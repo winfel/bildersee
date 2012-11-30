@@ -1,0 +1,136 @@
+<small><?php echo $legalShort; ?></small>
+</div>
+
+ <footer>
+  <?php
+
+	echo $config->copyright;
+	
+	?>
+  
+ </footer>
+</div>
+
+
+<header>
+<?php
+
+echo '<a href="?filter=" '.isActive('events').' id="button_events"><img src="design/events1.png" alt="">'.translate('events',true).'</a>';
+seperateIfNot('events');
+
+if ($user){
+	 echo '<a href="?mode=tags" '.isActive('tags').' id="button_tags"><img src="design/tags1.png" alt="">'.translate('tags',true).'</a>';
+	 seperateIfNot('tags');
+} 
+
+echo '<a href="?mode=gallery" '.isActive('gallery').' id="button_gallery"><img src="design/galleries1.png" alt="">'.translate('galleries',true).'</a>';
+seperateIfNot('gallery');
+
+if (!$config->local){
+
+	// right side
+	
+	echo '<a href="?mode=legal" '.isActive('info').' id="button_info"><img src="design/info1.png" alt="">'.translate('Info / Legal',true).'</a>';
+	
+	seperateIfNot('login','rechts');
+	
+	if (!$user) {
+		echo '<a '.isActive('login').' onclick="show(\'login\');this.className=\'activebutton\';return false" href="?mode=login" id="button_login"><img src="design/login1.png" alt="">'.translate('login',true).'</a>';
+	} else {
+		echo '<a '.isActive('login').' href="?logout=1" id="button_login" ><img src="design/logout1.png" alt="">'.translate('logout',true).'</a>';
+		if ($userIsAdmin) {
+			seperateIfNot('admin','rechts');
+			echo '<a href="?mode=admin" '.isActive('admin').' id="button_logs"><img src="design/admin1.png" alt="">'.translate('admin',true).'</a>';
+		}
+	}
+	seperateIfNot('upload','rechts');
+	echo '<a href="'.$config->updateURL.'" '.isActive('upload').' id="button_upload"><img src="design/upload1.png" alt="">'.translate('upload',true).'</a>';
+}
+	
+function isActive($part){global $activePart;
+	if ($part==$activePart) return 'class="activebutton"';
+	return 'class="button"';
+}
+
+function seperateIfNot($part,$direction=''){global $activePart;
+	if ($part==$activePart) return '';
+	echo '<div class="trenner'.$direction.'"></div>';
+}
+
+
+?>
+<h1 id="pagetitle"><?php echo $config->pageTitle;?></h1>
+</header>
+<div id="breadcrumb">
+<?php
+
+$output=array();
+foreach ($breadcrumb as $element){
+	$link=$element['link'];
+	$text=$element['text'];
+	if ($link) $text='<a href="'.$link.'">'.$text.'</a>';
+	$output[]='<div class="element">'.$text.'</div>';
+}
+echo implode('<div class="seperator"></div>',$output);
+
+if (isset($functionBar2) && $functionBar2) {
+	echo '<div id="functionbar2">'.$functionBar2.'</div>';
+}
+
+?>
+</div>
+
+<?php
+	if (isset($functionBar) && $functionBar) {
+		
+	
+		echo '
+		<div id="functionbar">
+		'.$functionBar.'
+		</div>
+		';
+	}
+?>
+
+<script>
+
+	var links=document.getElementsByTagName('a');
+	
+	for (var i in links){
+		var link=links[i];
+		if (link.onclick) continue;
+		link.onclick=function(e){
+			if(e.which==2) return true;
+			if(e.button==2) return true;
+			location.href=this.href;
+			return false;
+		}
+	}
+
+</script>
+<div id="overlay"></div>
+<!-- Piwik --> 
+<?php
+
+if ($page>1){
+	$pageTitle.=' (page '.$page.')';
+}
+
+?>
+
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://analytics.datenwiese.de/" : "http://analytics.datenwiese.de/");
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 2);
+piwikTracker.setDocumentTitle("<?php echo $pageTitle; ?>");
+<?php if($user) echo 'piwikTracker.setCustomVariable(1, "User", "'.$user.'", "visit" );';?>
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://analytics.datenwiese.de/piwik.php?idsite=2" style="border:0" alt="" /></p></noscript>
+<!-- End Piwik Tracking Code -->
+
+</body>
+</html>

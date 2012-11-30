@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <title>#HEADING# - <?php echo $config->pageTitle;?></title>
+  <meta name="description" content="#DESCRIPTION# - <?php echo $config->pageDescription;?>" />
+  <link rel="apple-touch-icon" href="<?php echo $config->designURL;?>/webclip.png"/>
+  <link rel="icon" type="image/ico" href="<?php echo $config->designURL;?>/favicon.ico">
+  <link rel="SHORTCUT ICON" type="image/ico" href="<?php echo $config->designURL;?>/favicon.ico" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1; minimum-scale=1; user-scalable=0;" />
+  <meta name="format-detection" content="telephone=no">
+  <link rel="stylesheet" href="<?php echo $config->designURL;?>/design.css" type="text/css" />
+  <script type="text/javascript" src="zxml.js.php"></script>
+  <script type="text/javascript" src="jsfunctions.js?version=092912"></script>
+
+<!--[if lt IE 9]>
+<script>
+// html5shiv MIT @rem remysharp.com/html5-enabling-script
+// iepp v1.6.2 MIT @jon_neal iecss.com/print-protector
+/*@cc_on(function(m,c){var z="abbr|article|aside|audio|canvas|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|section|summary|time|video";function n(d){for(var a=-1;++a<o;)d.createElement(i[a])}function p(d,a){for(var e=-1,b=d.length,j,q=[];++e<b;){j=d[e];if((a=j.media||a)!="screen")q.push(p(j.imports,a),j.cssText)}return q.join("")}var g=c.createElement("div");g.innerHTML="<z>i</z>";if(g.childNodes.length!==1){var i=z.split("|"),o=i.length,s=RegExp("(^|\\s)("+z+")",
+"gi"),t=RegExp("<(/*)("+z+")","gi"),u=RegExp("(^|[^\\n]*?\\s)("+z+")([^\\n]*)({[\\n\\w\\W]*?})","gi"),r=c.createDocumentFragment(),k=c.documentElement;g=k.firstChild;var h=c.createElement("body"),l=c.createElement("style"),f;n(c);n(r);g.insertBefore(l,
+g.firstChild);l.media="print";m.attachEvent("onbeforeprint",function(){var d=-1,a=p(c.styleSheets,"all"),e=[],b;for(f=f||c.body;(b=u.exec(a))!=null;)e.push((b[1]+b[2]+b[3]).replace(s,"$1.iepp_$2")+b[4]);for(l.styleSheet.cssText=e.join("\n");++d<o;){a=c.getElementsByTagName(i[d]);e=a.length;for(b=-1;++b<e;)if(a[b].className.indexOf("iepp_")<0)a[b].className+=" iepp_"+i[d]}r.appendChild(f);k.appendChild(h);h.className=f.className;h.innerHTML=f.innerHTML.replace(t,"<$1font")});m.attachEvent("onafterprint",
+function(){h.innerHTML="";k.removeChild(h);k.appendChild(f);l.styleSheet.cssText=""})}})(this,document);@*/
+</script>
+<![endif]-->
+
+  </head>
+
+<body onload="this.onorientationchange=this.onresize;processHash();" onresize="scrollHandlerDelayed();resizeHandlerDelayed();" onscroll="scrollHandlerDelayed()">
+<script>
+  var hash=window.location.hash; //used in processHash in onload
+</script>
+
+<div id="downarrow"></div>
+
+				<div id="login">
+				<div class="toparrow" /></div>
+				<p><?php echo translate('Registred users have access to further albums and photos. Access is only granted on a personal basis.');?> (<a href="?mode=legal"><?php echo translate('see legal',true);?></a>)</p>
+				<form method="post">
+				<table>
+				<tr><td><?php echo translate('user',true);?>: </td><td><input name="user" size="8" type="text" /></td></tr>
+				<tr><td><?php echo translate('password',true);?>: </td><td><input name="password" size="8" type="password" /></td></tr>
+				<tr><td><input value="<?php echo translate('cancel',true);?>" type="button" onclick="hide('login');document.getElementById('button_login').className='';" /></td><td style="text-align:right"><input value="<?php echo translate('login',true);?>" type="submit" /></td></tr>
+				</table>
+				</form>
+				</div>
+
+
+<input type="text" placeholder="<?php echo translate('search',true);?>" onkeyup="filterDelayed();" id="filter" size="30">
+
+<div id="visu">
+ <div id="maincontent">
+
