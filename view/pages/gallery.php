@@ -209,30 +209,5 @@ $pageDescription='';
 				
 
 		 </script>";
-		 
-		 
-function get_date($folder){
-	   $d=explode(' ',$folder);
-	   $d=$d[0];
-	   $d=explode('-',$d);
-	   switch (count($d)){
-	   	  case 6:
-	   	    $date=translateDate($d[0],$d[1],$d[2])." ".translate('till')." ".translateDate($d[3],$d[4],$d[5]);break;
-	   	  case 5:
-	   	    $date=translateDate($d[0],$d[1],$d[2])." ".translate('till')." ".translateDate($d[0],$d[3],$d[4]);break;
-	   	  case 4:
-	   	    $date=translateDate($d[0],$d[1],$d[2])." ".translate('till')." ".translateDate($d[0],$d[1],$d[3]);break;
-	   	  case 3:
-	   	    $date=translateDate($d[0],$d[1],$d[2]);break;
-	   	  case 2:
-	   	    $date="$d[0]-$d[1]";break;
-	   	  case 1:
-	   	    $date="$d[0]";break;
-	   	  default:
-	   	    $date="";break;
-	   }
-	   
-	   return $date;
-}
 
 ?>
