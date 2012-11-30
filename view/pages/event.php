@@ -141,31 +141,25 @@ switch (count($copyrights)){
 echo $byString;
 $pageDescription.=$byString;
 
-
 if (!isset($files) || !$files) $files=array();
 
-$navi='';
-
-$navi.=$count.' '.translate('images').'&nbsp;&nbsp;&nbsp;';
+$navi=$count.' '.translate('images').'&nbsp;&nbsp;&nbsp;';
 
 if (count($files)>1){
 
 	$navi.='<select onchange="setCategory(this.value);">';
-
 	$navi.='<option>'.translate('Jump directly to a topic').'  </option>';
+	
 	foreach(array_keys($files) as $category){
 		$navi.='<option value="'.$catOnPage[$category].'###'.urlencode($category).'">'.$category.'  </option>';
 	}
+	
 	$navi.='</select>&nbsp;&nbsp;&nbsp;';
 	
 
 }		
 
-$navi.='';
-
-$functionBar=$navi;
-$functionBar2=$navi;
-
+$functionBar=$navi;$functionBar2=$navi;
 
 if (!$config->local && $folderGiven && ($user||$codewordGiven)) {
 	$functionBar='<a href="?folder='.urlencode($folder).'&amp;filter='.$filter.'&amp;mode=download"><img src="design/download1.png" alt="" />'.translate('download',true).'</a><span class="seperator"></span>'.$navi;
@@ -199,55 +193,49 @@ echo '<div id="images">';
 
 foreach ($files as $category=>$entries){
 	
-if ($catOnPage[$category]!=$page) continue;
+	if ($catOnPage[$category]!=$page) continue;
+		
+	if ($category) echo '<h2 id="'.urlencode($category).'">'.$category.'</h2>';
 	
-if ($category) echo '<h2 id="'.urlencode($category).'">'.$category.'</h2>';
+	foreach ($entries as $entry){
+		
+		if ($first){
+			$first=false;
+			$functionBar='<span class="seperator"></span>'.$functionBar;
+			$url='index.php?mode=diashow&folder='.urlencode($folder).'&filter='.$filter.'&image='.$entry->key;
+			$functionBar='<a href="'.$url.'"><img src="design/galleries1.png" alt="" />'.translate('diashow',true).'</a>'.$functionBar;
+		}
+		
+		$url='?folder='.urlencode($folder).'&amp;image='.urlencode($entry->key).'&amp;filter='.$filter.'&page='.$page;
+		$imgurl=$config->imageGetterURL.'?key='.$entry->key.'&amp;width=300&amp;height=225';
+				
+		$readable=getReadableTags($entry->tags,$entry->sortstring);
+		
+		$mode='neutral';
+		if ($user && stripos($readable,'public')!==false) $mode='public';
+		if ($user && stripos($readable,'privat')!==false) $mode='private';
 
-
-	
-foreach ($entries as $entry){
-	
-	if ($first){
-		$first=false;
-		$functionBar='<span class="seperator"></span>'.$functionBar;
-		$url='index.php?mode=diashow&folder='.urlencode($folder).'&filter='.$filter.'&image='.$entry->key;
-		$functionBar='<a href="'.$url.'"><img src="design/galleries1.png" alt="" />'.translate('diashow',true).'</a>'.$functionBar;
+		$frameclass=($user)?'imageframe':'imageframe nouser_imageframe';
+		
+		echo '
+		<div class="'.$frameclass.'" id="'.$entry->key.'">
+		<table class="previmage">
+		 <tr>
+		  <td class="thumb"><a href="'.$url.'"><img alt="" src="design/ajax-loader.gif" title="'.$imgurl.'" id="img'.$entry->key.'"></a></td>
+		 </tr>';
+		
+		if ($user) echo '
+		 <tr>
+		  <td class="tag '.$mode.'" onclick="changeState(\''.$entry->key.'\',true)" id="tags'.$entry->key.'">
+		   <span>'.$readable.'</span>
+		   <textarea onblur="changeState(\''.$entry->key.'\',false)" onkeyup="handleEnter(event,\''.$entry->key.'\');" >'.$entry->filetags.' </textarea><textarea>'.$entry->filetags.' </textarea>
+		  </td>
+		 </tr>
+		 ';
+		
+		echo '</table>
+		</div>';
 	}
-	
-	$url='?folder='.urlencode($folder).'&amp;image='.urlencode($entry->key).'&amp;filter='.$filter.'&page='.$page;
-	$imgurl=$config->imageGetterURL.'?key='.$entry->key.'&amp;width=300&amp;height=225';
-	
-	if (isIPhone()) $url=$config->imageGetterURL.'key='.$entry->key.'&amp;width=1000&amp;height=1000';
-	
-	$readable=getReadableTags($entry->tags,$entry->sortstring);
-	
-	$mode='neutral';
-	if ($user && stripos($readable,'public')!==false) $mode='public';
-	if ($user && stripos($readable,'privat')!==false) $mode='private';
-	
-	$frameclass="imageframe";
-	if (!$user) $frameclass="imageframe nouser_imageframe";
-	
-	echo '
-	<div class="'.$frameclass.'" id="'.$entry->key.'">
-	<table class="previmage">
-	 <tr>
-	  <td class="thumb"><a href="'.$url.'"><img alt="" src="design/ajax-loader.gif" title="'.$imgurl.'" id="img'.$entry->key.'"></a></td>
-	 </tr>';
-	
-	if ($user) echo '
-	 <tr>
-	  <td class="tag '.$mode.'" onclick="changeState(\''.$entry->key.'\',true)" id="tags'.$entry->key.'">
-	   <span>'.$readable.'</span>
-	   <textarea onblur="changeState(\''.$entry->key.'\',false)" onkeyup="handleEnter(event,\''.$entry->key.'\');" >'.$entry->filetags.' </textarea><textarea>'.$entry->filetags.' </textarea>
-	  </td>
-	 </tr>
-	 ';
-	
-	echo '</table>
-	</div>';
-}
-	
 }
 
 echo '</div>';
@@ -256,10 +244,7 @@ foreach ($catOnPage as $cat=>$pag){
 	if ($cat && $pag>$page) echo '<h2 style="clear:both"><a href="javascript:setCategory(\''.$pag.'###'.urlencode($cat).'\')" style="text-decoration:none">'.translate('jump to',true).': '.$cat.'</a></h2>';
 }
 
-echo '<script type="text/javascript">
-
-document.onkeydown = keypressed;
-
+echo '<script>
 
 function enterCodeword(){
 	var result=prompt("'.translate('Please enter the codeword:').'","");
@@ -298,8 +283,6 @@ function activateNext(key){
 		if (td.id=="tags"+key) found=true; else found=false;
 	}
 
-	changeState(key,false);
-
 	if (nextKey) changeState(nextKey,true);
 }
 
@@ -313,7 +296,7 @@ function updateValue(key,value){
 }
 
 function changeState(key,state){
-	if ('.($config->local?'true':'false').') return;
+	if ('.($config->local?'true':'false').') return;  //changeStated switched off, if in local mode
 	
 	var tagArea=document.getElementById("tags"+key);
 	
@@ -350,8 +333,9 @@ function setCategory(data){
 	}
 }
 
-</script>';
 
-echo '<script>onScroll();</script>';
+onScroll();
+
+</script>';
 
 ?>
