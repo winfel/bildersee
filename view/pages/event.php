@@ -40,7 +40,7 @@ if ($tagGiven) {
 	addToBreadcrumb('',$temp);
 }
 
-$search=mysql_query("SELECT `key`,files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND files.folder LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
+$search=mysql_query("SELECT md5(`key`) as `key`,files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND files.folder LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
 
 
 $copyrights=array();

@@ -48,7 +48,7 @@ $pageDescription='';
 		
 		$t=time();
 		
-		$search=mysql_query("SELECT * FROM files WHERE  files.tags LIKE '%auswahl_%' ORDER BY sortstring");
+		$search=mysql_query("SELECT md5(`key`) as `key`,tags,copyright,sortstring FROM files WHERE  files.tags LIKE '%auswahl_%' ORDER BY sortstring");
 		
 		//echo (time()-$t);
 		

@@ -38,7 +38,7 @@
 	
 	$sfolder=$folder;
 	
-	$search=mysql_query("SELECT `key`,filename,copyright,tags FROM files WHERE $userQuery AND folder LIKE '$sfolder' $filterSQL ORDER BY sortstring $reverse");
+	$search=mysql_query("SELECT md5(`key`) as `key`,filename,copyright,tags FROM files WHERE $userQuery AND folder LIKE '$sfolder' $filterSQL ORDER BY sortstring $reverse");
 	
 	$prev=false;
 	$thisimage=false;
@@ -73,7 +73,7 @@
 	// if we did not get the image, try to get it without rights (direct URL access)
 	
 	if (!$thisimage){
-		$search=mysql_query("SELECT filename,copyright FROM files WHERE `key`='$image'");
+		$search=mysql_query("SELECT filename,copyright FROM files WHERE md5(`key`)='$image'");
 		if ($element=mysql_fetch_object($search)){
 			$thisimage=$element;
 			$pageTitle=basename($element->filename);

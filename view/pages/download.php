@@ -47,7 +47,7 @@
 		
 			$files=array();
 		
-			$search=mysql_query("SELECT `key`,filename  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND files.folder LIKE '$folder' $filterSQL $order $reverse");
+			$search=mysql_query("SELECT md5(`key`) as `key`,filename  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND files.folder LIKE '$folder' $filterSQL $order $reverse");
 			
 		    $subfolders=array();
 		    $copyrights=array();
