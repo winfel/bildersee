@@ -2,10 +2,8 @@
 
 $pageTitle=translate('search result',true);
 $pageDescription=translate('an online photo gallery',true);
-   
-if (!($folder=='%' || $folder=='%%')) {
-	$pageTitle=pretty(trim(substr($folder,strpos($folder,' '))));
-}
+
+$folder=str_replace('_','',str_replace(' ','',strtolower($folder)));
 
 $reverse=($folder=='%')?'DESC':'';
 
@@ -24,29 +22,7 @@ $folderGiven=$folder!='%' && $folder!='%%';
 $tagGiven=stripos($filter,'tag_')!==false;
 $codewordGiven=stripos($filter,'codeword_')!==false;
 
-if (!$folderGiven && $tagGiven) {
-	$activePart='tags';
-	addToBreadcrumb('?mode=tags',translate('tags',true));
-} else {
-	addToBreadcrumb('?',translate('events',true));
-}
-
-if ($folderGiven){
-	if ($tagGiven) addToBreadcrumb('',$pageTitle);
-	else addToBreadcrumb('?folder='.urlencode($folder),$pageTitle);
-} 
-
-if ($tagGiven) {
-	$temp=$filter;
-	$temp=str_replace(' ',', ',$temp);
-	$temp=str_replace('notag_',translate('not').' ',$temp);
-	$temp=str_replace('tag_','',$temp);
-	$temp=str_replace('_',' ',$temp);
-	$temp=ucwords_new($temp);
-	addToBreadcrumb('',$temp);
-}
-
-$search=mysql_query("SELECT md5(`key`) as `key`,files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND files.folder LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
+$search=mysql_query("SELECT md5(`key`) as `key`,files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(lower(files.folder),' ',''),'_','') LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
 
 
 $copyrights=array();
@@ -55,6 +31,35 @@ $count=0;
 while ($line=mysql_fetch_object($search)){
 		
 	$count++;
+	
+	if ($count==1 && $folderGiven && !($folder=='%' || $folder=='%%')) {
+		$pageTitle=pretty(trim(substr($line->folder,strpos($line->folder,' '))));
+	}
+	
+	if ($count==1){
+		if (!$folderGiven && $tagGiven) {
+			$activePart='tags';
+			addToBreadcrumb('?mode=tags',translate('tags',true));
+		} else {
+			addToBreadcrumb('?',translate('events',true));
+		}
+		
+		if ($folderGiven){
+			if ($tagGiven) addToBreadcrumb('',$pageTitle);
+			else addToBreadcrumb('?folder='.urlencode($folder),$pageTitle);
+		} 
+		
+		if ($tagGiven) {
+			$temp=$filter;
+			$temp=str_replace(' ',', ',$temp);
+			$temp=str_replace('notag_',translate('not').' ',$temp);
+			$temp=str_replace('tag_','',$temp);
+			$temp=str_replace('_',' ',$temp);
+			$temp=ucwords_new($temp);
+			addToBreadcrumb('',$temp);
+		}
+	}
+	
 	
 	if ($folderGiven){
 		$category=$line->subfolder;
@@ -77,6 +82,13 @@ while ($line=mysql_fetch_object($search)){
 $catOnPage=array();
 $perPage=$config->perPage;
 $i=1;$counter=0;
+
+if (!isset($files)){
+	$files=array();
+	echo '<h1>'.translate('An error has occured!').'</h1>';
+	echo '<p>'.translate('This event does not exist or you do not have access rights.').'</p>';
+}
+
 foreach($files as $category=>$elements){
 	$thisCount=count($elements);
 	if ($thisCount>$perPage || $counter+$thisCount>$perPage){

@@ -6,7 +6,7 @@ preventInjection();
  
 $folder=isset($_GET['folder'])?$_GET['folder']:false;
 
-$title=pretty($folder);
+$title=$folder;
 header('Content-Type: application/octet-stream');
 header('Content-disposition: attachment; filename="'.$title.'.zip"');
 
@@ -15,7 +15,7 @@ if (!$folder || $folder=='%') die ('Missing folder!');
 
 	$files=array();
 
-	$search=mysql_query("SELECT `key`,filename  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND files.folder LIKE '$folder' $filterSQL");
+	$search=mysql_query("SELECT `key`,filename  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(lower(files.folder),' ',''),'_','') LIKE '$folder' $filterSQL");
     
 	while ($line=mysql_fetch_object($search)){
 		{

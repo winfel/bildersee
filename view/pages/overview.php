@@ -62,13 +62,14 @@ $element=array();$element['link']='';$element['text']=translate('events',true);$
 		
 		$t=time();
 		
-		$search=mysql_query("SELECT folder, md5(`key`) AS stdthumb, category, tags FROM files WHERE $userQuery AND SUBSTR(folder,1,4)<'9' $filterSQL GROUP BY folder ORDER BY folder DESC");
+		$search=mysql_query("SELECT replace(replace(lower(folder),' ',''),'_','') AS folderID,folder, md5(`key`) AS stdthumb, category, tags FROM files WHERE $userQuery AND SUBSTR(folder,1,4)<'9' $filterSQL GROUP BY folder ORDER BY folder DESC");
 		
 		//echo (time()-$t);
 		
 		while ($line=mysql_fetch_object($search)){
 			$entry=array();
 			$entry['folder']=$line->folder;
+			$entry['folderID']=$line->folderID;
 			$eventCount++;
 			
 			$category=$line->category;
@@ -149,7 +150,7 @@ $element=array();$element['link']='';$element['text']=translate('events',true);$
 			
 			echo'<div class="overviewframe">
 			       <div class="albuminfo">
-					<a href="?folder='.urlencode($entry['folder']).'&amp;filter='.$filter.'" style="display:block;padding-right:10px">
+					<a href="?folder='.urlencode($entry['folderID']).'&amp;filter='.$filter.'" style="display:block;padding-right:10px">
 						<img width="170" height="170" src="design/loading.jpg" title="'.$config->imageGetterURL.'?key='.$entry['thumb'].'&amp;width=170&amp;height=170&amp;minimum=1">
 						
 						<span class="readable">'.$readable.'</span> <br />

@@ -20,7 +20,7 @@
 	//search the image on the event saved in the session variable.
 	//it may not be found in here (see below)
 	
-	$search=mysql_query("SELECT md5(`key`) as `key`,filename,copyright,tags FROM files WHERE $userQuery AND folder LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
+	$search=mysql_query("SELECT md5(`key`) as `key`,filename,copyright,tags,folder FROM files WHERE $userQuery AND replace(replace(lower(folder),' ',''),'_','') LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
 	
 	$prev=false;$thisimage=false;$next=false;$temp=false;
 	
@@ -30,6 +30,7 @@
 			$thisimage=$element;
 			$pageTitle=basename($element->filename);
 			$filename=$element->filename;
+			$folderReadable=pretty(trim(substr($element->folder,strpos($element->folder,' '))));
 			$pageDescription.=' '.translate('taken by').' '.ucwords_new(str_replace('_',' ',$element->copyright));
 			if ($temp) $prev=$temp->key;
 			$tags=$element->tags;
@@ -56,7 +57,7 @@
 			$pageDescription.=' '.translate('taken by').' '.ucwords_new(str_replace('_',' ',$element->copyright));
 			
 			$page=1;
-			$folder=$element->folder;
+			$folderReadable=pretty(trim(substr($element->folder,strpos($element->folder,' '))));
 			$folderGiven=true;
 			$tagGiven=false;
 			$filter='';
@@ -80,7 +81,7 @@
 	}
 	
 	if ($folderGiven){
-		$element=array();$element['link']='?folder='.urlencode($folder);$element['text']=pretty($folder);$breadcrumb[]=$element;
+		$element=array();$element['link']='?folder='.urlencode($folder);$element['text']=$folderReadable;$breadcrumb[]=$element;
 	} 
 	
 	if ($tagGiven) {

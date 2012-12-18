@@ -10,7 +10,7 @@
 	
 	$reverse=($folder=='%')?'DESC':'';
 	
-	$search=mysql_query("SELECT md5(`key`) as `key`,filename,copyright,tags FROM files WHERE $userQuery AND folder LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
+	$search=mysql_query("SELECT md5(`key`) as `key`,filename,copyright,tags FROM files WHERE $userQuery AND replace(replace(lower(folder),' ',''),'_','') LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
 	
 	$prev=false;
 	$thisimage=false;

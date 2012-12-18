@@ -9,45 +9,17 @@
 	    
 	    $reverse=($folder=='%')?'DESC':'';
 		$order='ORDER BY sortstring';
-		
-		$random=isset($_GET['random']);
 	
-		$codewordPossible=false;
 		$folderGiven=$folder!='%' && $folder!='%%';
 		$tagGiven=stripos($filter,'tag_')!==false;
 		$codewordGiven=stripos($filter,'codeword_')!==false;
 		
-		if (!$folderGiven && $tagGiven) {
-			$activePart='tags';
-			$element=array();$element['link']='?mode=tags';$element['text']='Stichworte';$breadcrumb[]=$element;
-		} else {
-			$element=array();$element['link']='?';$element['text']='Events';$breadcrumb[]=$element;
-		}
-		
-		if ($folderGiven && $tagGiven){
-			$element=array();$element['link']='?folder='.urlencode($folder);$element['text']=$pageTitle;$breadcrumb[]=$element;
-		} else {
-			if ($folderGiven){
-				$element=array();$element['link']='?folder='.urlencode($folder);$element['text']=$pageTitle;$breadcrumb[]=$element;
-				$element=array();$element['link']='';$element['text']=translate('download event as ZIP',true);$breadcrumb[]=$element;
-			}
-		}
-		
-		if ($tagGiven) {
-			$temp=$filter;
-			$temp=str_replace(' ',', ',$temp);
-			$temp=str_replace('notag_',translate('not').' ',$temp);
-			$temp=str_replace('tag_','',$temp);
-			$temp=str_replace('_',' ',$temp);
-			$temp=ucwords_new($temp);
-			$element=array();$element['link']='';$element['text']=$temp;$breadcrumb[]=$element;
-		}
-		
+		$element=array();$element['link']='?';$element['text']='Events';$breadcrumb[]=$element;
 		
 		
 			$files=array();
 		
-			$search=mysql_query("SELECT md5(`key`) as `key`,filename  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND files.folder LIKE '$folder' $filterSQL $order $reverse");
+			$search=mysql_query("SELECT md5(`key`) as `key`,filename,folder  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(lower(files.folder),' ',''),'_','') LIKE '$folder' $filterSQL $order $reverse");
 			
 		    $subfolders=array();
 		    $copyrights=array();
@@ -58,6 +30,14 @@
 				{
 					$files[]=$line;
 					$count++;
+					
+					if ($count==1 && $folderGiven && !($folder=='%' || $folder=='%%')) {
+						$pageTitle=pretty(trim(substr($line->folder,strpos($line->folder,' '))));
+						addToBreadcrumb('?folder='.urlencode($folder),$pageTitle);
+						$element=array();$element['link']='';$element['text']=translate('download event as ZIP',true);$breadcrumb[]=$element;
+
+					}
+					
 				} 
 	
 			}
