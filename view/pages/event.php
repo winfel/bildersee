@@ -9,7 +9,13 @@ if (!($folder=='%' || $folder=='%%')) {
 
 $reverse=($folder=='%')?'DESC':'';
 
-$page=isset($_GET['page'])?$page:1;
+$page=isset($_GET['page'])?$_GET['page']:1;
+
+//this is used for returning to the site;
+
+$_SESSION['last_page']=$page;
+$_SESSION['last_folder']=$folder;
+$_SESSION['last_filter']=$filter;
 
 $codewordPossible=false;
 $codeword=false;
@@ -206,7 +212,7 @@ foreach ($files as $category=>$entries){
 			$functionBar='<a href="'.$url.'"><img src="design/galleries1.png" alt="" />'.translate('diashow',true).'</a>'.$functionBar;
 		}
 		
-		$url='?folder='.urlencode($folder).'&amp;image='.urlencode($entry->key).'&amp;filter='.$filter.'&page='.$page;
+		$url='?image='.urlencode($entry->key);
 		$imgurl=$config->imageGetterURL.'?key='.$entry->key.'&amp;width=300&amp;height=225';
 				
 		$readable=getReadableTags($entry->tags,$entry->sortstring);

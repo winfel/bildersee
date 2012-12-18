@@ -1,12 +1,14 @@
 <?php
 
-	$pageTitle=translate('image',true);
+	//get the context from session. This is the last event which was visited
+
+	@$page=$_SESSION['last_page'];
+	@$folder=$_SESSION['last_folder'];
+	@$filter=$_SESSION['last_filter'];
+
 	$pageDescription=translate('an image in',true).' &quot;'.pretty($folder).'&quot;';;
 		
-		$pos=strpos(pretty($folder),' ');
-	    $pageTitle=(trim(substr(pretty($folder),$pos)));
-	    
-	    if (!$pageTitle || $pageTitle=='%' || $pageTitle=='%%') $pageTitle=translate('search result',true);
+	$pos=strpos(pretty($folder),' ');
 	
 	$reverse=($folder=='%')?'DESC':'';
 	$folderGiven=$folder!='%' && $folder!='%%';
@@ -14,6 +16,61 @@
 	$codewordGiven=stripos($filter,'codeword_')!==false;
 	
 	$page=isset($_GET['page'])?$_GET['page']:1;
+	
+	//search the image on the event saved in the session variable.
+	//it may not be found in here (see below)
+	
+	$search=mysql_query("SELECT md5(`key`) as `key`,filename,copyright,tags FROM files WHERE $userQuery AND folder LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
+	
+	$prev=false;$thisimage=false;$next=false;$temp=false;
+	
+	while ((!$thisimage || !$next) && $element=mysql_fetch_object($search)){
+		if ($thisimage) $next=$element->key;
+		if ($element->key==$image) {
+			$thisimage=$element;
+			$pageTitle=basename($element->filename);
+			$filename=$element->filename;
+			$pageDescription.=' '.translate('taken by').' '.ucwords_new(str_replace('_',' ',$element->copyright));
+			if ($temp) $prev=$temp->key;
+			$tags=$element->tags;
+			$geo=false;
+			$hasRights=true;
+			if (stripos($tags,'geo_')!==false) {
+				$geo=explode('geo_',$tags);$geo=$geo[1];$geo=explode(' ',$geo);$geo=$geo[0];
+			}
+		}
+		$temp=$element;
+	}
+	
+	//the image may not have been found in the previously viewed event
+	//this may have several reasons. It is most likely that a URL has
+	//been entered directly which points to an image outside the previously
+	//viewed event
+	
+	if (!$thisimage){
+		$search=mysql_query("SELECT filename,copyright,folder,tags,($userQuery) as hasRights FROM files WHERE md5(`key`)='$image'");
+		if ($element=mysql_fetch_object($search)){
+			$thisimage=$element;
+			$pageTitle=basename($element->filename);
+			$filename=$element->filename;
+			$pageDescription.=' '.translate('taken by').' '.ucwords_new(str_replace('_',' ',$element->copyright));
+			
+			$page=1;
+			$folder=$element->folder;
+			$folderGiven=true;
+			$tagGiven=false;
+			$filter='';
+			
+			$hasRights=$element->hasRights;
+			
+			$tags=$element->tags;
+			$geo=false;
+			if (stripos($tags,'geo_')!==false) {
+				$geo=explode('geo_',$tags);$geo=$geo[1];$geo=explode(' ',$geo);$geo=$geo[0];
+			}
+			
+		}
+	}	
 	
 	if (!$folderGiven && $tagGiven) {
 		$activePart='tags';
@@ -23,7 +80,7 @@
 	}
 	
 	if ($folderGiven){
-		$element=array();$element['link']='?folder='.urlencode($folder);$element['text']=$pageTitle;$breadcrumb[]=$element;
+		$element=array();$element['link']='?folder='.urlencode($folder);$element['text']=pretty($folder);$breadcrumb[]=$element;
 	} 
 	
 	if ($tagGiven) {
@@ -36,275 +93,219 @@
 		$element=array();$element['link']='?folder='.urlencode($folder).'&filter='.urlencode($filter);$element['text']=$temp;$breadcrumb[]=$element;
 	}
 	
-	$sfolder=$folder;
-	
-	$search=mysql_query("SELECT md5(`key`) as `key`,filename,copyright,tags FROM files WHERE $userQuery AND folder LIKE '$sfolder' $filterSQL ORDER BY sortstring $reverse");
-	
-	$prev=false;
-	$thisimage=false;
-	$next=false;
-	$number=0;
-	
-	$temp=false;
-	$i=0;
-	while ((!$thisimage || !$next) && $element=mysql_fetch_object($search)){
-		if ($thisimage) $next=$element->key;
-		if ($element->key==$image) {
-			$thisimage=$element;
-			$pageTitle=basename($element->filename);
-			$filename=$element->filename;
-			$pageDescription.=' taken by '.ucwords_new(str_replace('_',' ',$element->copyright));
-			$hasRights=true;
-			if ($temp) $prev=$temp->key;
-			$number=$i;
-			$tags=trim($element->tags);
-			$geo=false;
-			if (stripos($tags,'geo_')!==false) {
-				$geo=explode('geo_',$tags);
-				$geo=$geo[1];
-				$geo=explode(' ',$geo);
-				$geo=$geo[0];
-			}
-		}
-		$temp=$element;
-		$i++;
-	}
-	
-	// if we did not get the image, try to get it without rights (direct URL access)
-	
-	if (!$thisimage){
-		$search=mysql_query("SELECT filename,copyright FROM files WHERE md5(`key`)='$image'");
-		if ($element=mysql_fetch_object($search)){
-			$thisimage=$element;
-			$pageTitle=basename($element->filename);
-			$filename=$element->filename;
-			$pageDescription.=' '.translate('taken by').' '.ucwords_new(str_replace('_',' ',$element->copyright));
-			$hasRights=false;
-		}
-	}
-	
 	$functionBar='';
 	
 	if ($hasRights){
-	
-		$url='index.php?folder='.urlencode($folder).'&filter='.$filter.'&page='.$page.'#scroll'.$image;
-		$functionBar.='<a href="'.$url.'"><img src="design/overview1.png" alt="" />'.translate('overview',true).'</a>';
 		
-		if ($user){
+		if ($tagGiven){
+	
+			$url='index.php?folder='.urlencode($folder).'&filter='.$filter.'&page='.$page.'#scroll'.$image;
+			$functionBar.='<a href="'.$url.'"><img src="design/overview1.png" alt="" />'.translate('overview',true).'</a>';
+			
+			if ($user){
+				$url='findimage.php?key='.$image;
+				$functionBar.= '<a href="'.$url.'"><img src="design/context1.png" alt="" />'.translate('context',true).'</a>';
+			}
+			
+		} else {
+			
 			$url='findimage.php?key='.$image;
-			$functionBar.= '<a href="'.$url.'"><img src="design/context1.png" alt="" />'.translate('context',true).'</a>';
+			$functionBar.='<a href="'.$url.'"><img src="design/overview1.png" alt="" />'.translate('overview',true).'</a>';
+			
 		}
 		
 		$functionBar.='<span class="seperator"></span>';
-		
+	
 		$functionBar.='<a href="getimage.php?key='.$image.'&download=1" target="_blank"><img src="design/download1.png" alt="" />'.translate('download',true).'</a>';
+	
 	}
 
-	if (stripos($filename,'.youtube')){
-		$id=file_get_contents($filename);
-		$mainurl='http://www.youtube.com/embed/'.$id;
-		echo '<div id="imagediv"><iframe id="theimage" width="1000" height="1000" src="http://www.youtube.com/embed/'.$id.'" frameborder="0" allowfullscreen></iframe></div>';
+	if (!isset($filename)) {
+		echo '<h1>'.translate('An error has occured!').'</h1>';
+		echo '<p>'.translate('The image with this id could not be found. Please check if you have typed in or copied the URL correctly.').'</p>';
 	} else {
-		$mainurl=$config->imageGetterURL.'?key='.$image.'&width=1000000&height=1000';
-		echo '<div id="imagediv"><img src="" id="theimage" /><noscript><img src="'.$mainurl.'" id="theimage" style="opacity:1;width:100%" /></noscript></div>';
-		
-	}
-	
-	/*
-	$descsearch=mysql_query("SELECT * FROM descriptions WHERE descriptions.id='$image'");
-	
-	$description=false;
-	
-	if ($descsearch=mysql_fetch_object($descsearch)) {
-		$description=$descsearch->description;
-	}	
 
-	$changeText=translate('Double click to change the description');
-	
-	if ($user && $hasRights){
-		if ($description) {
-			echo '<p id="description" ondblclick="changeDescription(\''.$image.'\',this.innerHTML)" title="'.$changeText.'">'.$description.'</p>';
+		if (stripos($filename,'.youtube')){
+			$id=file_get_contents($filename);
+			$mainurl='http://www.youtube.com/embed/'.$id;
+			echo '<div id="imagediv"><iframe id="theimage" width="1000" height="1000" src="http://www.youtube.com/embed/'.$id.'" frameborder="0" allowfullscreen></iframe></div>';
 		} else {
-			echo '<p id="description" ondblclick="changeDescription(\''.$image.'\',\'\')" class="unset" title="'.$changeText.'">'.translate('Double click to add a description').'</p>';
+			$mainurl=$config->imageGetterURL.'?key='.$image.'&width=1000000&height=1000';
+			echo '<div id="imagediv"><img src="" id="theimage" /><noscript><img src="'.$mainurl.'" id="theimage" style="opacity:1;width:100%" /></noscript></div>';
+			
 		}
-	} else {
-		if ($description) {
-			echo '<p>'.$description.'</p>';
+		
+			
+		$element=array();$element['link']='';$element['text']=basename($thisimage->filename);$breadcrumb[]=$element;
+	
+		if ($prev || $next) $functionBar.='<span class="seperator"></span>';
+		
+		if ($prev) {
+			$url='?image='.urlencode($prev);
+			$functionBar.='<a href="'.$url.'" id="prevlink"><img src="design/back1.png" alt="back" /></a>';
 		}
-	}
-
-
-	if ($description) $pageDescription.=" - $description";
-	*/	
 		
-	$element=array();$element['link']='';$element['text']=basename($thisimage->filename);$breadcrumb[]=$element;
-
-	$functionBar.='<span class="seperator"></span>';
-	
-	if ($prev) {
-		$url='?folder='.urlencode($folder).'&image='.urlencode($prev).'&filter='.$filter;
-		$functionBar.='<a href="'.$url.'" id="prevlink"><img src="design/back1.png" alt="back" /></a>';
-	}
-	
-	echo '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;';
-	
-	if ($next) {
-		$url='?folder='.urlencode($folder).'&image='.urlencode($next).'&filter='.$filter;
-		$functionBar.='<a href="'.$url.'" id="nextlink"><img src="design/forward1.png" alt="forward" /></a>';
-	}
-	
-	echo '
-	<script>
-	
-		  function changeDescription(key,oldValue){
-		  	  var newValue=prompt("'.translate('Enter a description for this image:').'",oldValue);
-		  	  if (newValue==null) return;
-		  	  server_query("updatedescription.php?key="+key+"&description="+escape(newValue),function(value){
-					  		if (value) {
-					  			alert(value);
-					  		} else {
-					  			document.getElementById("description").innerHTML=newValue;
-					  			document.getElementById("description").className="set";
-					  		}
-				});
-		  }
-	
-	      var myWidth = 0, myHeight = 0;
-		  if( typeof( window.innerWidth ) == "number" ) {
-		    //Non-IE
-		    myWidth = window.innerWidth;
-		    myHeight = window.innerHeight;
-		  } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-		    //IE 6+ in "standards compliant mode"
-		    myWidth = document.documentElement.clientWidth;
-		    myHeight = document.documentElement.clientHeight;
-		  } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
-		    //IE 4 compatible
-		    myWidth = document.body.clientWidth;
-		    myHeight = document.body.clientHeight;
-		  }
+		echo '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;';
 		
-		var image=document.getElementById("theimage");
-		var imagediv=document.getElementById("imagediv");
+		if ($next) {
+			$url='?image='.urlencode($next);
+			$functionBar.='<a href="'.$url.'" id="nextlink"><img src="design/forward1.png" alt="forward" /></a>';
+		}
 		
-        var mHeight=myHeight-120;
-        imagediv.style.height=mHeight+"px";
+		echo '
+		<script>
 		
-		image.src="";
+			  function changeDescription(key,oldValue){
+			  	  var newValue=prompt("'.translate('Enter a description for this image:').'",oldValue);
+			  	  if (newValue==null) return;
+			  	  server_query("updatedescription.php?key="+key+"&description="+escape(newValue),function(value){
+						  		if (value) {
+						  			alert(value);
+						  		} else {
+						  			document.getElementById("description").innerHTML=newValue;
+						  			document.getElementById("description").className="set";
+						  		}
+					});
+			  }
 		
-		image.onload=function(){
-			var mHeight=myHeight-120;
-			var isHeight=(image.offsetHeight);
-			image.isHeight=isHeight;
-			if (isHeight>mHeight){
-				image.style.maxHeight=mHeight+"px";
-				imagediv.style.height=mHeight+"px";
-				imagediv.style.background="transparent";
+		      var myWidth = 0, myHeight = 0;
+			  if( typeof( window.innerWidth ) == "number" ) {
+			    //Non-IE
+			    myWidth = window.innerWidth;
+			    myHeight = window.innerHeight;
+			  } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+			    //IE 6+ in "standards compliant mode"
+			    myWidth = document.documentElement.clientWidth;
+			    myHeight = document.documentElement.clientHeight;
+			  } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+			    //IE 4 compatible
+			    myWidth = document.body.clientWidth;
+			    myHeight = document.body.clientHeight;
+			  }
+			
+			var image=document.getElementById("theimage");
+			var imagediv=document.getElementById("imagediv");
+			
+	        var mHeight=myHeight-120;
+	        imagediv.style.height=mHeight+"px";
+			
+			image.src="";
+			
+			image.onload=function(){
+				var mHeight=myHeight-120;
+				var isHeight=(image.offsetHeight);
+				image.isHeight=isHeight;
+				if (isHeight>mHeight){
+					image.style.maxHeight=mHeight+"px";
+					imagediv.style.height=mHeight+"px";
+					imagediv.style.background="transparent";
+					
+				}
+				image.style.maxWidth="100%";
+				image.style.opacity=1;
 				
 			}
-			image.style.maxWidth="100%";
-			image.style.opacity=1;
 			
-		}
-		
-		image.src="'.$mainurl.'";
-		
-		var body=document.getElementsByTagName("body")[0];
-		
-		image.onclick=function(){
-			if (!image.isHeight) return image.onload();
-			image.style.maxWidth="1000000px";
-			image.style.maxHeight=image.isHeight+"px";
-			imagediv.style.height=image.isHeight+"px";
-			image.isHeight=undefined;
-		}
-		
-		function showExif(e){
-			hideExifs();
-			var left=(e.clientX-200);
-			if (left<0) left=0;
-			document.getElementById("exifdata").style.display="block";
-			document.getElementById("exifdata").style.left=left+"px";
-			document.getElementById("downarrow").style.display="block";
-			document.getElementById("downarrow").style.left=(e.clientX-27)+"px";
-			document.getElementById("visu").onclick=hideExifs;
-			e.stopPropagation();
-		}
-		
-		function showLocation(e){
-			hideExifs();
-			var left=(e.clientX-250);
-			if (left<0) left=0;
-			document.getElementById("exiflocation").style.display="block";
-			document.getElementById("exiflocation").style.left=left+"px";
-			document.getElementById("downarrow").style.display="block";
-			document.getElementById("downarrow").style.left=(e.clientX-27)+"px";
-			document.getElementById("visu").onclick=hideExifs;
-			e.stopPropagation();
-		}
-		
-		function hideExifs(){
-			document.getElementById("downarrow").style.display="none";
-			if (document.getElementById("exifdata")) document.getElementById("exifdata").style.display="none";
-			if (document.getElementById("exiflocation")) document.getElementById("exiflocation").style.display="none";
-		}
-		
-		function fullScreen(){
-						
-			var elem = document.getElementById("imagediv");  
-			if (elem.requestFullScreen) {  
-			  elem.requestFullScreen();  
-			} else if (elem.mozRequestFullScreen) {  
-			  elem.mozRequestFullScreen();  
-			} else if (elem.webkitRequestFullScreen) {  
-			  elem.webkitRequestFullScreen();  
+			image.src="'.$mainurl.'";
+			
+			var body=document.getElementsByTagName("body")[0];
+			
+			image.onclick=function(){
+				if (!image.isHeight) return image.onload();
+				image.style.maxWidth="1000000px";
+				image.style.maxHeight=image.isHeight+"px";
+				imagediv.style.height=image.isHeight+"px";
+				image.isHeight=undefined;
 			}
 			
-			image.onload();
-			image.onclick();
-			  
-		}
-	
-	</script>
-	
-	';	
+			function showExif(e){
+				hideExifs();
+				var left=(e.clientX-200);
+				if (left<0) left=0;
+				document.getElementById("exifdata").style.display="block";
+				document.getElementById("exifdata").style.left=left+"px";
+				document.getElementById("downarrow").style.display="block";
+				document.getElementById("downarrow").style.left=(e.clientX-27)+"px";
+				document.getElementById("visu").onclick=hideExifs;
+				e.stopPropagation();
+			}
+			
+			function showLocation(e){
+				hideExifs();
+				var left=(e.clientX-250);
+				if (left<0) left=0;
+				document.getElementById("exiflocation").style.display="block";
+				document.getElementById("exiflocation").style.left=left+"px";
+				document.getElementById("downarrow").style.display="block";
+				document.getElementById("downarrow").style.left=(e.clientX-27)+"px";
+				document.getElementById("visu").onclick=hideExifs;
+				e.stopPropagation();
+			}
+			
+			function hideExifs(){
+				document.getElementById("downarrow").style.display="none";
+				if (document.getElementById("exifdata")) document.getElementById("exifdata").style.display="none";
+				if (document.getElementById("exiflocation")) document.getElementById("exiflocation").style.display="none";
+			}
+			
+			function fullScreen(){
+							
+				var elem = document.getElementById("imagediv");  
+				if (elem.requestFullScreen) {  
+				  elem.requestFullScreen();  
+				} else if (elem.mozRequestFullScreen) {  
+				  elem.mozRequestFullScreen();  
+				} else if (elem.webkitRequestFullScreen) {  
+				  elem.webkitRequestFullScreen();  
+				}
+				
+				image.onload();
+				image.onclick();
+				  
+			}
 		
-	$filename=$thisimage->filename;
-	
-	$functionBar='<span class="seperator"></span>'.$functionBar;
-	$url='index.php?mode=diashow&folder='.urlencode($folder).'&filter='.$filter.'&image='.$image;
-	$functionBar='<a href="'.$url.'"><img src="design/galleries1.png" alt="" />'.translate('diashow',true).'</a>'.$functionBar;
-	
-	@$exif=parseExif($filename,$geo);
-	
-	if ($exif['exif']) {
+		</script>
+		
+		';	
+			
+		$filename=$thisimage->filename;
+		
 		$functionBar='<span class="seperator"></span>'.$functionBar;
-		$functionBar='<a href="#" onclick="showExif(event);return false;"><img src="design/metadata1.png" alt="" />'.translate('metadata',true).'</a>'.$functionBar;
-		echo '<div id="exifdata">'.$exif['exif'].'</div>';
-	}
-	if ($exif['location']) {
-		$functionBar='<a href="#" onclick="showLocation(event);return false;"><img src="design/location1.png" alt="" />'.translate('location',true).'</a>'.$functionBar;
-		echo '<div id="exiflocation">'.$exif['location'].'</div>';
-	}
+		$url='index.php?mode=diashow&folder='.urlencode($folder).'&filter='.$filter.'&image='.$image;
+		$functionBar='<a href="'.$url.'"><img src="design/galleries1.png" alt="" />'.translate('diashow',true).'</a>'.$functionBar;
+		
+		@$exif=parseExif($filename,$geo);
+		
+		if ($exif['exif']) {
+			$functionBar='<span class="seperator"></span>'.$functionBar;
+			$functionBar='<a href="#" onclick="showExif(event);return false;"><img src="design/metadata1.png" alt="" />'.translate('metadata',true).'</a>'.$functionBar;
+			echo '<div id="exifdata">'.$exif['exif'].'</div>';
+		}
+		if ($exif['location']) {
+			$functionBar='<a href="#" onclick="showLocation(event);return false;"><img src="design/location1.png" alt="" />'.translate('location',true).'</a>'.$functionBar;
+			echo '<div id="exiflocation">'.$exif['location'].'</div>';
+		}
+		
+		
+		  if (isset($_GET['image']) && $_GET['image']){
+	  	echo '
 	
-	
-	  if (isset($_GET['image']) && $_GET['image']){
-  	echo '
-
-  	   <script>
-  	   	  document.onkeydown = keypressed;
-  	   </script>
-  	';
+	  	   <script>
+	  	   	  document.onkeydown = keypressed;
+	  	   </script>
+	  	';
+	  }
+	  
+	  
+	  // Prefetching of previous and next image
+	  
+	  $nextURL=$config->imageGetterURL.'?key='.$next.'&width=1000000&height=1000';	
+	  $prevURL=$config->imageGetterURL.'?key='.$prev.'&width=1000000&height=1000';	
+	  
+	  $legalShort.= '<img src="'.$nextURL.'" width="1" height="1" />';
+	  $legalShort.= '<img src="'.$prevURL.'" width="1" height="1" />';
+  
   }
-  
-  
-  // Prefetching of previous and next image
-  
-  $nextURL=$config->imageGetterURL.'?key='.$next.'&width=1000000&height=1000';	
-  $prevURL=$config->imageGetterURL.'?key='.$prev.'&width=1000000&height=1000';	
-  
-  $legalShort.= '<img src="'.$nextURL.'" width="1" height="1" />';
-  $legalShort.= '<img src="'.$prevURL.'" width="1" height="1" />';
   
   
 function parseExif($filename,$geo){global $translations,$lang,$config;

@@ -18,7 +18,7 @@
 	if(isset($_SESSION['userIsAdmin'])) $userIsAdmin=$_SESSION['userIsAdmin'];
 	
 	
-	$result=mysql_query("SELECT filename,copyright,tags FROM files WHERE md5(`key`)='$input'");
+	$result=mysql_query("SELECT filename,copyright,tags FROM files WHERE md5(`key`)='$input' OR `key`='$input'");
 	$resultSet=mysql_fetch_object($result);
 	@$getFile=($resultSet->filename);
 	@$getTags=($resultSet->tags);
