@@ -22,7 +22,7 @@ $folderGiven=$folder!='%' && $folder!='%%';
 $tagGiven=stripos($filter,'tag_')!==false;
 $codewordGiven=stripos($filter,'codeword_')!==false;
 
-$search=mysql_query("SELECT md5(`key`) as `key`,files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(lower(files.folder),' ',''),'_','') LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
+$search=mysql_query("SELECT md5(`key`) as `key`,files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder as folderReadable,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(lower(files.folder),' ',''),'_','') LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
 
 
 $copyrights=array();
@@ -33,7 +33,8 @@ while ($line=mysql_fetch_object($search)){
 	$count++;
 	
 	if ($count==1 && $folderGiven && !($folder=='%' || $folder=='%%')) {
-		$pageTitle=pretty(trim(substr($line->folder,strpos($line->folder,' '))));
+		$pageTitle=pretty(trim(substr($line->folderReadable,strpos($line->folderReadable,' '))));
+		$folderReadable=$line->folderReadable;
 	}
 	
 	if ($count==1){
@@ -79,19 +80,19 @@ while ($line=mysql_fetch_object($search)){
 
 }
 
-$catOnPage=array();
-$perPage=$config->perPage;
-$i=1;$counter=0;
-
 if (!isset($files)){
 	$files=array();
 	echo '<h1>'.translate('An error has occured!').'</h1>';
 	echo '<p>'.translate('This event does not exist or you do not have access rights.').'</p>';
 }
 
+$catOnPage=array();
+$perPage=$config->perPage;
+$i=1;$counter=0;
+
 foreach($files as $category=>$elements){
 	$thisCount=count($elements);
-	if ($thisCount>$perPage || $counter+$thisCount>$perPage){
+	if ($counter !==0 && $counter+$thisCount>$perPage){
 		$i++;
 		$counter=0;
 	} else {
@@ -140,7 +141,7 @@ function onScroll(){
 }
 </script>';
 
-if ($folderGiven){echo '<h1>'.$pageTitle.' <nobr>('.get_date($folder).')</nobr></h1>';}
+if ($folderGiven){echo '<h1>'.$pageTitle.' <nobr>('.get_date($folderReadable).')</nobr></h1>';}
 
 $copyrights=array_keys($copyrights);
 
