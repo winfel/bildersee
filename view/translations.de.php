@@ -2,6 +2,10 @@
 
 $translations['de']['Twinning']='Partnerschaft';
 
+$translations['de']['An error has occured!']='Ein Fehler ist aufgetreten!';
+$translations['de']['An image with this address could not be found. Please check if you have typed in or copied the address correctly.']='Unter dieser Adresse konnte keine Adresse gekauft. Bitte überprüfen Sie, ob Sie die Adresse richtig eingeben oder kopiert haben.';
+$translations['de']['This event does not exist or you do not have access rights.']='Dieses Ereignis existiert nicht oder Sie haben nicht die notwendigen Zugriffsrechte.';
+
 $translations['de']['jump to']='Springe zu';
 
 $translations['de']['years']='Jahre';

@@ -123,7 +123,7 @@
 
 	if (!isset($filename)) {
 		echo '<h1>'.translate('An error has occured!').'</h1>';
-		echo '<p>'.translate('The image with this id could not be found. Please check if you have typed in or copied the URL correctly.').'</p>';
+		echo '<p>'.translate('An image with this address could not be found. Please check if you have typed in or copied the address correctly.').'</p>';
 	} else {
 
 		if (stripos($filename,'.youtube')){
