@@ -24,6 +24,7 @@ $startTime=time();	//Debug
 $activePart='events';	// the actively selected mode - 'events' if nothing else is given	
 $breadcrumb=array();	// navigational breadcrumb
 $pageTitle='';			// the title of the current page
+$thumbnail=$config->designURL.'/webclip.png';
 $sideBar='';
 $pageDescription='';	// the description of the current page
 
@@ -93,6 +94,7 @@ ob_end_clean();
 
 //inserting page heading and description into the otherwise fully created page
 $output=str_replace('#HEADING#',$pageTitle,$output);
+$output=str_replace('#THUMBNAIL#',$thumbnail,$output);
 $output=str_replace('#DESCRIPTION#',$pageDescription,$output);
 
 echo $output;
