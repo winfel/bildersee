@@ -27,6 +27,7 @@ $search=mysql_query("SELECT md5(`key`) as `key`,files.tags as tags, filetags.tag
 
 $copyrights=array();
 $count=0;
+$thumb=false;
    
 while ($line=mysql_fetch_object($search)){
 		
@@ -72,6 +73,9 @@ while ($line=mysql_fetch_object($search)){
 	$files[$category][]=$line;
 	$codewordPossible=$codewordPossible || (stripos($line->tags,'codeword_') !==false);
 	$hasPublic=$hasPublic || (stripos($line->tags,'public') !==false);
+	if (!$thumb && (stripos($line->tags,'public') !==false)){
+		$thumb=$line->key;
+	}
 	
 	if ($codewordPossible && !$codeword){		
 		$codeword=between('codeword_',' ',$line->tags);
@@ -79,6 +83,8 @@ while ($line=mysql_fetch_object($search)){
 	$copyrights[ucwords_new(str_replace('_',' ',$line->copyright))]=true;  //TODO transfer this to update
 
 }
+
+echo '<img width="170" height="170" src="'.$config->imageGetterURL.'?key='.$thumb.'&amp;width=170&amp;height=170&amp;minimum=1" style="height:30px;width:30px;position:absolute;top:0;left:0">';
 
 if (!isset($files)){
 	$files=array();
@@ -240,7 +246,7 @@ foreach ($files as $category=>$entries){
 		<div class="'.$frameclass.'" id="'.$entry->key.'">
 		<table class="previmage">
 		 <tr>
-		  <td class="thumb"><a href="'.$url.'"><img alt="" src="design/ajax-loader.gif" title="'.$imgurl.'" id="img'.$entry->key.'"></a></td>
+		  <td class="thumb"><a href="'.$url.'"><img alt="" src="" title="'.$imgurl.'" id="img'.$entry->key.'" style="min-height:55px;min-width:55px;background:url(design/ajax-loader.gif)"></a></td>
 		 </tr>';
 		
 		if ($user) echo '
