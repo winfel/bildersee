@@ -2,6 +2,10 @@
 
 $translations['de']['Twinning']='Partnerschaft';
 
+$translations['de']['attention']='Achtung';
+$translations['de']['This has not been made public. If you share it on Facebook, it becomes available to everyone you share it with.']='Dieses Bild wurde nicht veröffentlicht. Wenn Sie es auf Facebook teilen, wird es für alle verfügbar, mit denen Sie es teilen.';
+$translations['de']["Please respect author\'s rights and the rights to the personal image when sharing photos on Facebook! Do you still want to share the image on facebook?"]='Bitte beachten sie das Urheberrecht und das Recht am eigenen Bild, wenn Sie Bilder auf Facebook teilen. Wollen Sie das Bild nach wie vor auf Facebook teilen?';
+
 $translations['de']['An error has occured!']='Ein Fehler ist aufgetreten!';
 $translations['de']['An image with this address could not be found. Please check if you have typed in or copied the address correctly.']='Unter dieser Adresse konnte kein Bild gefunden werden. Bitte überprüfen Sie, ob Sie die Adresse richtig eingeben oder kopiert haben.';
 $translations['de']['This event does not exist or you do not have access rights.']='Dieses Ereignis existiert nicht oder Sie haben nicht die notwendigen Zugriffsrechte.';

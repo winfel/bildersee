@@ -25,6 +25,7 @@
    	  $this->local=true;
    	  $this->alwaysLoggedIn=true;
    	  $this->perPage=300;
+   	  $this->localReplacement='http://www.example.com';
    	  
    	  $this->serverURL=$serverURL;
    	  $this->viewPath=$docroot.'/view';
