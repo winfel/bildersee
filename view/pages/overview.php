@@ -64,14 +64,12 @@ $element=array();$element['link']='';$element['text']=translate('events',true);$
 		
 		$t=time();
 		
-		$search=mysql_query("SELECT replace(replace(replace(replace(lower(folder),' ',''),'_',''),'.',''),',','') AS folderID,folder, md5(`key`) AS stdthumb, category, tags FROM files WHERE $userQuery AND SUBSTR(folder,1,4)<'9' $filterSQL GROUP BY folder ORDER BY folder DESC");
-		
-		//echo (time()-$t);
+		$search=mysql_query("SELECT DISTINCT folder,category, `key` AS stdthumb FROM files WHERE $userQuery AND SUBSTR(folder,1,4)<'9' $filterSQL GROUP BY folder ORDER BY folder DESC");
 		
 		while ($line=mysql_fetch_object($search)){
 			$entry=array();
 			$entry['folder']=$line->folder;
-			$entry['folderID']=$line->folderID;
+			$entry['folderID']=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($line->folder)))));;
 			$eventCount++;
 			
 			$category=$line->category;
@@ -102,7 +100,6 @@ $element=array();$element['link']='';$element['text']=translate('events',true);$
 			
 			if ($category) $category=translate('in').' '.$category;
 			
-			$entry['codeword']=strpos($line->tags,'codeword_')!==false;
 			$entry['category']=$category;
 			$entry['thumb']=$line->stdthumb;
 			$eventData[$line->folder]=$entry;

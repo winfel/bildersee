@@ -531,4 +531,8 @@ function get_date($folder){
    return $date;
 }
 
+function timing(){global $startTime;
+	echo time()-$startTime;
+}
+
 ?>
