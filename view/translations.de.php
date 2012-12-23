@@ -2,6 +2,7 @@
 
 $translations['de']['Twinning']='Partnerschaft';
 
+$translations['de']['share']='Teilen';
 $translations['de']['attention']='Achtung';
 $translations['de']['This has not been made public. If you share it on Facebook, it becomes available to everyone you share it with.']='Dieses Bild wurde nicht veröffentlicht. Wenn Sie es auf Facebook teilen, wird es für alle verfügbar, mit denen Sie es teilen.';
 $translations['de']["Please respect author\'s rights and the rights to the personal image when sharing photos on Facebook! Do you still want to share the image on facebook?"]='Bitte beachten sie das Urheberrecht und das Recht am eigenen Bild, wenn Sie Bilder auf Facebook teilen. Wollen Sie das Bild nach wie vor auf Facebook teilen?';

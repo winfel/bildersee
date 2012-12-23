@@ -30,7 +30,7 @@ $search=mysql_query("SELECT md5(`key`) as `key`,files.tags as tags, filetags.tag
 
 $copyrights=array();
 $count=0;
-$thumb=false;
+$hasThumb=false;
    
 while ($line=mysql_fetch_object($search)){
 		
@@ -76,8 +76,9 @@ while ($line=mysql_fetch_object($search)){
 	$files[$category][]=$line;
 	$codewordPossible=$codewordPossible || (stripos($line->tags,'codeword_') !==false);
 	$hasPublic=$hasPublic || (stripos($line->tags,'public') !==false);
-	if (!$thumb && (stripos($line->tags,'public') !==false)){
+	if (!$hasThumb && (stripos($line->tags,'thumb') !==false)){
 		$thumb=$line->key;
+		$hasThumb=true;
 	}
 	
 	if ($codewordPossible && !$codeword){		
@@ -272,7 +273,29 @@ foreach ($catOnPage as $cat=>$pag){
 	if ($cat && $pag>$page) echo '<h2 style="clear:both"><a href="javascript:setCategory(\''.$pag.'###'.urlencode($cat).'\')" style="text-decoration:none">'.translate('jump to',true).': '.$cat.'</a></h2>';
 }
 
+if ($hasPublic){
+		$functionBar='<span class="seperator"></span>'.$functionBar;
+		$url='javascript:shareOnFacebook();';
+		$functionBar='<a href="'.$url.'"><img src="design/share1.png" alt="" />'.translate('share',true).'</a>'.$functionBar;
+}
+
 echo '<script>
+
+		function shareOnFacebook(){
+			
+			var text="'.translate("attention",true).': ";
+			text+="'.translate("Please respect author\'s rights and the rights to the personal image when sharing photos on Facebook! Do you still want to share the image on facebook?").'";
+			
+			if (confirm(text)){
+				var reference=location.href;
+				
+				'.($config->local?('reference=reference.replace("http://localhost","'.$config->localReplacement.'");'):'').'
+				
+				var FBURL="http://www.facebook.com/sharer/sharer.php?u="+escape(reference);
+				var myWindow = window.open(FBURL, "Facebook", "width=780,height=200,toolbar=no,menubar=no,resizable=no,scrollbars=no,status=no");
+		 		myWindow.focus();
+			}
+		}
 
 function enterCodeword(){
 	var result=prompt("'.translate('Please enter the codeword:').'","");
