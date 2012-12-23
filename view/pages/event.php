@@ -3,7 +3,7 @@
 $pageTitle=translate('search result',true);
 $pageDescription=translate('an online photo gallery',true);
 
-$folder=str_replace('_','',str_replace(' ','',strtolower($folder)));
+$folder=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($folder)))));
 
 $reverse=($folder=='%')?'DESC':'';
 
@@ -22,7 +22,7 @@ $folderGiven=$folder!='%' && $folder!='%%';
 $tagGiven=stripos($filter,'tag_')!==false;
 $codewordGiven=stripos($filter,'codeword_')!==false;
 
-$search=mysql_query("SELECT md5(`key`) as `key`,files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder as folderReadable,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(lower(files.folder),' ',''),'_','') LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
+$search=mysql_query("SELECT md5(`key`) as `key`,files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder as folderReadable,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
 
 
 $copyrights=array();

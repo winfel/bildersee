@@ -1,16 +1,20 @@
 <style>
+ html {background:black;height:100%;overflow:hidden}
  header {display:none}
+ footer {display:none}
  #breadcrumb {display:none}
  #visu {padding:0}
 </style>
 
 <?php
     
+    $legalShort='';
+    
     if (!$pageTitle || $pageTitle=='%' || $pageTitle=='%%') $pageTitle=translate('search result',true);
 	
 	$reverse=($folder=='%')?'DESC':'';
 	
-	$search=mysql_query("SELECT md5(`key`) as `key`,filename,copyright,tags FROM files WHERE $userQuery AND replace(replace(lower(folder),' ',''),'_','') LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
+	$search=mysql_query("SELECT md5(`key`) as `key`,filename,copyright,tags FROM files WHERE $userQuery AND replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
 	
 	$prev=false;
 	$thisimage=false;

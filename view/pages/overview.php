@@ -62,7 +62,7 @@ $element=array();$element['link']='';$element['text']=translate('events',true);$
 		
 		$t=time();
 		
-		$search=mysql_query("SELECT replace(replace(lower(folder),' ',''),'_','') AS folderID,folder, md5(`key`) AS stdthumb, category, tags FROM files WHERE $userQuery AND SUBSTR(folder,1,4)<'9' $filterSQL GROUP BY folder ORDER BY folder DESC");
+		$search=mysql_query("SELECT replace(replace(replace(replace(lower(folder),' ',''),'_',''),'.',''),',','') AS folderID,folder, md5(`key`) AS stdthumb, category, tags FROM files WHERE $userQuery AND SUBSTR(folder,1,4)<'9' $filterSQL GROUP BY folder ORDER BY folder DESC");
 		
 		//echo (time()-$t);
 		
