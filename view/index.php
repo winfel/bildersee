@@ -16,6 +16,8 @@ ob_start();
 
 include_once('environment.php');
 
+if ($config->local && $_SERVER['HTTP_HOST']!='localhost') die('<h1>Local access only</h1>');
+
 $startTime=time();	//Debug
 
 // Basic variables for a certain page and naviation information. Information is set in
