@@ -12,7 +12,7 @@ $contextOK=false;
 //determine the state of the image (public? user has rights?)
 $state='non-existant';
 $contextQuery="$userQuery";
-if ($contextFolder) $contextQuery.="AND replace(replace(lower(folder),' ',''),'_','') LIKE '$contextFolder'";
+if ($contextFolder) $contextQuery.=" AND replace(replace(lower(folder),' ',''),'_','') LIKE '$contextFolder'";
 $contextQuery.=' '.getFilterSQL($contextFilter);
 
 $search=mysql_query("SELECT filename,copyright,folder,tags,($userQuery) as hasRights,($contextQuery) as inContext FROM files WHERE md5(`key`)='$image'");
@@ -52,21 +52,21 @@ if ($contextOK){
 	$folder=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($search->folder)))));
 	$filter='';
 	$contextQuery="$userQuery";
-	if ($folder) $contextQuery.="AND replace(replace(lower(folder),' ',''),'_','') LIKE '$folder'";
+	if ($folder) $contextQuery.=" AND replace(replace(lower(folder),' ',''),'_','') LIKE '$folder'";
 	$contextQuery.=' '.getFilterSQL($filter);
 }
 $folderGiven=$folder!='%' && $folder!='%%';
 $tagGiven=stripos($filter,'tag_')!==false;
 $codewordGiven=stripos($filter,'codeword_')!==false;	
 
+//determine previous and next image
+$prev=false;$next=false;
 if ($state!='no-rights'){
-	
-	//determine previous and next image
 	
 	$reverse=($folder=='%')?'DESC':'';
 	$search=mysql_query("SELECT md5(`key`) as `key` FROM files WHERE $contextQuery ORDER BY sortstring $reverse");
 	
-	$prev=false;$thisimage=false;$next=false;$temp=false;
+	$thisimage=false;$temp=false;
 
 	while ((!$thisimage || !$next) && $element=mysql_fetch_object($search)){
 		if ($thisimage) $next=$element->key;
@@ -273,9 +273,12 @@ if ($state=='non-existant') {
 	
 	';	
 	
-	$functionBar='<span class="seperator"></span>'.$functionBar;
-	$url='index.php?mode=diashow&folder='.urlencode($folder).'&filter='.$filter.'&image='.$image;
-	$functionBar='<a href="'.$url.'"><img src="design/galleries1.png" alt="" />'.translate('diashow',true).'</a>'.$functionBar;
+	if ($state=='has-rights' || $state=='public'){
+	
+		$functionBar='<span class="seperator"></span>'.$functionBar;
+		$url='index.php?mode=diashow&folder='.urlencode($folder).'&filter='.$filter.'&image='.$image;
+		$functionBar='<a href="'.$url.'"><img src="design/galleries1.png" alt="" />'.translate('diashow',true).'</a>'.$functionBar;
+	}
 	
 	@$exif=parseExif($filename,$geo);
 	
