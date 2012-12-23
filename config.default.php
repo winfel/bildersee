@@ -11,6 +11,8 @@
    	  $docroot=$_SERVER['DOCUMENT_ROOT'];
    	  $serverURL='http://www.website.com';
    	  $staticServerURL='http://static.website.com';
+   	  
+   	  $this->hash=md5(time()); // security
   
 	  $this->dbServer='127.0.0.1';
       $this->dbUser='user';
@@ -48,5 +50,6 @@
 } 
 
  $config=new Config(); 
+ $securityHash=$config->hash;
 
 ?>

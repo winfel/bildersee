@@ -1,5 +1,7 @@
 <?php
 
+		if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
+
 		$pageTitle=pretty($folder);
 		
 		$pos=strpos($pageTitle,' ');

@@ -1,5 +1,7 @@
 <?php
 
+if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
+
 $pageTitle=$config->pageTitle;
 $pageDescription='';
 $element=array();$element['link']='';$element['text']=translate('events',true);$breadcrumb[]=$element;

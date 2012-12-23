@@ -1,6 +1,7 @@
 <?php
 
-//echo htmlspecialchars(SID);
+if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
+
 
 $pageTitle=translate('gallery',true);
 $activePart='gallery';

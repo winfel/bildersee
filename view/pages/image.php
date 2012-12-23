@@ -1,5 +1,7 @@
 <?php
 
+if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
+
 	//get the context from session. This is the last event which was visited
 
 	@$page=$_SESSION['last_page'];

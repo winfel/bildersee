@@ -1,5 +1,8 @@
 <?php
 
+if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
+
+
 $pageTitle=translate('search result',true);
 $pageDescription=translate('an online photo gallery',true);
 
