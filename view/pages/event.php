@@ -88,7 +88,7 @@ while ($line=mysql_fetch_object($search)){
 
 }
 
-$thumbnail=$config->imageGetterURL.'?key='.$thumb.'&width=170&height=170&minimum=1';
+if (isset($thumb)) $thumbnail=$config->imageGetterURL.'?key='.$thumb.'&width=170&height=170&minimum=1';
 
 if (!isset($files)){
 	$files=array();

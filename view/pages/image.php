@@ -292,20 +292,20 @@ if ($state=='non-existant') {
 	
 	if ($state=='has-rights' || $state=='public'){
 	
-		$functionBar='<span class="seperator"></span>'.$functionBar;
+		$functionBar='<span class="seperator notonsmall"></span>'.$functionBar;
 		$url='index.php?mode=diashow&folder='.urlencode($folder).'&filter='.$filter.'&image='.$image;
-		$functionBar='<a href="'.$url.'"><img src="design/galleries1.png" alt="" />'.translate('diashow',true).'</a>'.$functionBar;
+		$functionBar='<a href="'.$url.'" class="notonsmall"><img src="design/galleries1.png" alt="" />'.translate('diashow',true).'</a>'.$functionBar;
 		
-		$functionBar='<span class="seperator"></span>'.$functionBar;
+		$functionBar='<span class="seperator notonsmall"></span>'.$functionBar;
 		$url='javascript:shareOnFacebook(\''.$state.'\');';
-		$functionBar='<a href="'.$url.'"><img src="design/share1.png" alt="" />'.translate('share',true).'</a>'.$functionBar;
+		$functionBar='<a href="'.$url.'" class="notonsmall"><img src="design/share1.png" alt="" />'.translate('share',true).'</a>'.$functionBar;
 	}
 	
 	@$exif=parseExif($filename,$geo);
 	
 	if ($exif['exif']) {
-		$functionBar='<span class="seperator"></span>'.$functionBar;
-		$functionBar='<a href="#" onclick="showExif(event);return false;"><img src="design/metadata1.png" alt="" />'.translate('metadata',true).'</a>'.$functionBar;
+		$functionBar='<span class="seperator notonsmall"></span>'.$functionBar;
+		$functionBar='<a href="#" onclick="showExif(event);return false;" class="notonsmall"><img src="design/metadata1.png" alt="" />'.translate('metadata',true).'</a>'.$functionBar;
 		echo '<div id="exifdata">'.$exif['exif'].'</div>';
 	}
 	if ($exif['location']) {
