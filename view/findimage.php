@@ -29,7 +29,7 @@ $catOnPage=array();
 $perPage=$config->perPage;
 $i=1;$counter=0;
 foreach($topics as $category=>$thisCount){
-	if ($thisCount>$perPage || $counter+$thisCount>$perPage){
+	if ($counter !==0 && $counter+$thisCount>$perPage){
 		$i++;
 		$counter=0;
 	} else {
