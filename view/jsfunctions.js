@@ -34,6 +34,9 @@ function processHash(direct){
 }
 
 function scrollToNew(to){
+	
+	window.scrollTo(0,to); return;
+	/*
 	var from=getScrollY();
 	var distance=(to-from)/10;
 	var value=(distance>0)?distance:distance*-1;
@@ -41,6 +44,7 @@ function scrollToNew(to){
 	window.scrollTo(0,Math.round(from+distance));
 	if (from==getScrollY()) return;
 	window.setTimeout(function(){scrollToNew(to);},10);
+	*/
 }
 
 function getElementPosition(e){
