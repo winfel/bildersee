@@ -185,6 +185,8 @@
 				if (image.className!='slide' && image.className!='fadeout' && image.className!='disappear') continue;
 				images.push(image);
 			}
+
+
 			for (var i in images){
 				var image=images[i];
 				var opacity=1-(i*0.2);
@@ -194,11 +196,21 @@
 				}
 				if (opacity<=0){
 					image.className='disappear';
-					window.setTimeout(function(){document.getElementById('visu').removeChild(image);},15000);
-					
+					removeImage(image);
 				}
 			}
 			
+		}
+		
+		function removeImage(image){
+			window.setTimeout(function(){
+						try{
+							document.getElementById('visu').removeChild(image);
+						} catch (e){
+							//console.log('Image already gone');
+						}
+						delete(image);
+			},15000);
 		}
 		
 		function getTime(){
@@ -257,7 +269,6 @@ function toggleFullScreen() {
 	
 	var hider=false;
 	function message(text){
-		console.log(text);
 		var el=document.getElementById('message');
 		el.style.opacity='1.0';
 		el.innerHTML=text;
