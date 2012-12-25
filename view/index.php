@@ -43,6 +43,7 @@ include('design/head.html');
 if ($image){
 	switch($mode){
 		case 'diashow':include('pages/diashow.php');break;
+		case 'random':include('pages/random.php');break;
 		default:include('pages/image.php');
 	}
 		
