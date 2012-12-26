@@ -69,7 +69,7 @@ while ($line=mysql_fetch_object($search)){
 	if ($folderGiven){
 		$category=$line->subfolder;
 	} else {
-		$category=pretty($line->folder);
+		$category=pretty($line->folderReadable);
 		if ($line->subfolder) $category.=' - '.$line->subfolder;
 	}
 	
