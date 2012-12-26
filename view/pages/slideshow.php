@@ -123,7 +123,6 @@
 					break;
 				}
 			}
-			alert(i);
 		}
 		
 		function random(min,max){
@@ -149,6 +148,11 @@
 		var nextTimeout=false;
 		function nextImageInt(){
 			var myWidth = screen.availWidth, myHeight = screen.availHeight;
+			if (window.orientation==90 || window.orientation==-90){
+				var t=myWidth;myWidth=myHeight;myHeight=t;
+			}
+			
+			
 			var url='".($config->imageGetterURL)."?key='+nextImageURL()+'&width='+myWidth+'&height='+myHeight;
 			document.getElementById('preloader').src=url;
 			startTime=getTime();
@@ -165,6 +169,11 @@
 		function nextImage(){
 		  
 			var myWidth = screen.availWidth, myHeight = screen.availHeight;
+			
+			if (window.orientation==90 || window.orientation==-90){
+				var t=myWidth;myWidth=myHeight;myHeight=t;
+			}
+			
 			var pause=delay-(getTime()-startTime);
 			if (pause<0) {
 				var newdelay=Math.ceil((delay-pause)/1000);
@@ -254,27 +263,6 @@
 		
 		nextImageInt();
 		message('".translate('Press ENTER to view in fullscreen. Press ESC or double click to leave the slideshow.')."');
-		
-function toggleFullScreen() {
-  if ((document.fullscreenElement && document.fullscreenElement !== null) ||    // alternative standard method
-      (!document.mozFullScreenElement && !document.webkitFullscreenElement)) {  // current working methods
-    if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen();
-    } else if (document.documentElement.mozRequestFullScreen) {
-      document.documentElement.mozRequestFullScreen();
-    } else if (document.documentElement.webkitRequestFullscreen) {
-      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-    }
-  } else {
-    if (document.cancelFullScreen) {
-      document.cancelFullScreen();
-    } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen();
-    } else if (document.webkitCancelFullScreen) {
-      document.webkitCancelFullScreen();
-    }
-  }
-}
 
 	document.addEventListener('keydown', function(e) {
 	  switch (e.keyCode){
