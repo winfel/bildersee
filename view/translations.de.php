@@ -2,6 +2,12 @@
 
 $translations['de']['Twinning']='Partnerschaft';
 
+$translations['de']['slideshow']='Diashow';
+$translations['de']['Network disruption! Trying the next image.']='Netzwerkstörung! Versuche, mit dem nächsten Bild fortzufahren';
+$translations['de']['Slideshow is running slower due to slow network response time!']='Diashow läuft langsamer auf Grund langsamer Netzwerkverbindung!';
+$translations['de']['Press ENTER to view in fullscreen. Press ESC or double click to leave the slideshow.']='Drücken Sie ENTER, um in den Vollbildmudus zu wechseln. Drücken Sie ESC oder machen Sie einen Doppelklick, um die Diashow zu verlassen.';
+
+
 $translations['de']['share']='Teilen';
 $translations['de']['attention']='Achtung';
 $translations['de']['This has not been made public. If you share it on Facebook, it becomes available to everyone you share it with.']='Dieses Bild wurde nicht veröffentlicht. Wenn Sie es auf Facebook teilen, wird es für alle verfügbar, mit denen Sie es teilen.';

@@ -231,8 +231,8 @@ foreach ($files as $category=>$entries){
 		if ($first){
 			$first=false;
 			$functionBar='<span class="seperator"></span>'.$functionBar;
-			$url='index.php?mode=random&folder='.urlencode($folder).'&filter='.$filter.'&image='.$entry->key;
-			$functionBar='<a href="'.$url.'"><img src="design/galleries1.png" alt="" />'.translate('diashow',true).'</a>'.$functionBar;
+			$url='index.php?mode=slideshow&folder='.urlencode($folder).'&filter='.$filter;
+			$functionBar='<a href="'.$url.'"><img src="design/galleries1.png" alt="" />'.translate('slideshow',true).'</a>'.$functionBar;
 		}
 		
 		$url='?image='.urlencode($entry->key);

@@ -293,8 +293,8 @@ if ($state=='non-existant') {
 	if ($state=='has-rights' || $state=='public'){
 	
 		$functionBar='<span class="seperator notonsmall"></span>'.$functionBar;
-		$url='index.php?mode=diashow&folder='.urlencode($folder).'&filter='.$filter.'&image='.$image;
-		$functionBar='<a href="'.$url.'" class="notonsmall"><img src="design/galleries1.png" alt="" />'.translate('diashow',true).'</a>'.$functionBar;
+		$url='index.php?mode=slideshow&folder='.urlencode($folder).'&filter='.$filter.'&image='.$image;
+		$functionBar='<a href="'.$url.'" class="notonsmall"><img src="design/galleries1.png" alt="" />'.translate('slideshow',true).'</a>'.$functionBar;
 		
 		$functionBar='<span class="seperator notonsmall"></span>'.$functionBar;
 		$url='javascript:shareOnFacebook(\''.$state.'\');';

@@ -42,8 +42,7 @@ include('design/head.html');
 //This even works, when the user has no rights but is passed a URL directly
 if ($image){
 	switch($mode){
-		case 'diashow':include('pages/diashow.php');break;
-		case 'random':include('pages/random.php');break;
+		case 'slideshow':include('pages/slideshow.php');break;
 		default:include('pages/image.php');
 	}
 		
@@ -81,6 +80,7 @@ if ($image){
 		
 		switch ($mode){
 			case 'download':include('pages/download.php');break;
+			case 'slideshow':include('pages/slideshow.php');break;
 			default: include ('pages/event.php'); break;
 
 		}

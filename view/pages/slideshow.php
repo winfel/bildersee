@@ -87,7 +87,7 @@
     
     $legalShort='';
     
-    if (!$pageTitle || $pageTitle=='%' || $pageTitle=='%%') $pageTitle=translate('search result',true);
+    if (!$pageTitle || $pageTitle=='%' || $pageTitle=='%%') $pageTitle=translate('slideshow',true);
 	
 	$reverse=($folder=='%')?'DESC':'';
 	
@@ -100,17 +100,31 @@
 
 	$allImages=json_encode($allImages);
 	
+	$image=(isset($_GET['image']))?$_GET['image']:false;
+	
 	echo "
 	
 	<img src=\"\" alt=\"preloader\" id=\"preloader\" onload=\"nextImage()\" width=\"100\" height=\"100\" style=\"opacity:0\">
 	
 	<script>
 	
-		var myWidth = screen.availWidth, myHeight = screen.availHeight;
-	
 		var allImages=$allImages;
+		var imageCount=allImages.length;
 		var startTime=0;
 		var delay=5000;
+		
+		var image=".(($image)?"'".$image."'":'false').";
+		var position=false;
+		
+		if (image){
+			for (var i in allImages){
+				if (allImages[i]==image){
+					position=i;
+					break;
+				}
+			}
+			alert(i);
+		}
 		
 		function random(min,max){
 			return Math.floor(Math.random() * (max - min)) + min;
@@ -121,9 +135,21 @@
 			return allImages[random];
 		}
 		
+		function nextImageURL(){
+			if (!image) return randomImage();
+			
+			var key=allImages[position];
+			
+			position++;
+			if (position==imageCount) position=0;
+			
+			return key;
+		}
+		
 		var nextTimeout=false;
 		function nextImageInt(){
-			var url='".($config->imageGetterURL)."?key='+randomImage()+'&width='+myWidth+'&height='+myHeight;
+			var myWidth = screen.availWidth, myHeight = screen.availHeight;
+			var url='".($config->imageGetterURL)."?key='+nextImageURL()+'&width='+myWidth+'&height='+myHeight;
 			document.getElementById('preloader').src=url;
 			startTime=getTime();
 			if (nextTimeout){
@@ -131,18 +157,18 @@
 				nextTimeout=false;
 			}
 			nextTimeout=window.setTimeout(function(){
-				message('Network disruption! Trying the next image.');
+				message('".translate('Network disruption! Trying the next image.')."');
 				nextImageInt();
 			},30000);
 		}
 		
 		function nextImage(){
 		  
-		
+			var myWidth = screen.availWidth, myHeight = screen.availHeight;
 			var pause=delay-(getTime()-startTime);
 			if (pause<0) {
 				var newdelay=Math.ceil((delay-pause)/1000);
-				message('Slideshow is running slower due to slow network response time! Try setting to '+newdelay+'s.');
+				message('".translate('Slideshow is running slower due to slow network response time!')."');
 				pause=0;
 				
 			}
@@ -227,7 +253,7 @@
 		}
 		
 		nextImageInt();
-		message('Press ENTER to view in fullscreen. Press ESC or click on the slideshow to go back.');
+		message('".translate('Press ENTER to view in fullscreen. Press ESC or double click to leave the slideshow.')."');
 		
 function toggleFullScreen() {
   if ((document.fullscreenElement && document.fullscreenElement !== null) ||    // alternative standard method
@@ -262,7 +288,7 @@ function toggleFullScreen() {
 	  }
 	}, false);
 	
-	document.addEventListener('click',function(e){
+	document.addEventListener('dblclick',function(e){
 		history.back();
 	},false);
 	

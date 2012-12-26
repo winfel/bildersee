@@ -2,9 +2,16 @@
 
 $translations['es']['Twinning']='Hermanamiento';
 
-//$translations['de']['An error has occured!']='Ein Fehler ist aufgetreten!';
-//$translations['de']['An image with this address could not be found. Please check if you have typed in or copied the address correctly.']='Unter dieser Adresse konnte kein Bild gefunden werden. Bitte überprüfen Sie, ob Sie die Adresse richtig eingeben oder kopiert haben.';
-//$translations['de']['This event does not exist or you do not have access rights.']='Dieses Ereignis existiert nicht oder Sie haben nicht die notwendigen Zugriffsrechte.';
+//$translations['es']['slideshow']='Diashow';
+//$translations['es']['Network disruption! Trying the next image.']='Netzwerkstörung! Versuche, mit dem nächsten Bild fortzufahren';
+//$translations['es']['Slideshow is running slower due to slow network response time!']='Diashow läuft langsamer auf Grund langsamer Netzwerkverbindung!';
+//$translations['es']['Press ENTER to view in fullscreen. Press ESC or double click to leave the slideshow.']='Drücken Sie ENTER, um in den Vollbildmudus zu wechseln. Drücken Sie ESC oder machen Sie einen Doppelklick, um die Diashow zu verlassen.';
+
+
+//$translations['es']['share']='Teilen';
+//$translations['es']['An error has occured!']='Ein Fehler ist aufgetreten!';
+//$translations['es']['An image with this address could not be found. Please check if you have typed in or copied the address correctly.']='Unter dieser Adresse konnte kein Bild gefunden werden. Bitte überprüfen Sie, ob Sie die Adresse richtig eingeben oder kopiert haben.';
+//$translations['es']['This event does not exist or you do not have access rights.']='Dieses Ereignis existiert nicht oder Sie haben nicht die notwendigen Zugriffsrechte.';
 
 //$translations['es']['jump to']='Springe zu';
 
