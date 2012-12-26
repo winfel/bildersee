@@ -121,10 +121,19 @@
 			return allImages[random];
 		}
 		
+		var nextTimeout=false;
 		function nextImageInt(){
 			var url='".($config->imageGetterURL)."?key='+randomImage()+'&width='+myWidth+'&height='+myHeight;
 			document.getElementById('preloader').src=url;
 			startTime=getTime();
+			if (nextTimeout){
+				window.clearTimeout(nextTimeout);
+				nextTimeout=false;
+			}
+			nextTimeout=window.setTimeout(function(){
+				message('Network disruption! Trying the next image.');
+				nextImageInt();
+			},30000);
 		}
 		
 		function nextImage(){
