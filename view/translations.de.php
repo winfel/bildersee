@@ -85,6 +85,7 @@ $translations['de']['Only a small selection of this event is publically availabl
 
 //Right to the Personal Image
 
+$translations['de']['You are browsing this event using a codeword. Please do not share neither the codeword nor this address with people who have no connection to this event!']='Sie haben Zugriff auf dieses Ereignis mit einem Kennwort. Bitte geben Sie weder das Kennwort noch diese Adresse an Leute weiter, die keine Verbindung zu dem Ereignis haben.';
 $translations['de']['Due to privacy reasons, you only see a selection of photos of this event. You get access to all photos, if you know the codeword.']='Aus Datenschutz- und Persönlichkeitsschutzgründen sehen Sie hier nur eine Auswahl der Fotos. Sie erhalten Zugriff auf alle Fotos mit einem Kennwort:';
 $translations['de']['Enter the codeword now!']='Das Kennwort jetzt eingeben!';
 $translations['de']['Registred users have access to further albums and photos. Access is only granted on a personal basis.']='Registrierte Nutzer haben Zugriff auf weitere Alben und Fotos. Der Zugriff wird auf persönlicher Basis gewährt.';

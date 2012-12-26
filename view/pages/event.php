@@ -194,6 +194,10 @@ if (!$config->local && $folderGiven && ($user||$codewordGiven)) {
 	$functionBar='<a href="?folder='.urlencode($folder).'&amp;filter='.$filter.'&amp;mode=download"><img src="design/download1.png" alt="" />'.translate('download',true).'</a><span class="seperator"></span>'.$navi;
 }
 
+if ($codewordGiven){
+		echo '<p id="notice">'.translate('You are browsing this event using a codeword. Please do not share neither the codeword nor this address with people who have no connection to this event!').'</p>';
+}
+
 if (!$config->local && !$user && $codewordPossible && !$codewordGiven && $folderGiven) {
 	
 	echo '<p id="keywordnotice">'.translate('Due to privacy reasons, you only see a selection of photos of this event. You get access to all photos, if you know the codeword.').' <a href="javascript:enterCodeword();">'.translate('Enter the codeword now!').'</a></p>';

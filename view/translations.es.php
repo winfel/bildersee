@@ -81,6 +81,7 @@ $translations['es']['Right to the Personal Image']='Derecho a la propia imágen'
 
 //Right to the Personal Image
 
+//$translations['es']['You are browsing this event using a codeword. Please do not share neither the codeword nor this address with people who have no connection to this event!']='Sie haben Zugriff auf dieses Ereignis mit einem Kennwort. Bitte geben Sie weder das Kennwort noch diese Adresse an Leute weiter, die keine Verbindung zu dem Ereignis haben.';
 //$translations['es']['Due to privacy reasons, you only see a selection of photos of this event. You get access to all photos, if you know the codeword.']='Aus Datenschutz- und Persönlichkeitsschutzgründen sehen Sie hier nur eine Auswahl der Fotos. Sie erhalten Zugriff auf alle Fotos mit einem Kennwort:';
 //$translations['es']['Enter the codeword now!']='Das Kennwort jetzt eingeben!';
 //$translations['es']['Registred users have access to further albums and photos. Access is only granted on a personal basis.']='Registrierte Nutzer haben Zugriff auf weitere Alben und Fotos. Der Zugriff wird auf persönlicher Basis gewährt.';
