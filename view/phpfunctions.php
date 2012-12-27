@@ -535,4 +535,23 @@ function timing(){global $startTime;
 	echo time()-$startTime;
 }
 
+function cleanupCache(){global $config,$user;
+
+	$path=$config->cachePath;
+	
+	$dir=scandir($path);
+	
+	$i=0;
+	foreach($dir as $filename){
+		if ($filename[0]=='.') continue;
+		$filename=$path.'/'.$filename;
+		$age=floor((time()-filemtime($filename))/60/60/24);
+		if ($age>=7){
+			@unlink($filename);
+			$i++;
+		}
+		
+	}
+}
+
 ?>
