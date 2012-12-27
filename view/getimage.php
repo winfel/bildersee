@@ -229,7 +229,7 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
  imageinterlace($temp,1);
  ImageJPEG($temp,$cachePath,$quality);
  if ($newheight*$newwidth>=300*300){
-  	$command= ('exiftool -TagsFromFile "'.$lokalurl.'" --Orientation "'.$cachePath.'"');
+  	$command= ('exiftool -overwrite_original -TagsFromFile "'.$lokalurl.'" --Orientation "'.$cachePath.'"');
   	exec($command);
  }
  echo (file_get_contents($cachePath));
