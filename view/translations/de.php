@@ -2,10 +2,14 @@
 
 $translations['de']['Twinning']='Partnerschaft';
 
+$translations['de']['start slideshow']='Diashow starten';
+$translations['de']['ordered']='in Reihenfolge';
+$translations['de']['random']='zufällige Reihenfolge';
+
 $translations['de']['slideshow']='Diashow';
 $translations['de']['Network disruption! Trying the next image.']='Netzwerkstörung! Versuche, mit dem nächsten Bild fortzufahren';
 $translations['de']['Slideshow is running slower due to slow network response time!']='Diashow läuft langsamer auf Grund langsamer Netzwerkverbindung!';
-$translations['de']['Press ENTER to view in fullscreen. Press ESC or double click to leave the slideshow.']='Drücken Sie ENTER, um in den Vollbildmudus zu wechseln. Drücken Sie ESC oder machen Sie einen Doppelklick, um die Diashow zu verlassen.';
+$translations['de']['Press ENTER to view in fullscreen. Press ESC or double click to leave the slideshow.']='Drücken Sie ENTER, um in den Voll&shy;bild&shy;modus zu wechseln. Drücken Sie ESC oder machen Sie einen Doppel&shy;klick, um die Dia&shy;show zu verlassen.';
 
 
 $translations['de']['share']='Teilen';

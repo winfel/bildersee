@@ -209,7 +209,7 @@
 		    	style.right=random(0,myWidth/3)+'px'
 		    }
 		    style.maxWidth=(myWidth/1.5)+'px';
-		    style.maxHeight=(myHeight)+'px';
+		    style.maxHeight=(myHeight-50)+'px';
 		    style.transform='rotateZ('+degrees+'deg)';
             style.webkitTransform='rotateZ('+degrees+'deg)'; /* Safari and Chrome */
             style.mozTransform='rotateZ('+degrees+'deg)'; /* Firefox */
