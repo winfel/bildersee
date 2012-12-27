@@ -194,8 +194,8 @@
 				style.opacity='1.0';
 			},100)
 		    
-		    var top=random(0,2.2);
-		    var left=random(0,2.2);
+		    var top=random(0,2);
+		    var left=random(0,2);
 		    
 		    style.position='absolute';
 		    if (top){;
