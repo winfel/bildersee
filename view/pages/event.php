@@ -254,7 +254,7 @@ foreach ($files as $category=>$entries){
 		<div class="'.$frameclass.'" id="'.$entry->key.'">
 		<table class="previmage">
 		 <tr>
-		  <td class="thumb"><a href="'.$url.'"><img alt="" src="" title="'.$imgurl.'" id="img'.$entry->key.'" style="min-height:55px;min-width:55px;background:url(design/ajax-loader.gif) 50% 50% no-repeat"></a></td>
+		  <td class="thumb"><a href="'.$url.'"><img alt="" src="design/ajax-loader.gif" title="'.$imgurl.'" id="img'.$entry->key.'"></a></td>
 		 </tr>';
 		
 		if ($user) echo '
