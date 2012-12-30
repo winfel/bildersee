@@ -127,14 +127,14 @@
 			
 			var pause=delay-(getTime()-startTime);
 			if (pause<0) {
-				var newdelay=Math.ceil((delay-pause)/1000);
 				message('".translate('Slideshow is running slower due to slow network response time!')."');
-				pause=0;
+				nextImageInt();
 				
+			} else {
+				window.setTimeout(function(){nextImageInt();},pause);
 			}
-			window.setTimeout(function(){nextImageInt();},pause);
 			
-			var degrees=random(-15,15);
+			var degrees=random(-10,10);
 			
 			var visu=document.getElementById('visu');
 			var preloader=document.getElementById('preloader');

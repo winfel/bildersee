@@ -12,7 +12,7 @@ $contextOK=false;
 //determine the state of the image (public? user has rights?)
 $state='non-existant';
 $contextQuery="$userQuery";
-if ($contextFolder) $contextQuery.=" AND replace(replace(lower(folder),' ',''),'_','') LIKE '$contextFolder'";
+if ($contextFolder) $contextQuery.=" AND replace(replace(replace(replace(lower(folder),' ',''),'_',''),'.',''),',','') LIKE '$contextFolder'";
 $contextQuery.=' '.getFilterSQL($contextFilter);
 
 $search=mysql_query("SELECT filename,copyright,folder,tags,($userQuery) as hasRights,($contextQuery) as inContext FROM files WHERE md5(`key`)='$image'");
@@ -64,8 +64,9 @@ $prev=false;$next=false;
 if ($state!='no-rights'){
 	
 	$reverse=($folder=='%')?'DESC':'';
-	$search=mysql_query("SELECT md5(`key`) as `key` FROM files WHERE $contextQuery ORDER BY sortstring $reverse");
 	
+	$search=mysql_query("SELECT md5(`key`) as `key` FROM files WHERE $contextQuery ORDER BY sortstring $reverse");
+
 	$thisimage=false;$temp=false;
 
 	while ((!$thisimage || !$next) && $element=mysql_fetch_object($search)){

@@ -309,7 +309,7 @@ foreach ($autotagCache as $autotag){
    if (isset($result['privat']) && isset($result['public'])) unset($result['public']);  //private always wins
    
    /*
-   if (strpos($path,'codeword_')===false && !isset($result['public']) && !isset($result['privat'])) $result[getFolderCodeword($folder)]=true; //automatically create codeword for nonpublic images
+   if (strpos($path,'codeword_')===false && !isset($result['public']) && !isset($result['privat'])) $result[getFolderCodeword($folder)]=true; //automatically create codeword for nonpublic events
    */
    
    if (strpos($path,'codeword_')===false && !isset($result['public']) && !isset($result['privat'])) $result['privat']=true;
@@ -490,7 +490,7 @@ function getFolderCodeword($folder){global $foldercodewords;
 	}
 	$output=$foldercodewords[$folder];
 	
-	return 'codeword_'.$output;
+	return 'codeword_direct'.$output;
 }
 
 function getAge($input,$relation=false,$showyears=true){
