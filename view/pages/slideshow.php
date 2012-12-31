@@ -8,35 +8,7 @@
 	  opacity:0;
  }
 
- 
- #message {
- 	  -webkit-transition-property: opacity;
-	  -webkit-transition-duration: 2s;
-	  -webkit-transition-delay: 0s;
-	  -moz-transition-property: opacity;
-	  -moz-transition-duration: 2s;
-	  -moz-transition-delay: 0s;
-	  -o-transition-property: opacity;
-	  -o-transition-duration: 2s;
-	  -o-transition-delay: 0s;
-	  transition-property: opacity;
-	  transition-duration: 2s;
-	  transition-delay: 0s;
-	  background:rgba(0,0,0,0.8);
-	  width:400px;
-	  padding:20px;
-	  position:absolute;
-	  bottom:50px;
-	  left:50%;
-	  margin-left:-210px;
-	  font-size:20px;
-	  text-align:left;
-	  z-index:1000;
-	  opacity:1;
-  }
 </style>
-
-<div id="message"></div>
 
 <?php
     
@@ -243,19 +215,7 @@
 		message('Delay '+(delay/1000)+'s');
 	}
 	
-	var hider=false;
-	function message(text){
-		var el=document.getElementById('message');
-		el.style.opacity='1.0';
-		el.innerHTML=text;
-		if (hider){
-			window.clearTimeout(hider);
-			hider=false;
-		}
-		hider=window.setTimeout(function(){
-			el.style.opacity='0.0';
-		},3000);
-	}
+
 		
 	</script>
 	

@@ -226,3 +226,17 @@ function toggleFullScreen() {
     }
   }
 }
+
+var hider=false;
+function message(text){
+	var el=document.getElementById('message');
+	el.style.opacity='1.0';
+	el.innerHTML=text;
+	if (hider){
+		window.clearTimeout(hider);
+		hider=false;
+	}
+	hider=window.setTimeout(function(){
+		el.style.opacity='0.0';
+	},3000);
+}

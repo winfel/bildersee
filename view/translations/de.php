@@ -3,6 +3,7 @@
 $translations['de']['Twinning']='Partnerschaft';
 
 $translations['de']['go to address']='zur Adresse wechseln';
+$translations['de']['loading data from server.']='lade Daten vom Server.';
 
 $translations['de']['start slideshow']='Diashow starten';
 $translations['de']['ordered']='in Reihenfolge';

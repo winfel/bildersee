@@ -94,6 +94,34 @@ header {
 
 #breadcrumb div.seperator {width:7px;height:27px;margin-right:10px;margin-left:10px;background:url(seperator.png)}
 
+#message {
+  -webkit-transition-property: opacity;
+  -webkit-transition-duration: 2s;
+  -webkit-transition-delay: 0s;
+  -moz-transition-property: opacity;
+  -moz-transition-duration: 2s;
+  -moz-transition-delay: 0s;
+  -o-transition-property: opacity;
+  -o-transition-duration: 2s;
+  -o-transition-delay: 0s;
+  transition-property: opacity;
+  transition-duration: 2s;
+  transition-delay: 0s;
+  background:rgba(0,0,0,0.8);
+  width:400px;
+  padding:20px;
+  position:absolute;
+  bottom:50px;
+  left:50%;
+  margin-left:-210px;
+  font-size:20px;
+  text-align:left;
+  z-index:1000;
+  opacity:0;
+  color:white;
+  text-align:center;
+ }
+
 #functionbar2 {
 	float:right;
 	margin-top:5px;
