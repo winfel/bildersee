@@ -197,34 +197,37 @@ if (!$config->local && $folderGiven && ($user||$codewordGiven)) {
 }
 
 if ($codewordGiven && !$autocodeword){
-		echo '<p id="notice">'.translate('You are browsing this event using a codeword. Please do not share neither the codeword nor this address with people who have no connection to this event!').'</p>';
+		echo '<p id="warning">'.translate('You are browsing this event using a codeword. Please do not share neither the codeword nor this address with people who have no connection to this event!').'</p>';
 }
 
 if ($codewordGiven && $autocodeword){
-		echo '<p id="notice">'.translate('You are browsing this event using a direct access address. Please do not share this address with people who have no connection to this event!').'</p>';
+		echo '<p id="warning">'.translate('You are browsing this event using a direct access address. Please do not share this address with people who have no connection to this event!').'</p>';
 }
 
-if (!$config->local && !$user && $codewordPossible && !$autocodeword && !$codewordGiven && $folderGiven) {
+if (!$user && $codewordPossible && !$autocodeword && !$codewordGiven && $folderGiven) {
 	
 	echo '<p id="keywordnotice">'.translate('Due to privacy reasons, you only see a selection of photos of this event. You get access to all photos, if you know the codeword.').' <a href="javascript:enterCodeword();">'.translate('Enter the codeword now!').'</a></p>';
 
 }
 
-if (!$config->local && $user && $codeword && !$autocodeword && !$codewordGiven && $folderGiven && $hasPublic) {
+if ($user && $codeword && !$autocodeword && !$codewordGiven && $folderGiven && $hasPublic) {
 	
 	echo '<p id="notice">'.translate('Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed with the following codeword:').' <b>'.$codeword.'</b></p>';
 
 }
 
-if (!$config->local && $user && $codeword && $autocodeword && !$codewordGiven && $folderGiven && $hasPublic) {
+if ($user && $codeword && $autocodeword && !$codewordGiven && $folderGiven && $hasPublic) {
 	$url=$config->viewURL.'/?folder='.urlencode($folder).'&filter=codeword_'.$codeword;
-	echo '<p id="notice">'.translate('Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed under this address:').'<br><a href="'.$url.'" onclick="return showAddress(this);">'.translate('go to address',true).'</a></p>';
+	if ($config->local){$url=str_replace('http://localhost',$config->localReplacement,$url);}
+	
+	echo '<p id="notice">'.translate('Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed under this address:').' <a href="'.$url.'" onclick="return showAddress(this);">'.translate('go to address',true).'</a></p>';
 
 }
 
-if (!$config->local && $user && $codeword && !$codewordGiven && $folderGiven && !$hasPublic) {
-	
+if ($user && $codeword && !$codewordGiven && $folderGiven && !$hasPublic) {
 	$url=$config->viewURL.'/?folder='.urlencode($folder).'&filter=codeword_'.$codeword;
+	if ($config->local){$url=str_replace('http://localhost',$config->localReplacement,$url);}
+	
 	$out='<p id="notice">'.translate('This event is not publically visible, but can directly be accessed:').' <a href="'.$url.'" onclick="return showAddress(this);">'.translate('go to address',true).'</a></p>';
 	echo $out;
 

@@ -299,7 +299,7 @@ ul {margin-left:40px}
 background:white;text-align:left;max-width:990px;margin:auto;color: black;padding:5px
 }
 
-#keywordnotice, #notice {
+#keywordnotice, #notice, #warning {
 	padding:10px; background:rgba(255,255,255,0.7);
     color:black;margin:10px 0;
 	text-shadow: none;font-size:80%;
@@ -310,6 +310,8 @@ background:white;text-align:left;max-width:990px;margin:auto;color: black;paddin
 #keywordnotice {background:rgba(255,255,255,0.7);}
 
 #keywordnotice a,#notice a {color:darkblue}
+
+#warning {color:darkred}
 
 #description {
 	cursor:pointer;
