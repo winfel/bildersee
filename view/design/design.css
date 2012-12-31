@@ -300,7 +300,7 @@ background:white;text-align:left;max-width:990px;margin:auto;color: black;paddin
 }
 
 #keywordnotice, #notice {
-	padding:10px; background:rgba(255,255,255,0.5);
+	padding:10px; background:rgba(255,255,255,0.7);
     color:black;margin:10px 0;
 	text-shadow: none;font-size:80%;
 	overflow:hidden;
@@ -309,7 +309,7 @@ background:white;text-align:left;max-width:990px;margin:auto;color: black;paddin
 
 #keywordnotice {background:rgba(255,255,255,0.7);}
 
-#keywordnotice a {color:darkblue}
+#keywordnotice a,#notice a {color:darkblue}
 
 #description {
 	cursor:pointer;

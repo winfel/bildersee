@@ -20,6 +20,7 @@ $_SESSION['last_filter']=$filter;
 
 $codewordPossible=false;
 $codeword=false;
+$autocodeword=false;
 $hasPublic=false;
 $folderGiven=$folder!='%' && $folder!='%%';
 $tagGiven=stripos($filter,'tag_')!==false;
@@ -83,6 +84,7 @@ while ($line=mysql_fetch_object($search)){
 	
 	if ($codewordPossible && !$codeword){		
 		$codeword=between('codeword_',' ',$line->tags);
+		$autocodeword=(stripos($codeword,'direct') !==false);
 	}
 	$copyrights[ucwords_new(str_replace('_',' ',$line->copyright))]=true;  //TODO transfer this to update
 
@@ -151,7 +153,7 @@ function onScroll(){
 }
 </script>';
 
-if ($folderGiven){echo '<h1>'.$pageTitle.' <nobr>('.get_date($folderReadable).')</nobr></h1>';}
+if ($folderGiven && isset($folderReadable)){echo '<h1>'.$pageTitle.' <nobr>('.get_date($folderReadable).')</nobr></h1>';}
 
 $copyrights=array_keys($copyrights);
 
@@ -194,25 +196,37 @@ if (!$config->local && $folderGiven && ($user||$codewordGiven)) {
 	$functionBar='<a href="?folder='.urlencode($folder).'&amp;filter='.$filter.'&amp;mode=download"><img src="design/download1.png" alt="" />'.translate('download',true).'</a><span class="seperator"></span>'.$navi;
 }
 
-if ($codewordGiven){
+if ($codewordGiven && !$autocodeword){
 		echo '<p id="notice">'.translate('You are browsing this event using a codeword. Please do not share neither the codeword nor this address with people who have no connection to this event!').'</p>';
 }
 
-if (!$config->local && !$user && $codewordPossible && !$codewordGiven && $folderGiven) {
+if ($codewordGiven && $autocodeword){
+		echo '<p id="notice">'.translate('You are browsing this event using a direct access address. Please do not share this address with people who have no connection to this event!').'</p>';
+}
+
+if (!$config->local && !$user && $codewordPossible && !$autocodeword && !$codewordGiven && $folderGiven) {
 	
 	echo '<p id="keywordnotice">'.translate('Due to privacy reasons, you only see a selection of photos of this event. You get access to all photos, if you know the codeword.').' <a href="javascript:enterCodeword();">'.translate('Enter the codeword now!').'</a></p>';
 
 }
 
-if (!$config->local && $user && $codeword && !$codewordGiven && $folderGiven && $hasPublic) {
+if (!$config->local && $user && $codeword && !$autocodeword && !$codewordGiven && $folderGiven && $hasPublic) {
 	
 	echo '<p id="notice">'.translate('Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed with the following codeword:').' <b>'.$codeword.'</b></p>';
 
 }
 
+if (!$config->local && $user && $codeword && $autocodeword && !$codewordGiven && $folderGiven && $hasPublic) {
+	$url=$config->viewURL.'/?folder='.urlencode($folder).'&filter=codeword_'.$codeword;
+	echo '<p id="notice">'.translate('Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed under this address:').'<br><a href="'.$url.'" onclick="return showAddress(this);">'.translate('go to address',true).'</a></p>';
+
+}
+
 if (!$config->local && $user && $codeword && !$codewordGiven && $folderGiven && !$hasPublic) {
 	
-	echo '<p id="notice">'.translate('This event is not publically visible, but can directly be accessed:').' '.$config->viewURL.'/?folder='.urlencode($folder).'&filter=codeword_'.$codeword.'</p>';
+	$url=$config->viewURL.'/?folder='.urlencode($folder).'&filter=codeword_'.$codeword;
+	$out='<p id="notice">'.translate('This event is not publically visible, but can directly be accessed:').' <a href="'.$url.'" onclick="return showAddress(this);">'.translate('go to address',true).'</a></p>';
+	echo $out;
 
 }
 
@@ -386,6 +400,12 @@ function setCategory(data){
 		var url="?folder='.$folder.'&page="+page+"&filter='.$filter.'#scroll"+cat;
 		window.location.href=url;
 	}
+}
+
+function showAddress(){
+	
+	return confirm("'.translate('This event is not publically visible. Please do not share neither the codeword nor this address with people who have no connection to this event!').'");
+	
 }
 
 

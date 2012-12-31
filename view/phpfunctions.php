@@ -308,11 +308,14 @@ foreach ($autotagCache as $autotag){
    
    if (isset($result['privat']) && isset($result['public'])) unset($result['public']);  //private always wins
    
-   /*
-   if (strpos($path,'codeword_')===false && !isset($result['public']) && !isset($result['privat'])) $result[getFolderCodeword($folder)]=true; //automatically create codeword for nonpublic events
-   */
+   $autoCodeword=false;
+   if (strpos($path,'codeword_')===false && !isset($result['public']) && !isset($result['privat'])){
+   		$result[getFolderCodeword($folder)]=true; //automatically create codeword for nonpublic events
+   		$autoCodeword=true;
+   }
+ 
    
-   if (strpos($path,'codeword_')===false && !isset($result['public']) && !isset($result['privat'])) $result['privat']=true;
+   if (!$autoCodeword && strpos($path,'codeword_')===false && !isset($result['public']) && !isset($result['privat'])) $result['privat']=true;
       
    if (isset($result['palamos'])) {
    		$result['palamós']=true;
