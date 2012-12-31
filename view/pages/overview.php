@@ -194,6 +194,7 @@ $element=array();$element['link']='';$element['text']=translate('events',true);$
 					var h2s=document.getElementsByTagName('h2');
 					for (var i in h2s){
 						var h2=h2s[i];
+						if (!h2.style) continue;
 						if (value=='') h2.style.display='block';
 						else h2.style.display='none';
 					}
