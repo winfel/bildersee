@@ -201,7 +201,7 @@
 	  }
 	}, false);
 	
-	document.addEventListener('dblclick',function(e){
+	document.addEventListener('click',function(e){
 		history.back();
 	},false);
 	
