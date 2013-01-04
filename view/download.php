@@ -7,15 +7,16 @@ preventInjection();
 $folder=isset($_GET['folder'])?$_GET['folder']:false;
 
 $title=$folder;
-header('Content-Type: application/octet-stream');
-header('Content-disposition: attachment; filename="'.$title.'.zip"');
+
+if ($title='%%') $title='download';
+
 
 if (!$folder || $folder=='%') die ('Missing folder!');
 
 
 	$files=array();
 
-	$search=mysql_query("SELECT `key`,filename  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(lower(files.folder),' ',''),'_','') LIKE '$folder' $filterSQL");
+	$search=mysql_query("SELECT `key`,filename  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') LIKE '$folder' $filterSQL");
     
 	while ($line=mysql_fetch_object($search)){
 		{
@@ -25,7 +26,10 @@ if (!$folder || $folder=='%') die ('Missing folder!');
 
 	}
 	
-	if (!$files) $files=array();
+	if (!$files) die('Error: No files');
+	
+	header('Content-Type: application/octet-stream');
+	header('Content-disposition: attachment; filename="'.$title.'.zip"');
 	
 	//shorten temps
 	
@@ -73,6 +77,8 @@ if (!$folder || $folder=='%') die ('Missing folder!');
 		buildLink($file,$temp);
 						
 	}
+	
+	if (!file_exists($tempfolder)) die ('Could not cd to temp folder');
 	
 	$fp = popen('cd "'.$tempfolder.'/"; zip -0 -r - *', 'r');
 	

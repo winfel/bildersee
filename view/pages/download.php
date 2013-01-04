@@ -21,7 +21,7 @@
 		
 			$files=array();
 		
-			$search=mysql_query("SELECT md5(`key`) as `key`,filename,folder  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(lower(files.folder),' ',''),'_','') LIKE '$folder' $filterSQL $order $reverse");
+			$search=mysql_query("SELECT md5(`key`) as `key`,filename,folder  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') LIKE '$folder' $filterSQL $order $reverse");
 			
 		    $subfolders=array();
 		    $copyrights=array();
@@ -71,7 +71,7 @@
 			echo ' ';
 			echo translate('Please only donwload the ZIP file, if you really need all photos. If you are just interested in a few shots, please use the individual image download instead.');
 			
-			echo '<p style="font-size:200%;display:block;margin:10px;text-align:center"><a href="download.php?folder='.urlencode($folder).'&amp;filter='.$filter.'">';
+			echo '<p style="font-size:200%;display:block;margin:10px;text-align:center"><a href="download.php?folder='.urlencode($folder).'&amp;filter='.$filter.'" target="_blank">';
 			
 			$size=0;
 			
