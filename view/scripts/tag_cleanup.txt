@@ -1,0 +1,27 @@
+<?php
+
+include_once ('environment.php');
+ 
+$keys=array();
+
+$search=mysql_query("SELECT image from filetags");
+
+while($line=mysql_fetch_object($search)){
+	$keys[$line->image]=true;
+}
+
+$search=mysql_query("SELECT `key` from files");
+
+while($line=mysql_fetch_object($search)){
+	unset($keys[$line->key]);
+}
+
+foreach (array_keys($keys) as $key){
+	echo "Deleting $key<br>";
+	$search=mysql_query("DELETE FROM filetags WHERE image='$key'");
+}
+
+
+    
+
+?>
