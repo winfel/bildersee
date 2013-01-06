@@ -41,5 +41,11 @@ ICQ: 54428358
 
 <p>Die auf dieser Website veröffentlichten Fotos sind urheberrechtlich geschützt! Die Rechte liegen bei den jeweiligen Fotografen! Durch die Bereitstellung der Fotos (z.B. durch Hochladen auf den Server von bildersee.eu) haben diese sich mit einer Verbreitung auf diesem Wege bereiterklärt. Die hier veröffentlichten Fotos dürfen für private Zwecke kostenlos genutzt werden. Eine weitergehende Nutzung bedarf der Zustimmung des Fotografen und aller abgebildeten Personen. Inhalte, die nur nach Anmeldung oder durch eingabe eines Kennwortes verfügbar sind, dürfen generell nur auf Nachfrage verwendet werden.</p>
 
+<h2>Attributions</h2>
 
+<ul>
+<li>Das Video-Icon wurde gestaltet von <a href="http://www.iconarchive.com/artist/deleket.html">Deleket</>.
+<li>GUI-Icons von <a href="http://www.iconsweets2.com/">Iconsweets</a>.
+<li>Das Facebook-Icon ist eine eingetragene Marke von Facebook.
+</ul>
 </div>

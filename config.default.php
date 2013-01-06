@@ -32,6 +32,7 @@
    	  $this->viewURL=$serverURL.'/view';
    	  $this->logsPath=$docroot.'/logs';
    	  $this->contentPath=$docroot.'/pics';
+   	  $this->contentURL=$serverURL.'/pics';
    	  $this->tempPath=$docroot.'/temp';
       $this->uploadPath=$docroot.'/upload_pics';
       $this->cachePath=$docroot.'/cache';

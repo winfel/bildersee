@@ -38,7 +38,11 @@
 	$isLimited=($width>0);
 	
 	if (!file_exists($getFile)) {
-	$getFile=$config->viewPath.'/design/missingimage.jpg';
+		$getFile=$config->viewPath.'/design/missingimage.jpg';
+	}
+	
+	if (stripos($getFile,'.jpg')===false && stripos($getFile,'.jpeg')===false && stripos($getFile,'.png')===false){
+		$getFile=$config->viewPath.'/design/video.jpg';
 	}
 	
 	//header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");

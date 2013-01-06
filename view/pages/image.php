@@ -134,14 +134,29 @@ if ($state=='non-existant') {
 	echo '<p>'.translate('An image with this address could not be found. Please check if you have typed in or copied the address correctly.').'</p>';
 } else {
 
-	if (stripos($filename,'.youtube')){
+    if (stripos($filename,'.youtube')){
 		$id=file_get_contents($filename);
 		$mainurl='http://www.youtube.com/embed/'.$id;
 		echo '<div id="imagediv"><iframe id="theimage" width="1000" height="1000" src="http://www.youtube.com/embed/'.$id.'" frameborder="0" allowfullscreen></iframe></div>';
 	} else {
-		$mainurl=$config->imageGetterURL.'?key='.$image.'&width=1000000&height=1000';
-		echo '<div id="imagediv"><img src="" id="theimage" /><noscript><img src="'.$mainurl.'" id="theimage" style="opacity:1;width:100%" /></noscript></div>';
-		$thumbnail=$config->imageGetterURL.'?key='.$image.'&width=170&height=170&minimum=1';
+		
+		if (stripos($filename,'.jpg')===false && stripos($filename,'.jpeg')===false && stripos($filename,'.png')===false){
+			$url=$filename;
+			$url=str_replace($config->contentPath,$config->contentURL,$url);
+			$mainurl='';
+			echo '<script src="ac_quicktime.js" language="javascript"> </script>';
+			echo '<div id="imagediv">
+					<script language="javascript">
+	    				QT_WriteOBJECT("'.$url.'" , "100%", "100%", "", "AUTOPLAY", "True", "SCALE", "Aspect") ;
+					</script>
+				  </div>';
+				   
+		} else {
+		
+			$mainurl=$config->imageGetterURL.'?key='.$image.'&width=1000000&height=1000';
+			echo '<div id="imagediv"><img src="" id="theimage" /><noscript><img src="'.$mainurl.'" id="theimage" style="opacity:1;width:100%" /></noscript></div>';
+			$thumbnail=$config->imageGetterURL.'?key='.$image.'&width=170&height=170&minimum=1';
+		}
 		
 	}
 	
@@ -194,34 +209,37 @@ if ($state=='non-existant') {
 		
         var mHeight=myHeight-120;
         imagediv.style.height=mHeight+"px";
-		
-		image.src="";
-		
-		image.onload=function(){
-			var mHeight=myHeight-120;
-			var isHeight=(image.offsetHeight);
-			image.isHeight=isHeight;
-			if (isHeight>mHeight){
-				image.style.maxHeight=mHeight+"px";
-				imagediv.style.height=mHeight+"px";
-				imagediv.style.background="transparent";
+	        
+		if (image){
+			
+			image.src="";
+			
+			image.onload=function(){
+				var mHeight=myHeight-120;
+				var isHeight=(image.offsetHeight);
+				image.isHeight=isHeight;
+				if (isHeight>mHeight){
+					image.style.maxHeight=mHeight+"px";
+					imagediv.style.height=mHeight+"px";
+					imagediv.style.background="transparent";
+					
+				}
+				image.style.maxWidth="100%";
+				image.style.opacity=1;
 				
 			}
-			image.style.maxWidth="100%";
-			image.style.opacity=1;
 			
-		}
-		
-		image.src="'.$mainurl.'";
-		
-		var body=document.getElementsByTagName("body")[0];
-		
-		image.onclick=function(){
-			if (!image.isHeight) return image.onload();
-			image.style.maxWidth="1000000px";
-			image.style.maxHeight=image.isHeight+"px";
-			imagediv.style.height=image.isHeight+"px";
-			image.isHeight=undefined;
+			image.src="'.$mainurl.'";
+			
+			var body=document.getElementsByTagName("body")[0];
+			
+			image.onclick=function(){
+				if (!image.isHeight) return image.onload();
+				image.style.maxWidth="1000000px";
+				image.style.maxHeight=image.isHeight+"px";
+				imagediv.style.height=image.isHeight+"px";
+				image.isHeight=undefined;
+			}
 		}
 		
 		function showExif(e){
