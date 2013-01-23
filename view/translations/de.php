@@ -24,7 +24,7 @@ $translations['de']['An error has occured!']='Ein Fehler ist aufgetreten!';
 $translations['de']['An image with this address could not be found. Please check if you have typed in or copied the address correctly.']='Unter dieser Adresse konnte kein Bild gefunden werden. Bitte überprüfen Sie, ob Sie die Adresse richtig eingeben oder kopiert haben.';
 $translations['de']['This event does not exist or you do not have access rights.']='Dieses Ereignis existiert nicht oder Sie haben nicht die notwendigen Zugriffsrechte.';
 
-$translations['de']['jump to']='Springe zu';
+$translations['de']['more images']='weitere Bilder';
 
 $translations['de']['years']='Jahre';
 $translations['de']['search for people']='Nach Personen suchen';

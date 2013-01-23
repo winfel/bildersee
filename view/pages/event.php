@@ -235,8 +235,19 @@ if ($user && $codeword && !$codewordGiven && $folderGiven && !$hasPublic) {
 
 $first=true;
 
+$jumpNavi=array();
+
 foreach ($catOnPage as $cat=>$pag){
-	if ($cat && $pag<$page) echo '<h2><a href="javascript:setCategory(\''.$pag.'###'.urlencode($cat).'\')" style="text-decoration:none">'.translate('jump to',true).': '.$cat.'</a></h2>';
+	
+	if ($cat && $pag<$page) {
+		$jumpNavi[]='<a href="javascript:setCategory(\''.$pag.'###'.urlencode($cat).'\')"> '.$cat.'</a>';
+	}
+}
+
+if (count($jumpNavi)){
+	echo '<p class="jump">'.translate('more images',true).': ';
+	echo implode($jumpNavi,', ');
+	echo '</p>';
 }
 
 echo '<div id="images">';
@@ -290,8 +301,19 @@ foreach ($files as $category=>$entries){
 
 echo '</div>';
 
+$jumpNavi=array();
+
 foreach ($catOnPage as $cat=>$pag){
-	if ($cat && $pag>$page) echo '<h2 style="clear:both"><a href="javascript:setCategory(\''.$pag.'###'.urlencode($cat).'\')" style="text-decoration:none">'.translate('jump to',true).': '.$cat.'</a></h2>';
+	
+	if ($cat && $pag>$page) {
+		$jumpNavi[]='<a href="javascript:setCategory(\''.$pag.'###'.urlencode($cat).'\')"> '.$cat.'</a>';
+	}
+}
+
+if (count($jumpNavi)){
+	echo '<p class="jump">'.translate('more images',true).': ';
+	echo implode($jumpNavi,', ');
+	echo '</p>';
 }
 
 if ($hasPublic){

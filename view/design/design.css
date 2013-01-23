@@ -422,6 +422,7 @@ small {
 	left:195px;
 }
 
+
 #exifdata, #exiflocation {
 	color:black;
 	text-shadow: none;
@@ -548,4 +549,24 @@ box-shadow: 0 0 20px #000; -webkit-box-shadow: 0 0 20px #000; -moz-box-shadow: #
 	#login input[type=button],#login input[type=submit] {font-size:25px; margin:15px}
 	
 	#button_gallery {display:none}
+}
+
+.jump {
+	margin-left:20px;
+	margin-right:12px;
+	margin-top:20px;
+	font-size:17px;
+	border-top:2px solid #3d3d3d;
+	border-bottom:2px solid #3d3d3d;
+	padding:2px;
+	color:#777;
+}
+
+.jump a{
+	 text-decoration:none;
+	 white-space:nowrap;
+}
+
+.jump a:hover{
+	 text-decoration:underline;
 }
