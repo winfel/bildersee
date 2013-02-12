@@ -33,8 +33,6 @@ ICQ: 54428358
 
 <p>Der Datenschutz auf bildersee.eu nehme ich sehr ernst. Für die Betrachtung der öffentlichen Bildergalerien auf bildersee.eu ist es nicht erforderlich, dass Sie personenbezogene Daten angeben. Angemeldeten Nutzern steht ein erweiterter Zugang zur Datenbank zur Verfügung. Zugänge werden nur auf persönlicher Basis vergeben. Die Fotos auf dieser Website werden nicht durch Google oder andere öffentliche Suchmaschinen indiziert.</p>
 
-<iframe frameborder="no" width="800px" height="110px" src="http://analytics.datenwiese.de/index.php?module=CoreAdminHome&action=optOut&language=de" style="background:white;margin-bottom:10px;"></iframe>
-
 <p>Die Veröffentlichung von Fotos, die Menschen zeigen, erfordert deren Zustimmung. Die Fotografen, die Fotos beigetragen haben, haben diese Genehmigung so weit wie möglich eingeholt. Sollten Sie dennoch ein Foto finden, das nicht veröffentlicht werden sollte, schicken Sie eine E-Mail an winkelnkemper@googlemail.com Das Foto wird sofort entfernt. Weitere Informationen finden Sie in der <a href="?mode=privacy">Datenschutzerklärung</a></p>
 
 <h2>Urheberrecht</h2>
