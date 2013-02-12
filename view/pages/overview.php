@@ -112,7 +112,7 @@ $element=array();$element['link']='';$element['text']=translate('events',true);$
 		
 		echo '<div style="width:100%;margin:auto;clear:both;">';
 		
-		$search=mysql_query("SELECT folder,md5(`key`) AS thumb FROM files WHERE tags LIKE '%thumb%' $filterSQL GROUP BY folder");
+		$search=mysql_query("SELECT folder,md5(`key`) AS thumb FROM files WHERE tags LIKE '%thumb%' $filterSQL GROUP BY sortstring");
 		
 		while ($line=mysql_fetch_object($search)){
 			$eventData[$line->folder]['thumb']=$line->thumb;
