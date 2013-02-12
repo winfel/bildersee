@@ -77,9 +77,8 @@ while ($line=mysql_fetch_object($search)){
 	$files[$category][]=$line;
 	$codewordPossible=$codewordPossible || (stripos($line->tags,'codeword_') !==false);
 	$hasPublic=$hasPublic || (stripos($line->tags,'public') !==false);
-	if (!$hasThumb && (stripos($line->tags,'thumb') !==false)){
+	if ((stripos($line->tags,'thumb') !==false)){
 		$thumb=$line->key;
-		$hasThumb=true;
 	}
 	
 	if ($codewordPossible && !$codeword){		
@@ -90,7 +89,7 @@ while ($line=mysql_fetch_object($search)){
 
 }
 
-if (isset($thumb)) $thumbnail=$config->imageGetterURL.'?key='.$thumb.'&width=170&height=170&minimum=1';
+if (isset($thumb)) $thumbnail=$config->imageGetterURL.'?key='.$thumb.'&width=200&height=200&minimum=1';
 
 if (!isset($files)){
 	$files=array();
