@@ -36,13 +36,15 @@
 	}
 	
 	$isLimited=($width>0);
+	$playIcon=false;
+	
+	if (stripos($getFile,'.m4v')) {
+		$getFile=str_replace('.m4v','.preview.jpg',$getFile);
+		$playIcon=true;
+	}
 	
 	if (!file_exists($getFile)) {
 		$getFile=$config->viewPath.'/design/missingimage.jpg';
-	}
-	
-	if (stripos($getFile,'.jpg')===false && stripos($getFile,'.jpeg')===false && stripos($getFile,'.png')===false){
-		$getFile=$config->viewPath.'/design/video.jpg';
 	}
 	
 	//header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
@@ -84,14 +86,14 @@
 	 	$entry='Image access from '.$server;
 	 } else $entry='Direct URL access';
 	 
-	 shrinkImage($getFile,$width,$height,$rotate,$config->cachePath,$input,$text,$minimum);
+	 shrinkImage($getFile,$width,$height,$rotate,$config->cachePath,$input,$text,$minimum,$playIcon);
 	 
 	}
 	else {
 	 readfile($getFile);
 	}
 	
-function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,$text='',$minimum=''){global $config;	
+function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,$text='',$minimum='',$playIcon=false){global $config;	
 	
  //TODO Handling of different formats
  if (stripos($lokalurl,'.youtube')){
@@ -226,6 +228,15 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
  	$color = imagecolorresolve($temp, 255, 255, 255);
  	imagefttext($temp, $size, 0, $offset, $newheight-$offset, $color, $font, $text);
  	
+ }
+ 
+ //show a play icon
+ 
+ if ($playIcon){
+ 	$colorCircle=imagecolorallocatealpha ( $temp,255,255,255,30 );
+ 	$colorTriangle=imagecolorallocatealpha ( $temp,0,0,0,30 );
+ 	imagefilledellipse ( $temp , $newwidth/2 , $newheight/2 ,  100 ,  100 , $colorCircle );
+ 	imagefilledpolygon ( $temp , array($newwidth/2-20,  $newheight/2-35, $newwidth/2+35,  $newheight/2, $newwidth/2-20,  $newheight/2+35) , 3 , $colorTriangle );
  }
  
  $quality=($newheight*$newwidth<=300*300)?75:95;

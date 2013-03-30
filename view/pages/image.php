@@ -144,12 +144,15 @@ if ($state=='non-existant') {
 			$url=$filename;
 			$url=str_replace($config->contentPath,$config->contentURL,$url);
 			$mainurl='';
-			echo '<script src="ac_quicktime.js" language="javascript"> </script>';
-			echo '<div id="imagediv">
-					<script language="javascript">
-	    				QT_WriteOBJECT("'.$url.'" , "100%", "100%", "", "AUTOPLAY", "True", "SCALE", "Aspect") ;
-					</script>
-				  </div>';
+			echo '
+			
+<video controls="controls"  autoplay="autoplay" poster="'.str_replace('.m4v','.preview.jpg',$url).'" width="640" height="480" title="2013-01-01 Neujahr 2013">
+<source src="'.$url.'" type="video/mp4" />
+<source src="'.str_replace('.m4v','.webm',$url).'" type="video/webm" />
+</video>			
+			
+			
+			';
 				   
 		} else {
 		

@@ -210,6 +210,12 @@ if (!$path){
       	}
       }
   
+   // Auto tag videos
+   
+  
+   $filename=basename($path);
+   if (stripos($filename,'.m4v')) $result['video']=true;
+  
    // Search for copyright information in brackets
    
    $dirname=($path);

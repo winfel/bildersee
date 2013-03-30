@@ -217,7 +217,9 @@
 		    $fullpath=$path.'/'.$line; 
 		    if (is_dir($fullpath)) continue;
 		    if (stripos($lowline,'.db')===false
-		     && stripos($lowline,'.tmp')===false) {  
+		     && stripos($lowline,'.tmp')===false
+		     && stripos($lowline,'.webm')===false
+		     && stripos($lowline,'.preview.jpg')===false) {  
 		       if (isset($list[$fullpath])) unset($list[$fullpath]); else $list[$fullpath]='add';
 		       //HERE
 		    } 
