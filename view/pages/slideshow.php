@@ -18,12 +18,12 @@
     
     if (!$pageTitle || $pageTitle=='%' || $pageTitle=='%%') $pageTitle=translate('slideshow',true);
 	
-	$reverse=($folder=='%')?'DESC':'';
+	$reverse=($folder=='%');
 	
-	$search=mysql_query("SELECT md5(`key`) as `key` FROM files WHERE $userQuery AND replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
+	$search=getImages($folder,$reverse);
 	
 	$allImages=array();
-	while ($line=mysql_fetch_object($search)){
+	while ($line=array_shift($search)){
 		$allImages[]=$line->key;
 	}  
 

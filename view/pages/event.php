@@ -2,13 +2,12 @@
 
 if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
 
-
 $pageTitle=translate('search result',true);
 $pageDescription=translate('an online photo gallery',true);
 
 $folder=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($folder)))));
 
-$reverse=($folder=='%')?'DESC':'';
+$reverse=($folder=='%');
 
 $page=isset($_GET['page'])?$_GET['page']:1;
 
@@ -26,14 +25,13 @@ $folderGiven=$folder!='%' && $folder!='%%';
 $tagGiven=stripos($filter,'tag_')!==false;
 $codewordGiven=stripos($filter,'codeword_')!==false;
 
-$search=mysql_query("SELECT md5(`key`) as `key`,files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder as folderReadable,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') LIKE '$folder' $filterSQL ORDER BY sortstring $reverse");
-
+$search=getImages($folder,$reverse);
 
 $copyrights=array();
 $count=0;
 $hasThumb=false;
    
-while ($line=mysql_fetch_object($search)){
+while ($line=array_shift($search)){
 		
 	$count++;
 	

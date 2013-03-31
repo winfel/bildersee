@@ -51,21 +51,18 @@ if ($image){
 		
 		//when not logged in, modes are restricted to a very few. Paricularly administration and tagging
 		//are not accessible
-		if (!$user && $mode!='nocookies' && $mode!='gallery' && $mode!='login' && $mode!='tags' && $mode!='legal' && $mode!='privacy' && $mode!='upload') $mode='';
+		if (!$user && $mode!='gallery' && $mode!='tags' && $mode!='legal' && $mode!='privacy' && $mode!='upload') $mode='';
 		
 		//these modes are specified directly by url
 		switch ($mode){
 		 case 'tags':include('pages/tags.php');break;
 		 case 'people':include('pages/people.php');break;
-		 case 'logs':include('pages/logs.php');break;
 		 case 'admin':include('pages/admin.php');break;
 		 case 'taginfo':include('pages/taginfo.php');break;
 		 case 'tagchange':include('pages/tagchange.php');break;
 		 case 'stats':include('pages/stats.php');break;
 		 case 'legal':include('pages/legal.php');break;
 		 case 'privacy':include('pages/privacy.php');break;
-		 case 'login':include('pages/login.php');break;
-		 case 'nocookies':include('pages/nocookies.php');break;
 		 case 'gallery':include('pages/gallery.php');break;
 		 
 		 //the default mode "overwiew" shows the most recent event

@@ -1,5 +1,7 @@
 <?php
 
+$translations['de']['data privacy statement']='Datenschutzerklärung';
+
 $translations['de']['Twinning']='Partnerschaft';
 
 $translations['de']['go to address']='zur Adresse wechseln';

@@ -646,4 +646,74 @@ function lang_getfrombrowser ($allowed_languages, $default_language, $lang_varia
         return $current_lang;
 }
 
+function getImages($folder,$reverse=false){global $userQuery,$filterSQL;
+
+	$reverse=($reverse)?'DESC':'';
+
+	$query="SELECT md5(`key`) as `key`,files.filename as filename, files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder as folderReadable,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') LIKE '$folder' $filterSQL ORDER BY sortstring $reverse";
+	
+	$search=mysql_query($query);
+	
+	$output=array();
+	
+	while($line=mysql_fetch_object($search)){
+		$output[]=$line;
+	}
+	
+	return $output;
+}
+
+function getAlbums(){global $userQuery,$filterSQL;
+
+	$search=mysql_query("SELECT DISTINCT folder,category, `key` AS thumb, replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') as folderID FROM files WHERE $userQuery AND SUBSTR(folder,1,4)<'9' $filterSQL GROUP BY folder ORDER BY folder DESC");
+	
+	$output=array();
+	
+	while($line=mysql_fetch_object($search)){
+		
+		$category=$line->category;
+		
+		if (strpos($category,'(')!==false) $category='';
+		$category=ucwords(str_replace('_',' ',$category));
+		
+		if ($category=='2014') $category='';
+		if ($category=='2013') $category='';
+		if ($category=='2012') $category='';
+		if ($category=='2011') $category='';
+		if ($category=='2010') $category='';
+		if ($category=='2009') $category='';
+		if ($category=='2008') $category='';
+		if ($category=='2007') $category='';
+		if ($category=='2006') $category='';
+		if ($category=='2005') $category='';
+		if ($category=='2004') $category='';
+		if ($category=='2003') $category='';
+		if ($category=='2002') $category='';
+		if ($category=='2001') $category='';
+		if ($category=='2000') $category='';
+		
+		if ($category=='Partnerschaft') $category=translate('Twinning');
+		if ($category=='Djk') $category='DJK Rheda';
+		if ($category=='Ebr2012') $category='EBR 2012';
+		if ($category=='Ftcr') $category='FTCR';
+		if ($category=='Diverses') $category='';
+		
+		$line->category=$category;
+		
+		$output[$line->folder]=$line;
+	}
+	
+	$search=mysql_query("SELECT folder,md5(`key`) AS thumb FROM files WHERE tags LIKE '%thumb%' $filterSQL GROUP BY sortstring");
+		
+	while ($moreInfo=mysql_fetch_object($search)){
+		$line=$output[$moreInfo->folder];
+		$line->thumb=$moreInfo->thumb;
+		$output[$line->folder]=$line;
+	}
+	
+	return $output;
+
+}
+
+
 ?>

@@ -13,6 +13,7 @@ $pageTitle='Festplattenstatistik';
  	$filename=$result->filename;
  	$category=$result->category;
  	$folder=$result->folder;
+ 	$tags=$result->tags;
  	$year=substr($result->sortstring,1,4);
  	if ($year==0) $year='kein Jahr';
  	
@@ -22,12 +23,16 @@ $pageTitle='Festplattenstatistik';
  		@$statistics['Cat '.$category]+=$size;
  		@$count['Cat '.$category]+=1;
  	}
+ 	
+ 	if (stripos($tags,'video')!==false){
+ 		@$statistics['Videos']+=$size;
+ 		@$count['Videos']+=1;
+ 	}
+ 	
  	@$statistics['Year '.$year]+=$size;
- 	@$statistics['Folder '.$folder]+=$size;
  	@$statistics[' -- TOTAL --']+=$size;
  	
  	@$count['Year '.$year]+=1;
- 	@$count['Folder '.$folder]+=1;
  	@$count[' -- TOTAL --']+=1;
 
  }

@@ -44,8 +44,9 @@
       
       $this->pageTitle='Page Title';
       $this->pageDescription='Page Description';  
-      $this->copyright='&copy;  2012, Felix Winkelnkemper – Horner Straße 22 – 33102 Paderborn – Germany
-  <br />Phone: +49 151 40432121 – E-mail: winkelnkemper@googlemail.com – ICQ: 54428358';   
+      $this->copyright='&copy;  2013, Copyright holder';
+      
+      $this->privacyBig='Data privacy statement';   
       
    }
  

@@ -1,5 +1,7 @@
 <?php
 
+//$translations['es']['data privacy statement']='Datenschutzerklärung';
+
 $translations['es']['Twinning']='Hermanamiento';
 
 //$translations['es']['slideshow']='Diashow';

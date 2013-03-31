@@ -16,9 +16,9 @@ if (!$folder || $folder=='%') die ('Missing folder!');
 
 	$files=array();
 
-	$search=mysql_query("SELECT `key`,filename  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE $userQuery AND replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') LIKE '$folder' $filterSQL");
+	$search=getImages($folder);
     
-	while ($line=mysql_fetch_object($search)){
+	while ($line=array_shift($search)){
 		{
 			$line->temp=str_replace($config->contentPath,'',$line->filename);
 			$files[]=$line;
