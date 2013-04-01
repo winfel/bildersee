@@ -38,10 +38,6 @@ if (!$config->local){
 		echo '<a '.isActive('login').' onclick="show(\'login\');this.className=\'activebutton\';return false" href="?mode=login" id="button_login"><img src="design/login1.png" alt="">'.translate('login',true).'</a>';
 	} else {
 		echo '<a '.isActive('login').' href="?logout=1" id="button_login" ><img src="design/logout1.png" alt="">'.translate('logout',true).'</a>';
-		if ($userIsAdmin) {
-			seperateIfNot('admin','rechts');
-			echo '<a href="?mode=admin" '.isActive('admin').' id="button_logs"><img src="design/admin1.png" alt="">'.translate('admin',true).'</a>';
-		}
 	}
 	seperateIfNot('upload','rechts');
 	echo '<a href="'.$config->updateURL.'" '.isActive('upload').' id="button_upload"><img src="design/upload1.png" alt="">'.translate('upload',true).'</a>';

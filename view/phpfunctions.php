@@ -703,9 +703,10 @@ function getAlbums(){global $userQuery,$filterSQL;
 		$output[$line->folder]=$line;
 	}
 	
-	$search=mysql_query("SELECT folder,md5(`key`) AS thumb FROM files WHERE tags LIKE '%thumb%' $filterSQL GROUP BY sortstring");
+	$search=mysql_query("SELECT folder,md5(`key`) AS thumb FROM files WHERE $userQuery AND tags LIKE '%thumb%' $filterSQL GROUP BY sortstring");
 		
 	while ($moreInfo=mysql_fetch_object($search)){
+		if (!isset($output[$moreInfo->folder])) continue;
 		$line=$output[$moreInfo->folder];
 		$line->thumb=$moreInfo->thumb;
 		$output[$line->folder]=$line;

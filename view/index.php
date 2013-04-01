@@ -57,7 +57,6 @@ if ($image){
 		switch ($mode){
 		 case 'tags':include('pages/tags.php');break;
 		 case 'people':include('pages/people.php');break;
-		 case 'admin':include('pages/admin.php');break;
 		 case 'taginfo':include('pages/taginfo.php');break;
 		 case 'tagchange':include('pages/tagchange.php');break;
 		 case 'stats':include('pages/stats.php');break;
