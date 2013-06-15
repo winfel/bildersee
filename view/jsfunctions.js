@@ -7,8 +7,10 @@
     } else {
         var hash = location.hash;
         namespace.replaceHash = function(newhash) {
+        	/*
         	if (location.hash !== hash) history.back();
             location.hash = newhash;
+            */
         };
     }
 })(window);
@@ -228,15 +230,22 @@ function toggleFullScreen() {
 }
 
 var hider=false;
+var hider2=false;
 function message(text){
 	var el=document.getElementById('message');
+	el.style.display='block';
 	el.style.opacity='1.0';
 	el.innerHTML=text;
 	if (hider){
 		window.clearTimeout(hider);
+		window.clearTimeout(hider2);
 		hider=false;
+		hider2=false;
 	}
 	hider=window.setTimeout(function(){
 		el.style.opacity='0.0';
 	},3000);
+	hider2=window.setTimeout(function(){
+		el.style.display='none';
+	},5000);
 }

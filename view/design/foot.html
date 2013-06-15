@@ -23,16 +23,9 @@ if ($user){
 	 seperateIfNot('tags');
 } 
 
-echo '<a href="?mode=gallery" '.isActive('gallery').' id="button_gallery"><img src="design/galleries1.png" alt="">'.translate('galleries',true).'</a>';
-seperateIfNot('gallery');
-
 if (!$config->local){
-
+	
 	// right side
-	
-	echo '<a href="?mode=legal" '.isActive('info').' id="button_info"><img src="design/info1.png" alt="">'.translate('Info / Legal',true).'</a>';
-	
-	seperateIfNot('login','rechts');
 	
 	if (!$user) {
 		echo '<a '.isActive('login').' onclick="show(\'login\');this.className=\'activebutton\';return false" href="?mode=login" id="button_login"><img src="design/login1.png" alt="">'.translate('login',true).'</a>';
@@ -41,6 +34,12 @@ if (!$config->local){
 	}
 	seperateIfNot('upload','rechts');
 	echo '<a href="'.$config->updateURL.'" '.isActive('upload').' id="button_upload"><img src="design/upload1.png" alt="">'.translate('upload',true).'</a>';
+	seperateIfNot('upload','rechts');
+	
+	echo '<a href="?mode=legal" '.isActive('info').' id="button_info"><img src="design/info1.png" alt="">'.translate('Info / Legal',true).'</a>';
+	
+	seperateIfNot('login','rechts');
+	
 }
 	
 function isActive($part){global $activePart;
@@ -114,6 +113,13 @@ if (isset($functionBar2) && $functionBar2) {
 
 </script>
 <div id="overlay"></div>
+
+
+<script>
+	//Scroll to last position, when the html file is loaded completely, but do not wait for images
+	//to load as well
+	processHash();
+</script>
 
 <!-- Piwik --> 
 <?php
