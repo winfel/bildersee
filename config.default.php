@@ -46,7 +46,8 @@
       $this->pageDescription='Page Description';  
       $this->copyright='&copy;  2013, Copyright holder';
       
-      $this->privacyBig='Data privacy statement';   
+      $this->privacyBig='Data privacy statement';
+	  $this->legal='';
       
    }
  
