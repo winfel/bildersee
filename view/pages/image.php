@@ -158,7 +158,7 @@ if ($state=='non-existant') {
 		
 			$mainurl=$config->imageGetterURL.'?key='.$image.'&width=1000000&height=1000';
 			echo '<div id="imagediv"><img src="" id="theimage" /><noscript><img src="'.$mainurl.'" id="theimage" style="opacity:1;width:100%" /></noscript></div>';
-			$thumbnail=$config->imageGetterURL.'?key='.$image.'&width=170&height=170&minimum=1';
+			$thumbnail=$config->imageGetterURL.'?key='.$image.'&width=250&height=250&minimum=1';
 		}
 		
 	}
