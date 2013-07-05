@@ -25,6 +25,8 @@ $folderGiven=$folder!='%' && $folder!='%%';
 $tagGiven=stripos($filter,'tag_')!==false;
 $codewordGiven=stripos($filter,'codeword_')!==false;
 
+$mayDownload=!$config->local && $folderGiven && ($user||$codewordGiven);
+
 $search=getImages($folder,$reverse);
 
 $copyrights=array();
@@ -75,6 +77,7 @@ while ($line=array_shift($search)){
 	$files[$category][]=$line;
 	$codewordPossible=$codewordPossible || (stripos($line->tags,'codeword_') !==false);
 	$hasPublic=$hasPublic || (stripos($line->tags,'public') !==false);
+	if (!$config->local && (stripos($line->tags,'download') !==false)) $mayDownload=true;
 	if ((stripos($line->tags,'thumb') !==false)){
 		$thumb=$line->key;
 	}
@@ -87,7 +90,7 @@ while ($line=array_shift($search)){
 
 }
 
-if (isset($thumb)) $thumbnail=$config->imageGetterURL.'?key='.$thumb.'&width=200&height=200&minimum=1';
+if (isset($thumb)) $thumbnail=$config->imageGetterURL.'?key='.$thumb.'&width=250&height=250&minimum=1';
 
 if (!isset($files)){
 	$files=array();
@@ -189,7 +192,7 @@ if (count($files)>1){
 
 $functionBar=$navi;$functionBar2=$navi;
 
-if (!$config->local && $folderGiven && ($user||$codewordGiven)) {
+if ($mayDownload) {
 	$functionBar='<a href="?folder='.urlencode($folder).'&amp;filter='.$filter.'&amp;mode=download"><img src="design/download1.png" alt="" />'.translate('download',true).'</a><span class="seperator"></span>'.$navi;
 }
 
