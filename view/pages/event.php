@@ -268,34 +268,23 @@ foreach ($files as $category=>$entries){
 		}
 		
 		$url='?image='.urlencode($entry->key);
-		$imgurl=$config->imageGetterURL.'?key='.$entry->key.'&amp;width=300&amp;height=225';
+		$imgurl=$config->imageGetterURL.'?key='.$entry->key.'&amp;width=225&amp;height=225&amp;minimum=1';
+		$mainurl=$config->imageGetterURL.'?key='.$entry->key.'&width=1000000&height=1000';
 				
 		$readable=getReadableTags($entry->tags,$entry->sortstring);
 		
 		$mode='neutral';
 		if ($user && stripos($readable,'public')!==false) $mode='public';
 		if ($user && stripos($readable,'privat')!==false) $mode='private';
-
-		$frameclass=($user)?'imageframe':'imageframe nouser_imageframe';
 		
-		echo '
-		<div class="'.$frameclass.'" id="'.$entry->key.'">
-		<table class="previmage">
-		 <tr>
-		  <td class="thumb"><a href="'.$url.'"><img alt="" src="design/ajax-loader.gif" title="'.$imgurl.'" id="img'.$entry->key.'"></a></td>
-		 </tr>';
-		
-		if ($user) echo '
-		 <tr>
-		  <td class="tag '.$mode.'" onclick="changeState(\''.$entry->key.'\',true)" id="tags'.$entry->key.'">
-		   <span>'.$readable.'</span>
-		   <textarea onblur="changeState(\''.$entry->key.'\',false)" onkeyup="handleEnter(event,\''.$entry->key.'\');" >'.$entry->filetags.' </textarea><textarea>'.$entry->filetags.' </textarea>
-		  </td>
-		 </tr>
-		 ';
-		
-		echo '</table>
-		</div>';
+		//swipe
+		echo '<div class="thumb" id="'.$entry->key.'"><a href="'.$url.'"><img alt="" src="design/ajax-loader.gif" title="'.$imgurl.'" id="img'.$entry->key.'"></a>';
+		if ($user) {
+			echo '<div class="tag readabletags" onclick="changeState(\''.$entry->key.'\',true)" id="tags'.$entry->key.'">'.$readable;
+			echo '<textarea onblur="changeState(\''.$entry->key.'\',false)" onkeyup="handleEnter(event,\''.$entry->key.'\');" >'.$entry->filetags.' </textarea><textarea>'.$entry->filetags.' </textarea>';
+			echo '</div>';
+		}
+		echo '</div>';
 	}
 }
 
@@ -364,7 +353,7 @@ function activateNext(key){
 
 	var nextKey=false;var found=false;
 
-	var tds=document.getElementsByTagName("td");
+	var tds=document.getElementsByTagName("div");
 
 	for(var i in tds){
 		var td=tds[i];

@@ -137,8 +137,6 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
  	if (file_exists($cachePath)) unlink($cachePath);
  }
 
-        
- 
  if (file_exists($cachePath)) {
  	//writeLog('update','Got'.$cachePath.' from cache');
  	header ('location: '.$config->cacheURL.'/'.basename($cachePath));
@@ -185,6 +183,7 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
  if ($minimum){
  	$temp=ImageCreateTrueColor($limitWidth,$limitHeight);
  	ImageCopyResampled($temp,$alt,-($newwidth-$limitWidth)/2,-($newheight-$limitHeight)/4,0,0,$newwidth,$newheight,$origwidth,$origheight);
+ 	$newwidth=$limitWidth;$newheight=$limitHeight;
  }
  else {
    $temp=ImageCreateTrueColor($newwidth,$newheight);
@@ -227,17 +226,17 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
  	imagefttext($temp, $size, 0, $offset+1, $newheight-$offset, $color, $font, $text);
  	$color = imagecolorresolve($temp, 255, 255, 255);
  	imagefttext($temp, $size, 0, $offset, $newheight-$offset, $color, $font, $text);
-
-	 //show a play icon
-	 
-	 if ($playIcon){
-	 	$colorCircle=imagecolorallocatealpha ( $temp,255,255,255,30 );
-	 	$colorTriangle=imagecolorallocatealpha ( $temp,0,0,0,30 );
-	 	imagefilledellipse ( $temp , $newwidth/2 , $newheight/2 ,  100 ,  100 , $colorCircle );
-	 	imagefilledpolygon ( $temp , array($newwidth/2-20,  $newheight/2-35, $newwidth/2+35,  $newheight/2, $newwidth/2-20,  $newheight/2+35) , 3 , $colorTriangle );
-	 }
  	
  }
+ 
+	//show a play icon
+	
+	if ($playIcon){
+		$colorCircle=imagecolorallocatealpha ( $temp,255,255,255,30 );
+		$colorTriangle=imagecolorallocatealpha ( $temp,0,0,0,30 );
+		imagefilledellipse ( $temp , $newwidth/2 , $newheight/2 ,  100 ,  100 , $colorCircle );
+		imagefilledpolygon ( $temp , array($newwidth/2-20,  $newheight/2-35, $newwidth/2+35,  $newheight/2, $newwidth/2-20,  $newheight/2+35) , 3 , $colorTriangle );
+	}
  
 
  

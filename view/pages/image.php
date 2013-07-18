@@ -2,6 +2,14 @@
 
 if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
 
+echo '
+<style>
+ header {display:none}
+ #breadcrumb {display:none}
+ #visu {padding:0}
+</style>
+';
+
 //get the context from session. This is the last event which was visited
 
 @$contextPage=$_SESSION['last_page'];
@@ -195,31 +203,30 @@ if ($state=='non-existant') {
 					  		}
 				});
 		  }
-	
-	      var myWidth = 0, myHeight = 0;
-		  if( typeof( window.innerWidth ) == "number" ) {
-		    //Non-IE
-		    myWidth = window.innerWidth;
-		    myHeight = window.innerHeight;
-		  } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-		    //IE 6+ in "standards compliant mode"
-		    myWidth = document.documentElement.clientWidth;
-		    myHeight = document.documentElement.clientHeight;
-		  } 
 		
 		var image=document.getElementById("theimage");
 		var imagediv=document.getElementById("imagediv");
-		
-        var mHeight=myHeight-120;
-        imagediv.style.height=mHeight+"px";
 	        
 		if (image){
-			
+						
 			image.src="";
 			
 			image.onload=function(){
-				var mHeight=myHeight-120;
-				var isHeight=(image.offsetHeight);
+				
+				var myWidth = 0, myHeight = 0;
+				  if( typeof( window.innerWidth ) == "number" ) {
+				    //Non-IE
+				    myWidth = window.innerWidth;
+				    myHeight = window.innerHeight;
+				  } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+				    //IE 6+ in "standards compliant mode"
+				    myWidth = document.documentElement.clientWidth;
+				    myHeight = document.documentElement.clientHeight;
+				  } 
+				
+				var mHeight=myHeight-25;
+				imagediv.style.height=mHeight+"px";
+				var isHeight=(image.isHeight || image.offsetHeight);
 				image.isHeight=isHeight;
 				if (isHeight>mHeight){
 					image.style.maxHeight=mHeight+"px";
@@ -305,6 +312,13 @@ if ($state=='non-existant') {
 				var FBURL="http://www.facebook.com/sharer/sharer.php?u="+escape(reference);
 				var myWindow = window.open(FBURL, "Facebook", "width=780,height=200,toolbar=no,menubar=no,resizable=no,scrollbars=no,status=no");
 		 		myWindow.focus();
+			}
+		}
+		
+		function onResize(){
+			if (image) {
+				image.onload();
+				//image.onclick();
 			}
 		}
 	
