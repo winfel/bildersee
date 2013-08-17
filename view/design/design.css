@@ -293,8 +293,9 @@ ul {margin-left:40px}
 }
 
 
-#visu .thumb {cursor: pointer;width:33%;float:left;box-sizing:border-box;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;padding:1px}
+#visu .thumb {cursor: pointer;width:215px;float:left;box-sizing:border-box;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;padding:1px}
 
+@media all and (min-width:10px) {#visu .thumb {width:33%;}}
 @media all and (min-width:500px) {#visu .thumb {width:25%;}}
 @media all and (min-width:1000px) {#visu .thumb {width:20%;}}
 @media all and (min-width:1200px) {#visu .thumb {width:16.6%;}}
@@ -309,7 +310,7 @@ ul {margin-left:40px}
 .readabletags {color:#ddd;font-size:12px;height:70px;}
 
 #theimage {
-	box-shadow: 2px 2px 5px #222; -webkit-box-shadow: 2px 2px 5px #222;-moz-box-shadow: #222 2px 2px 5px;max-width:100%;}
+	box-shadow: 2px 2px 5px #222; -webkit-box-shadow: 2px 2px 5px #222;-moz-box-shadow: #222 2px 2px 5px;}
 
 #visu .private {color:#CC7777}
 #visu .public {color:#77CC77}
@@ -383,9 +384,6 @@ input {font-size:13px}
 #searchbox {
 	background:white;padding:10px;width:400px;margin:auto;margin-bottom:20px;box-shadow: 0 1px 5px #666; -webkit-box-shadow: 0 1px 5px #666; -moz-box-shadow: #666 0px 1px 5px;z-index:200;
 }
-
-#imagediv {background:url(ajax-loader.gif) 50% 200px no-repeat;min-height:300px}
-#theimage {opacity:0}
 
 #images h2 {margin-bottom:10px 0;clear:both;}
 
@@ -484,14 +482,48 @@ small {
 	position:fixed;
 	top:0;
 	left:0;
-	bottom:0;
-	right:0;
-	background:rgba(0,0,0,0.85);
+	width:100%;
+	height:100%;
+	padding:15px;
+	background:black;
+	background:rgba(0,0,0,0.75);
 	z-index:300;
+	-moz-box-sizing:border-box;
+	-webkit-box-sizing:border-box;
+	-o-box-sizing:border-box;
+	-ms-box-sizing:border-box;
+	box-sizing:border-box;
 }
 
 #overlay img {
 box-shadow: 0 0 20px #000; -webkit-box-shadow: 0 0 20px #000; -moz-box-shadow: #000 0px 0px 20px;
+}
+
+#overlay #menu{
+	position:fixed;
+	top:10px;
+	left:10px;
+	width:200px;
+	margin-left:-100px;
+	margin-top:-10px;
+	background:rgba(255,255,255,0.9);
+	display:none;
+	box-shadow: 0 0 20px #000; -webkit-box-shadow: 0 0 20px #000; -moz-box-shadow: #000 0px 0px 20px;
+}
+
+#overlay #menu a{
+	font-size:20px;
+	display:block;
+	color:rgba(0,0,0,0.5);
+	text-decoration:none;
+	padding:10px;
+	text-align:left;
+}
+
+#overlay #menu a:hover{
+	color:black;
+	background:white;
+	
 }
 
 @media all and (min-width:200px) {.overviewframe {width:100%;}}

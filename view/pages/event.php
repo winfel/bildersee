@@ -119,20 +119,27 @@ echo '<script>
 
 var hashDelay=false;
 function onScroll(){
+
 	var element=document.getElementById("images");
 	var top=getScrollY();
 	var height=window.getHeight();
 	var images=element.getElementsByTagName("img");
 	var hash=false;
 	
+	console.log("window top",top);
+	console.log("window height",height);
+	
 	for (var i in images){
 		var image=images[i];
 		
 		var y=getElementPosition(image);
 		
+		console.log("found image at ",y);
+		image.src=image.title;
 		if (image.title && y>top-200 && y<top+height+400) {
 			image.src=image.title;
-			image.title="";
+			//image.title="";
+			console.log("showing it ",image.src);
 		}
 		
 		if (!hash && y>top+20) {
@@ -147,7 +154,7 @@ function onScroll(){
 			window.clearTimeout(hashDelay);
 			hashDelay=false;
 		}
-		if (hash) window.replaceHash(hash);
+		if (!inImageMode) window.replaceHash(hash);
 	},1000);
 	
 }
@@ -270,6 +277,10 @@ foreach ($files as $category=>$entries){
 		$url='?image='.urlencode($entry->key);
 		$imgurl=$config->imageGetterURL.'?key='.$entry->key.'&amp;width=225&amp;height=225&amp;minimum=1';
 		$mainurl=$config->imageGetterURL.'?key='.$entry->key.'&width=1000000&height=1000';
+		$video=stripos($entry->tags,'video')!==false;
+		
+		$linkTitle=$entry->key;
+		if ($video) $linkTitle=str_replace($config->contentPath,$config->contentURL,$entry->filename);
 				
 		$readable=getReadableTags($entry->tags,$entry->sortstring);
 		
@@ -278,7 +289,7 @@ foreach ($files as $category=>$entries){
 		if ($user && stripos($readable,'privat')!==false) $mode='private';
 		
 		//swipe
-		echo '<div class="thumb" id="'.$entry->key.'"><a href="'.$url.'"><img alt="" src="design/ajax-loader.gif" title="'.$imgurl.'" id="img'.$entry->key.'"></a>';
+		echo '<div class="thumb" id="'.$entry->key.'"><a href="'.$url.'" class="image_link" title="'.$linkTitle.'"><img alt="" src="design/ajax-loader.gif" title="'.$imgurl.'" id="img'.$entry->key.'"></a>';
 		if ($user) {
 			echo '<div class="tag readabletags" onclick="changeState(\''.$entry->key.'\',true)" id="tags'.$entry->key.'">'.$readable;
 			echo '<textarea onblur="changeState(\''.$entry->key.'\',false)" onkeyup="handleEnter(event,\''.$entry->key.'\');" >'.$entry->filetags.' </textarea><textarea>'.$entry->filetags.' </textarea>';
@@ -289,6 +300,119 @@ foreach ($files as $category=>$entries){
 }
 
 echo '</div>';
+
+echo "
+<script>
+    var temp=document.getElementsByTagName('a');
+	var links=[];
+	
+	for (var i=0; i<temp.length;i++){
+		if (temp[i].onclick) continue;
+		if (temp[i].className=='image_link'){
+			links.push(temp[i]);
+		}
+	}
+	
+	for (var i=0; i<links.length;i++){
+		var link=links[i];
+		link.prev=false;
+		if (links[i-1]) {link.prev=links[i-1];}
+		link.next=false;
+		if (links[i+1]) {link.next=links[i+1];}
+		link.key=(link.title);
+		
+		link.onclick=function(){
+			showImage(this);
+			return false;
+		}
+	}
+	
+	var inImageMode=false;
+	function showImage(object){
+	
+		inImageMode=true;
+	
+		var key=object.key;
+		setPrev(object.prev);
+		setNext(object.next);
+		
+		window.replaceHash('image_'+key);
+		
+		var overlay=document.getElementById('overlay');
+		var mainurl='".$config->imageGetterURL."?key='+key+'&width=1000000&height=1000';
+		overlay.onclick=close;
+		overlay.style.display='block';
+		
+		var innerHTML='<img id=\"overlayImage\" src=\"'+mainurl+'\" style=\"max-width:100%;max-height:100%\">';
+		
+		if(key.substr(0,4)=='http'){
+			var innerHTML='<video controls=\"controls\"  autoplay=\"autoplay\" poster=\"'+(key.replace('.mp4','.preview.jpg'))+'\" width=\"100%\" height=\"100%\">'
+                         +'<source src=\"'+key+'\" type=\"video/mp4\" />'
+                         +'<source src=\"'+(key.replace('.mp4','.webm'))+'\" type=\"video/webm\" />'
+                         +'</video>';
+		}
+		
+		innerHTML+='<div id=\"menu\">'
+		+'<a href=\"getimage.php?key='+key+'&download=1\" target=\"_blank\" onclick=\"event.stopPropagation();\">".translate("download",true)."</a>'
+		+'<a href=\"?image='+key+'\" onclick=\"event.stopPropagation();\">".translate("image information",true)."</a>'
+		+'<a href=\"javascript:close();\">".translate("overview",true)."</a>'
+		+'</div>';
+		
+		overlay.innerHTML=innerHTML;
+		
+		var overlayImage=document.getElementById('overlayImage');
+		
+		if (overlayImage){
+			overlayImage.onclick=function(e){
+				showMenu(e);e.preventDefault();e.stopPropagation();return false;
+			}
+		}
+		
+	}
+	
+	var menuIsOpen=false;
+	function showMenu(e){
+		var menu=document.getElementById('menu');
+		if (menuIsOpen){
+			menuIsOpen=false;
+			menu.style.display='none';
+		} else {
+			menuIsOpen=true;
+			menu.style.display='block';
+			var top=e.clientY;
+			var left=e.clientX;
+			menu.style.left=left+'px';
+			menu.style.top=top+'px';
+		}
+	}
+	
+	function close(){
+		
+		inImageMode=false;
+		
+		var overlay=document.getElementById('overlay');
+		overlay.style.display='none';
+		setNext(false);
+		setPrev(false);
+		
+		onScroll()
+		
+		return false;
+	}
+	
+	var nextImage=false;
+	function setNext(value){
+		nextImage=value;
+	}
+	
+	var prevImage=false;
+	function setPrev(value){
+		prevImage=value;
+	}
+	
+  	document.onkeydown = keypressed;
+	
+</script>";
 
 $jumpNavi=array();
 
