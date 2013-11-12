@@ -17,7 +17,7 @@
 
 function processHash(direct){
 	var type=hash.substring(1,7);
-	if (type=="scroll" || type=="image_"){
+	if (type=="scroll"){
 				
 		var elementID=hash.substr(7);
 		var element=document.getElementById(elementID);
@@ -32,15 +32,6 @@ function processHash(direct){
 			window.setTimeout(function(){scrollToNew(position);}, 300);
 		}
 		
-	}
-	if (type=="image_"){
-		var elementID=hash.substr(7);
-		var element=document.getElementById(elementID);
-		if (!element) {
-			return;
-		}
-		element=element.getElementsByTagName('a')[0];
-		showImage(element);
 	}
 }
 
@@ -130,9 +121,6 @@ function keypressed (Ereignis) {
   	           if (nextlink){
   	           	  location.href=nextlink.href;
   				}
-  	 if(nextImage && showImage) {
-  		showImage(nextImage);
-  	}
   }
   
   if (Tastencode==37) {
@@ -140,14 +128,8 @@ function keypressed (Ereignis) {
   	           if (prevlink){
   	           	  location.href=prevlink.href;
   				}
-  	if(prevImage && showImage) {
-  		showImage(prevImage);
-  	}
   }
   if (Tastencode==27) {
-  	if (close){
-  		return close();
-  	}
   	var backlink=document.getElementById('backlink');
   	           if (backlink){
   	           	  location.href=backlink.href;
