@@ -2,14 +2,6 @@
 
 if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
 
-echo '
-<style>
- header {display:none}
- #breadcrumb {display:none}
- #visu {padding:0}
-</style>
-';
-
 //get the context from session. This is the last event which was visited
 
 @$contextPage=$_SESSION['last_page'];
@@ -20,7 +12,7 @@ $contextOK=false;
 //determine the state of the image (public? user has rights?)
 $state='non-existant';
 $contextQuery="$userQuery";
-if ($contextFolder) $contextQuery.=" AND replace(replace(replace(replace(lower(folder),' ',''),'_',''),'.',''),',','') LIKE '$contextFolder'";
+if ($contextFolder) $contextQuery.=" OR replace(replace(replace(replace(lower(folder),' ',''),'_',''),'.',''),',','') LIKE '$contextFolder'";
 $contextQuery.=' '.getFilterSQL($contextFilter);
 
 $search=mysql_query("SELECT filename,copyright,folder,tags,($userQuery) as hasRights,($contextQuery) as inContext FROM files WHERE md5(`key`)='$image'");
@@ -154,7 +146,7 @@ if ($state=='non-existant') {
 			$mainurl='';
 			echo '
 			
-<video controls="controls"  autoplay="autoplay" poster="'.str_replace('.m4v','.preview.jpg',$url).'" width="640" height="480">
+<video controls="controls"  autoplay="autoplay" poster="'.str_replace('.m4v','.preview.jpg',$url).'" width="640" height="480" title="2013-01-01 Neujahr 2013">
 <source src="'.$url.'" type="video/mp4" />
 <source src="'.str_replace('.m4v','.webm',$url).'" type="video/webm" />
 </video>			
@@ -165,7 +157,7 @@ if ($state=='non-existant') {
 		} else {
 		
 			$mainurl=$config->imageGetterURL.'?key='.$image.'&width=1000000&height=1000';
-			echo '<div id="imagediv"><img src="" id="theimage" /></div>';
+			echo '<div id="imagediv"><img src="" id="theimage" /><noscript><img src="'.$mainurl.'" id="theimage" style="opacity:1;width:100%" /></noscript></div>';
 			$thumbnail=$config->imageGetterURL.'?key='.$image.'&width=250&height=250&minimum=1';
 		}
 		
@@ -173,6 +165,20 @@ if ($state=='non-existant') {
 	
 		
 	$element=array();$element['link']='';$element['text']=basename($filename);$breadcrumb[]=$element;
+
+	if ($prev || $next) $functionBar.='<span class="seperator"></span>';
+	
+	if ($prev) {
+		$url='?image='.urlencode($prev);
+		$functionBar.='<a href="'.$url.'" id="prevlink"><img src="design/back1.png" alt="back" /></a>';
+	}
+	
+	echo '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;';
+	
+	if ($next) {
+		$url='?image='.urlencode($next);
+		$functionBar.='<a href="'.$url.'" id="nextlink"><img src="design/forward1.png" alt="forward" /></a>';
+	}
 	
 	echo '
 	<script>
@@ -189,15 +195,54 @@ if ($state=='non-existant') {
 					  		}
 				});
 		  }
+	
+	      var myWidth = 0, myHeight = 0;
+		  if( typeof( window.innerWidth ) == "number" ) {
+		    //Non-IE
+		    myWidth = window.innerWidth;
+		    myHeight = window.innerHeight;
+		  } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+		    //IE 6+ in "standards compliant mode"
+		    myWidth = document.documentElement.clientWidth;
+		    myHeight = document.documentElement.clientHeight;
+		  } 
 		
 		var image=document.getElementById("theimage");
 		var imagediv=document.getElementById("imagediv");
+		
+        var mHeight=myHeight-120;
+        imagediv.style.height=mHeight+"px";
 	        
 		if (image){
-						
-			image.src="";			
+			
+			image.src="";
+			
+			image.onload=function(){
+				var mHeight=myHeight-120;
+				var isHeight=(image.offsetHeight);
+				image.isHeight=isHeight;
+				if (isHeight>mHeight){
+					image.style.maxHeight=mHeight+"px";
+					imagediv.style.height=mHeight+"px";
+					imagediv.style.background="transparent";
+					
+				}
+				image.style.maxWidth="100%";
+				image.style.opacity=1;
+				
+			}
+			
 			image.src="'.$mainurl.'";
 			
+			var body=document.getElementsByTagName("body")[0];
+			
+			image.onclick=function(){
+				if (!image.isHeight) return image.onload();
+				image.style.maxWidth="1000000px";
+				image.style.maxHeight=image.isHeight+"px";
+				imagediv.style.height=image.isHeight+"px";
+				image.isHeight=undefined;
+			}
 		}
 		
 		function showExif(e){
@@ -246,10 +291,20 @@ if ($state=='non-existant') {
 			  
 		}
 		
-		function onResize(){
-			if (image) {
-				image.onload();
-				//image.onclick();
+		function shareOnFacebook(state){
+			
+			var text="'.translate("attention",true).': ";
+			if (state!="public") text+="'.translate("This has not been made public. If you share it on Facebook, it becomes available to everyone you share it with.").' ";
+			text+="'.translate("Please respect author\'s rights and the rights to the personal image when sharing photos on Facebook! Do you still want to share the image on facebook?").'";
+			
+			if (confirm(text)){
+				var reference=location.href;
+				
+				'.($config->local?('reference=reference.replace("http://localhost","'.$config->localReplacement.'");'):'').'
+				
+				var FBURL="http://www.facebook.com/sharer/sharer.php?u="+escape(reference);
+				var myWindow = window.open(FBURL, "Facebook", "width=780,height=200,toolbar=no,menubar=no,resizable=no,scrollbars=no,status=no");
+		 		myWindow.focus();
 			}
 		}
 	
@@ -262,6 +317,10 @@ if ($state=='non-existant') {
 		$functionBar='<span class="seperator notonsmall"></span>'.$functionBar;
 		$url='index.php?mode=slideshow&folder='.urlencode($folder).'&filter='.$filter.'&image='.$image;
 		$functionBar='<a href="'.$url.'" class="notonsmall"><img src="design/galleries1.png" alt="" />'.translate('slideshow',true).'</a>'.$functionBar;
+		
+		$functionBar='<span class="seperator notonsmall"></span>'.$functionBar;
+		$url='javascript:shareOnFacebook(\''.$state.'\');';
+		$functionBar='<a href="'.$url.'" class="notonsmall"><img src="design/share1.png" alt="" />'.translate('share',true).'</a>'.$functionBar;
 	}
 	
 	@$exif=parseExif($filename,$geo);
