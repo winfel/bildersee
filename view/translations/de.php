@@ -61,6 +61,8 @@ $translations['de']['see legal']='siehe Impressum';
 $translations['de']['search']='Suche';
 $translations['de']['with a codeword']='mit Kennwort';
 $translations['de']['Jump directly to a topic']='Direkt zu einem Thema springen';
+$translations['de']['images are shown on presenter']='Bilder werden angezeigt auf Präsentator';
+$translations['de']['switch back to local image display']='auf lokale Bildanzeige zurückwechseln';
 
 $translations['de']['January']='Januar';
 $translations['de']['February']='Februar';

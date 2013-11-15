@@ -9,6 +9,11 @@ if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securi
 @$contextFilter=$_SESSION['last_filter'];
 $contextOK=false;
 
+if (isset($_GET['target'])){
+	$target=$_GET['target'];
+	$_SESSION['last_target']=$target;
+}
+
 //determine the state of the image (public? user has rights?)
 $state='non-existant';
 $contextQuery="$userQuery";
@@ -156,9 +161,30 @@ if ($state=='non-existant') {
 				   
 		} else {
 		
+			//display of image
+			
 			$mainurl=$config->imageGetterURL.'?key='.$image.'&width=1000000&height=1000';
+			$thumbnail=$config->imageGetterURL.'?key='.$image.'&width=300&height=225';
+			
 			echo '<div id="imagediv"><img src="" id="theimage" /><noscript><img src="'.$mainurl.'" id="theimage" style="opacity:1;width:100%" /></noscript></div>';
-			$thumbnail=$config->imageGetterURL.'?key='.$image.'&width=250&height=250&minimum=1';
+			
+			if (isset($_SESSION['last_target']) && $_SESSION['last_target']){ //target
+				$target=$_SESSION['last_target'];
+				$message=translate('images are shown on presenter',true).' '.$target;
+				$message.= ' - <a href="?image='.$image.'&amp;target=">'.translate('switch back to local image display',true).'</a>';
+				
+				echo '<br />'.$message;
+				
+				$targetPath=$config->tempPath.'/'.$target;
+				file_put_contents ($targetPath,$image);
+			} 
+			
+			/*
+			$targetPath=$config->tempPath.'/spy';
+			file_put_contents ($targetPath,$image);
+			*/
+			
+			
 		}
 		
 	}

@@ -25,6 +25,7 @@ function preventInjection(){
 		$value=str_replace("'",'',$value);
 		$value=str_replace('"','',$value);
 		$value=str_replace("\\",'',$value);
+		$value=str_replace("/",'',$value);
 		
 		$_GET[$key]=$value;
 	
@@ -35,6 +36,7 @@ function preventInjection(){
 		$value=str_replace("'",'',$value);
 		$value=str_replace('"','',$value);
 		$value=str_replace("\\",'',$value);
+		$value=str_replace("/",'',$value);
 		
 		$_POST[$key]=$value;
 	

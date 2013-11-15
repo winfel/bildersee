@@ -8,6 +8,13 @@ $pageTitle=$config->pageTitle;
 $pageDescription='';
 $element=array();$element['link']='';$element['text']=translate('events',true);$breadcrumb[]=$element;
 
+$target='';
+
+if(isset($_GET['target'])){
+	$target=$_GET['target'];
+    $_SESSION['last_target']=$target;
+}
+
 if (!$config->local){
 	if (!$user){
 		echo '<h1>Willkommen! Welcome! Bienvenidos! Benvinguts!</h1>';
@@ -18,6 +25,12 @@ if (!$config->local){
 		
 		echo '<h1>'.$heading.'</h1>';
 	}
+}
+
+if (isset($_SESSION['last_target']) && $_SESSION['last_target']){
+	$target=$_SESSION['last_target'];
+	echo translate('images are shown on presenter',true).' '.$target;
+	echo ' - <a href="?target=">'.translate('switch back to local image display',true).'</a><br>&nbsp;<br>';
 }
 
 echo '<script>
