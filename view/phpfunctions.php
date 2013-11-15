@@ -173,7 +173,7 @@ function getReadableTags($string,$path=false){global $people,$config;
 	
 	$result=implode($result,', ');
 	
-	if (!$result) $result='untagged';
+	if (!$result) $result='';
 	
 	$result='<span class="'.$mode.'">'.$result.'</span>';
 	return $result;

@@ -44,6 +44,7 @@ $translations['de']['an online photo gallery']='Eine Fotogalerie im Netz';
 $translations['de']['search result']='Suchergebnis';
 $translations['de']['taken by']='erstellt von';
 $translations['de']['and']='und';
+$translations['de']['also show images taken by other photographers']='Auch die Bilder von anderen Fotografen anzeigen';
 $translations['de']['images']='Bilder';
 $translations['de']['on']='auf';
 $translations['de']['download']='Herunterladen';

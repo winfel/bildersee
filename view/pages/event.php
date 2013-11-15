@@ -24,6 +24,7 @@ $hasPublic=false;
 $folderGiven=$folder!='%' && $folder!='%%';
 $tagGiven=stripos($filter,'tag_')!==false;
 $codewordGiven=stripos($filter,'codeword_')!==false;
+$restrictedToAuthor=stripos($filter,'copyright_')!==false;
 
 $mayDownload=!$config->local && $folderGiven && ($user||$codewordGiven);
 
@@ -86,7 +87,16 @@ while ($line=array_shift($search)){
 		$codeword=between('codeword_',' ',$line->tags);
 		$autocodeword=(stripos($codeword,'direct') !==false);
 	}
-	$copyrights[ucwords_new(str_replace('_',' ',$line->copyright))]=true;  //TODO transfer this to update
+	
+	if (!isset($copyrights[$line->copyright])) {
+		$copyReadable=ucwords_new(str_replace('_',' ',$line->copyright));
+		if (!$restrictedToAuthor) {
+			$newFilter=trim($filter.' copyright_'.$line->copyright);
+			$copyrights[$line->copyright]='<a href="?folder='.urlencode($folder).'&amp;filter='.urlencode($newFilter).'">'.$copyReadable.'</a>';
+		} else {
+			$copyrights[$line->copyright]=$copyReadable;
+		}
+	}
 
 }
 
@@ -155,13 +165,11 @@ function onScroll(){
 
 if ($folderGiven && isset($folderReadable)){echo '<h1>'.$pageTitle.' <nobr>('.get_date($folderReadable).')</nobr></h1>';}
 
-$copyrights=array_keys($copyrights);
-
 $byString='';
 
 switch (count($copyrights)){
 	case 0: break;
-	case 1: $byString=translate('taken by').' '.$copyrights[0]; break;
+	case 1: $byString=translate('taken by').' '.array_pop($copyrights); break;
 	default:
 	    $last=' '.translate('and').' '.array_pop($copyrights);
 		$first=implode(', ',$copyrights);
@@ -171,6 +179,16 @@ switch (count($copyrights)){
 
 echo $byString;
 $pageDescription.=$byString;
+
+if ($restrictedToAuthor) {
+	$temp=explode(' ',$filter);
+	foreach ($temp as $k=>$v){
+		if (stripos($v,'copyright_')!==false) unset($temp[$k]);
+	}
+	$newFilter=trim(implode(' ',$temp));
+    $link='?folder='.urlencode($folder).'&amp;filter='.urlencode($newFilter);
+	echo ' - <a href="'.$link.'">'.translate('also show images taken by other photographers',true).'</a>';
+}
 
 if (!isset($files) || !$files) $files=array();
 
