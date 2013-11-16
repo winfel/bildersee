@@ -2,6 +2,13 @@
 
 if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
 
+if (isset($_GET['target'])){
+	$target=$_GET['target'];
+	$_SESSION['last_target']=$target;
+}
+
+@$target=$_SESSION['last_target'];
+
 $pageTitle=translate('search result',true);
 $pageDescription=translate('an online photo gallery',true);
 
@@ -100,7 +107,7 @@ while ($line=array_shift($search)){
 
 }
 
-if (isset($thumb)) $thumbnail=$config->imageGetterURL.'?key='.$thumb.'&width=250&height=250&minimum=1';
+if (isset($thumb)) $thumbnail=$config->imageGetterURL.'?key='.$thumb.'&size=thumb';
 
 if (!isset($files)){
 	$files=array();
@@ -178,7 +185,7 @@ switch (count($copyrights)){
 }
 
 echo $byString;
-$pageDescription.=$byString;
+$pageDescription.=strip_tags($byString);
 
 if ($restrictedToAuthor) {
 	$temp=explode(' ',$filter);
@@ -286,7 +293,7 @@ foreach ($files as $category=>$entries){
 		}
 		
 		$url='?image='.urlencode($entry->key);
-		$imgurl=$config->imageGetterURL.'?key='.$entry->key.'&amp;width=300&amp;height=225';
+		$imgurl=$config->imageGetterURL.'?key='.$entry->key.'&amp;size=preview';
 				
 		$readable=getReadableTags($entry->tags,$entry->sortstring);
 		

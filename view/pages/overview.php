@@ -112,7 +112,7 @@ while ($entry=array_shift($search)){
 	echo'<div class="overviewframe">
 	<div class="albuminfo">
 	<a href="?folder='.urlencode($entry->folderID).'&amp;filter='.$filter.'" style="display:block;padding-right:10px">
-	<img width="170" height="170" src="design/loading.jpg" title="'.$config->imageGetterURL.'?key='.$entry->thumb.'&amp;width=170&amp;height=170&amp;minimum=1">
+	<img width="170" height="170" src="design/loading.jpg" title="'.$config->imageGetterURL.'?key='.$entry->thumb.'&amp;size=smallthumb">
 	
 	<span class="readable">'.$readable.'</span> <br />
 	<span class="date">'.get_date($entry->folder).' '.$entry->category.'</span>

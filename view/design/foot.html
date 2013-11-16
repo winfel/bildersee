@@ -91,14 +91,25 @@ if (isset($functionBar2) && $functionBar2) {
 
 	var links=document.getElementsByTagName('a');
 	
+	var target='<?php if (isset($target)) echo $target;?>';
+	
 	for (var i in links){
 		var link=links[i];
 		if (link.onclick) continue;
 		link.onclick=function(e){
 			if(e.which==2) return true;
 			if(e.button==2) return true;
-			location.href=this.href;
-			return false;
+			
+			if (target && this.href.search('image=')!==-1) {
+				server_query(this.href,function(value){
+				  msg="<?php echo translate('images are shown on presenter',true).' '.$target; ?>";
+				  message(msg);
+				});
+				return false;
+			} else {
+				location.href=this.href;
+				return false;
+			}
 		}
 	}
 	
