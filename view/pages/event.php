@@ -40,6 +40,8 @@ $search=getImages($folder,$reverse);
 $copyrights=array();
 $count=0;
 $hasThumb=false;
+
+$autoTopicTags=array();
    
 while ($line=array_shift($search)){
 		
@@ -77,6 +79,9 @@ while ($line=array_shift($search)){
 	
 	if ($folderGiven){
 		$category=$line->subfolder;
+		if (!$line->subfolder && substr(basename($line->filename),4,1)=='-'){
+			$category=substr(basename($line->filename),0,10);
+		}
 	} else {
 		$category=pretty($line->folderReadable);
 		if ($line->subfolder) $category.=' - '.$line->subfolder;

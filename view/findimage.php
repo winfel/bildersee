@@ -8,20 +8,29 @@ $key=isset($_GET['key'])?$_GET['key']:false;
 
 if (!$key) die ('ERROR! No image!');
 
-$folder=mysql_query("SELECT folder,subfolder FROM files WHERE $userQuery AND md5(`key`)='$key'");
+$folder=mysql_query("SELECT folder,subfolder,filename FROM files WHERE $userQuery AND md5(`key`)='$key'");
 
 if (!$folder=mysql_fetch_object($folder)) die ('Image not found!');
 
 $topic=$folder->subfolder;
+
+if (!$topic && substr(basename($folder->filename),4,1)=='-'){
+	$topic=substr(basename($folder->filename),0,10);
+}
+
 $folder=$folder->folder;
 
 
-$images=mysql_query("SELECT md5(`key`) as `key`,subfolder FROM files WHERE $userQuery AND `folder`='$folder' ORDER BY sortstring");
+$images=mysql_query("SELECT md5(`key`) as `key`,subfolder,filename FROM files WHERE $userQuery AND `folder`='$folder' ORDER BY sortstring");
 
 $topics=array();
 while ($image=mysql_fetch_object($images)){
+	$category=$image->subfolder;
+	if (!$image->subfolder && substr(basename($image->filename),4,1)=='-'){
+			$category=substr(basename($image->filename),0,10);
+		}
 	
-	@$topics[$image->subfolder]++;
+	@$topics[$category]++;
 	
 }
 
