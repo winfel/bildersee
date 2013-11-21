@@ -41,7 +41,8 @@ $copyrights=array();
 $count=0;
 $hasThumb=false;
 
-$autoTopicTags=array();
+$catTagList=array();
+$peopleList=false;
    
 while ($line=array_shift($search)){
 		
@@ -77,10 +78,39 @@ while ($line=array_shift($search)){
 	}
 	
 	
+	
 	if ($folderGiven){
 		$category=$line->subfolder;
 		if (!$line->subfolder && substr(basename($line->filename),4,1)=='-'){
 			$category=substr(basename($line->filename),0,10);
+			
+			
+			foreach (explode(' ',$line->filetags) as $ele){
+				if ($ele==' ') continue;
+				if ($ele=='') continue;
+				if ($ele=='public') continue;
+				if ($ele=='privat') continue;
+				if ($ele=='thumb') continue;
+				if ($ele=='panorama') continue;
+				if ($ele=='schwarz-weiß') continue;
+				
+				if (!$peopleList){
+					$query="SELECT * FROM people";
+			
+					$psearch=mysql_query($query);
+					
+					$peopleList=array();
+					
+					while($pline=mysql_fetch_object($psearch)){
+						$peopleList[$pline->tag]=true;
+					}
+				}
+				if (isset($peopleList[$ele])) continue;
+				if (stripos($ele,'copyright_')!==false) continue;
+				@$catTagList[$category][ucwords_new(str_replace('_',' ',$ele))]++; 
+			}
+			
+			
 		}
 	} else {
 		$category=pretty($line->folderReadable);
@@ -123,6 +153,17 @@ if (!isset($files)){
 $catOnPage=array();
 $perPage=$config->perPage;
 $i=1;$counter=0;
+
+foreach ($catTagList as $old=>$data){
+	$tagstring='';
+	arsort($data);
+	$data=array_slice($data, 0, 5, true);
+	$tagstring=implode(', ',array_keys($data));
+	if ($tagstring) $tagstring=" ($tagstring)";
+	$temp=$files[$old];
+	unset($files[$old]);
+	$files[trim($old.$tagstring)]=$temp;
+}
 
 foreach($files as $category=>$elements){
 	$thisCount=count($elements);
@@ -181,7 +222,7 @@ $byString='';
 
 switch (count($copyrights)){
 	case 0: break;
-	case 1: $byString=translate('taken by').' '.array_pop($copyrights); break;
+	case 1: $byString=translate('taken by').' '.ucwords_new(str_replace('_',' ',array_pop(array_keys($copyrights)))); break;
 	default:
 	    $last=' '.translate('and').' '.array_pop($copyrights);
 		$first=implode(', ',$copyrights);
