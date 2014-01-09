@@ -1,3 +1,8 @@
+<style>
+ header {display:none}
+ #breadcrumb {display:none}
+ #visu {padding:5px 0 0 0}
+</style>
 <?php
 
 if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
@@ -237,7 +242,7 @@ if ($state=='non-existant') {
 		var image=document.getElementById("theimage");
 		var imagediv=document.getElementById("imagediv");
 		
-        var mHeight=myHeight-120;
+        var mHeight=myHeight-40;
         imagediv.style.height=mHeight+"px";
 	        
 		if (image){
@@ -245,7 +250,7 @@ if ($state=='non-existant') {
 			image.src="";
 			
 			image.onload=function(){
-				var mHeight=myHeight-120;
+				var mHeight=myHeight-40;
 				var isHeight=(image.offsetHeight);
 				image.isHeight=isHeight;
 				if (isHeight>mHeight){
