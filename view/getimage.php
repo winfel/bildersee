@@ -30,7 +30,7 @@
 		switch ($size){
 			case 'smallthumb':$width=170;$height=170;$minimum='minimum';$download=false;break;
 			case 'thumb':$width=250;$height=250;$minimum='minimum';$download=false;break;
-			case 'preview':$width=300;$height=225;$minimum='';$download=false;break;
+			case 'preview':$width=450;$height=338;$minimum='';$download=false;break;
 			default:$width=1000000;$height=1080;$minimum='';$download=false;break;
 		}
 	}
@@ -50,13 +50,6 @@
 	if (!file_exists($getFile)) {
 		$getFile=$config->viewPath.'/design/missingimage.jpg';
 	}
-	
-	//header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-	$expires=date("D, d M Y H:i:s",time() + (3 * 60 * 60)).' GMT';
-	header("Expires: $expires");  //in one week
-	header("Content-type: image/jpeg");
-	//echo $getFile;
-	
 	
 	if ($download) header('Content-Disposition: attachment; filename="'.basename($getFile).'"');
 	
@@ -142,10 +135,14 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
 	 }     
 	 
 	 if (file_exists($cachePath)) {
-	 	header ('location: '.$config->cacheURL.'/'.basename($cachePath));die('');
+	 	header ('location: '.$config->cacheURL.'/'.basename($cachePath));die('FROM CACHE');
 	 } 
 	 
 	 // END CACHING
+		
+	 $expires=date("D, d M Y H:i:s",time() + (3 * 60 * 60)).' GMT';
+	 header("Expires: $expires");  //in one week
+	 header("Content-type: image/jpeg");	
 		
 	 ini_set('memory_limit', '1024M');set_time_limit(60);ini_set('gd.jpeg_ignore_warning', 1);               
 	 
