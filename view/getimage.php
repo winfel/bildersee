@@ -25,7 +25,7 @@
 	if (isset($_GET['height'])) $height=$_GET['height'];
 	if (isset($_GET['minimum'])) $minimum='minimum'; else $minimum='';
 	if (isset($_GET['download'])) $download=true; else $download=false;
-	
+
 	if (!$width&&!$height&&!$download){
 		switch ($size){
 			case 'smallthumb':$width=170;$height=170;$minimum='minimum';$download=false;break;
@@ -35,7 +35,7 @@
 		}
 	}
 	
-	if (!$userIsAdmin && $width==0){
+	if (!$userIsAdmin && $width==0 &&!$download){
 		$width=10000000; $height=10000000;
 	}
 	
