@@ -21,6 +21,10 @@ seperateIfNot('events');
 if ($user){
 	 echo '<a href="?mode=tags" '.isActive('tags').' id="button_tags"><img src="design/tags1.png" alt="">'.translate('tags',true).'</a>';
 	 seperateIfNot('tags');
+	 
+	 echo '<a href="?mode=people" '.isActive('people').' id="button_tags"><img src="design/login1.png" alt="">'.translate('people',true).'</a>';
+	 seperateIfNot('people');	 
+	 
 } 
 
 if (!$config->local){

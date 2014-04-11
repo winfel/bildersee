@@ -50,7 +50,7 @@ foreach($topics as $category=>$thisCount){
 
 $page=$catOnPage[$topic];
 
-$folder=str_replace('_','',str_replace(' ','',strtolower($folder)));
+$folder=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($folder)))));
 
 header ("Location: index.php?folder=".urlencode($folder).'&page='.$page.'&filter=#scroll'.$key);
 

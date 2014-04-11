@@ -576,6 +576,7 @@ $allowed['Transform']=true;
 $allowed['FlashWarning']=true;  
 
 $readables=array();
+$readables['FileName']='Filename';
 $readables['FileSize']='File Size';
 $readables['ImageSize']='Dimensions';
 $readables['DateTimeOriginal']='Creation Date';
@@ -591,8 +592,13 @@ $readables['ISO']='ISO Film Speed';
 $readables['Flash']='Flash';
 $readables['SubjectDistance']='Subject Distance';
 $readables['ObjectDistance']='Subject Distance';
-   $readables['Artist']='Camera Owner';
+$readables['Artist']='Camera Owner';
 $readables['Copyright']='Copyright Notice';
+$readables['OwnerName']='Owner';
+
+foreach ($readables as $key=>$value){
+	$allowed[$key]=true;
+}
 
 $skipped=array();
 $metadataRaw=array();
@@ -649,9 +655,9 @@ foreach ($metadataRaw as $key=>$value){
 
 $output.='</td></table>';
 
-/*
+//*
 foreach ($skipped as $key=>$value){
-	echo'<b title="'.$value.'" style="display:inline;font-size:70%;font-weight:normal">'.$key.', </b>';
+	echo'<b title="'.$value.'" style="display:inline;font-size:70%;font-weight:normal">'.$key.':'.$value.' , </b><br/>';
 }
 //*/
 

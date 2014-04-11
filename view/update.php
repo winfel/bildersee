@@ -25,7 +25,8 @@
      
   writeLog('update','Updated called');
  
-  
+  //tagStatistics();
+  //die('Jupp');
   
   if (tableExists($runTable)){
      if (tableAge($runTable)>30*60) 
@@ -57,6 +58,40 @@
   final_cleanup();
   mysql_query("truncate table $resultCacheTable");
   writeLog('update','Database has been updated');
+  
+  //tagStatistics();
+  
+  function tagStatistics(){global $runTable;
+  
+  	$stats=array();
+  	$query=mysql_query("SELECT * FROM files ORDER BY sortstring DESC");
+  	$i=1;
+  	while ($file=mysql_fetch_object($query)){
+  		
+  		$i=$i*0.999;
+  		$value=$i;
+  		//$value++;
+  		
+  		$tags=$file->tags;
+  		
+  		$tags=explode(' ',$tags);
+  		foreach ($tags as $tag){
+  			if ($tag=='archiv') continue;
+  			if ($tag=='public') continue;
+  			if ($tag=='privat') continue;
+  			if (stripos($tag,'copyright_')!==false) continue;
+  			if (stripos($tag,'codeword_')!==false) continue;
+  			if (stripos($tag,'codeword_')!==false) continue;
+  			if (stripos($tag,'year_')!==false) continue;
+  			@$stats[$tag]+=$value;
+  		}
+  		
+  	}
+  	arsort($stats);
+  	
+  	var_dump($stats);
+  
+  }
   
   function final_cleanup(){
   	

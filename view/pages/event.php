@@ -222,7 +222,12 @@ $byString='';
 
 switch (count($copyrights)){
 	case 0: break;
-	case 1: $byString=translate('taken by').' '.ucwords_new(str_replace('_',' ',array_pop(array_keys($copyrights)))); break;
+	
+	case 1: 
+	
+	$element=array_keys($copyrights);
+	$element=$element[0];
+	$byString=translate('taken by').' '.ucwords_new(str_replace('_',' ',$element)); break;
 	default:
 	    $last=' '.translate('and').' '.array_pop($copyrights);
 		$first=implode(', ',$copyrights);
@@ -327,7 +332,7 @@ foreach ($files as $category=>$entries){
 	
 	if ($catOnPage[$category]!=$page) continue;
 		
-	if ($category) echo '<h2 id="'.urlencode($category).'">'.$category.'</h2>';
+	if ($category && count($catOnPage)>1) echo '<h2 id="'.urlencode($category).'">'.$category.'</h2>';
 	
 	foreach ($entries as $entry){
 		

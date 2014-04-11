@@ -5,7 +5,7 @@ if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securi
 
 if (!$user) die();
 
-$activePart='tags';
+$activePart='people';
 $element=array();$element['link']='';$element['text']='Tags';$breadcrumb[]=$element;
 
 $pageTitle=translate('people',true);

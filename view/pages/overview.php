@@ -17,7 +17,7 @@ if(isset($_GET['target'])){
 
 if (!$config->local){
 	if (!$user){
-		echo '<h1>Willkommen! Welcome! Bienvenidos! Benvinguts!</h1>';
+		echo '<h1>Bonventa! Willkommen! Welcome! ¡Bienvenidos! Benvinguts! Ongi etorri! おかえり</h1>';
 	} else {
 		$heading=translate('Hello #NAME#. Welcome to #PAGETITLE#!');
 		$heading=str_replace('#NAME#',$user,$heading);
