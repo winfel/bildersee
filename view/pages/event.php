@@ -41,8 +41,9 @@ $copyrights=array();
 $count=0;
 $hasThumb=false;
 
-$catTagList=array();
 $peopleList=false;
+$imageTags=array();
+
    
 while ($line=array_shift($search)){
 		
@@ -62,7 +63,7 @@ while ($line=array_shift($search)){
 		}
 		
 		if ($folderGiven){
-			if ($tagGiven) addToBreadcrumb('',$pageTitle);
+			if (!$tagGiven) addToBreadcrumb('',$pageTitle);
 			else addToBreadcrumb('?folder='.urlencode($folder),$pageTitle);
 		} 
 		
@@ -81,41 +82,42 @@ while ($line=array_shift($search)){
 	
 	if ($folderGiven){
 		$category=$line->subfolder;
-		if (!$line->subfolder && substr(basename($line->filename),4,1)=='-'){
-			$category=substr(basename($line->filename),0,10);
-			
-			
-			foreach (explode(' ',$line->filetags) as $ele){
-				if ($ele==' ') continue;
-				if ($ele=='') continue;
-				if ($ele=='public') continue;
-				if ($ele=='privat') continue;
-				if ($ele=='thumb') continue;
-				if ($ele=='panorama') continue;
-				if ($ele=='schwarz-weiß') continue;
-				
-				if (!$peopleList){
-					$query="SELECT * FROM people";
-			
-					$psearch=mysql_query($query);
-					
-					$peopleList=array();
-					
-					while($pline=mysql_fetch_object($psearch)){
-						$peopleList[$pline->tag]=true;
-					}
-				}
-				if (isset($peopleList[$ele])) continue;
-				if (stripos($ele,'copyright_')!==false) continue;
-				@$catTagList[$category][ucwords_new(str_replace('_',' ',$ele))]++; 
-			}
-			
-			
-		}
 	} else {
 		$category=pretty($line->folderReadable);
-		if ($line->subfolder) $category.=' - '.$line->subfolder;
+	    if ($line->subfolder) $category.=' - '.$line->subfolder;
 	}
+	
+	foreach (explode(' ',$line->tags) as $ele){
+		if ($ele==' ') continue;
+		if ($ele=='') continue;
+		if ($ele=='public') continue;
+		if ($ele=='privat') continue;
+		if ($ele=='auswahl') continue;
+		if ($ele=='thumb') continue;
+		if ($ele=='archiv') continue;
+		if (stripos($ele,'copyright_')!==false) continue;
+		if (stripos($ele,'codeword_')!==false) continue;
+		
+		if (!$peopleList){
+			$query="SELECT * FROM people";
+	
+			$psearch=mysql_query($query);
+			
+			$peopleList=array();
+			
+			while($pline=mysql_fetch_object($psearch)){
+				$peopleList[$pline->tag]=true;
+			}
+		}
+		
+		if (isset($peopleList[$ele])){
+			 //if ($user) @$imageTags[$ele]++;
+			 continue;
+		} else {
+			@$imageTags[$ele]++;
+		}
+		
+	}	  
 	
 	$files[$category][]=$line;
 	$codewordPossible=$codewordPossible || (stripos($line->tags,'codeword_') !==false);
@@ -154,16 +156,6 @@ $catOnPage=array();
 $perPage=$config->perPage;
 $i=1;$counter=0;
 
-foreach ($catTagList as $old=>$data){
-	$tagstring='';
-	arsort($data);
-	$data=array_slice($data, 0, 5, true);
-	$tagstring=implode(', ',array_keys($data));
-	if ($tagstring) $tagstring=" ($tagstring)";
-	$temp=$files[$old];
-	unset($files[$old]);
-	$files[trim($old.$tagstring)]=$temp;
-}
 
 foreach($files as $category=>$elements){
 	$thisCount=count($elements);
@@ -216,6 +208,7 @@ function onScroll(){
 }
 </script>';
 
+
 if ($folderGiven && isset($folderReadable)){echo '<h1>'.$pageTitle.' <nobr>('.get_date($folderReadable).')</nobr></h1>';}
 
 $byString='';
@@ -238,6 +231,7 @@ switch (count($copyrights)){
 echo $byString;
 $pageDescription.=strip_tags($byString);
 
+
 if ($restrictedToAuthor) {
 	$temp=explode(' ',$filter);
 	foreach ($temp as $k=>$v){
@@ -248,6 +242,7 @@ if ($restrictedToAuthor) {
 	echo ' - <a href="'.$link.'">'.translate('also show images taken by other photographers',true).'</a>';
 }
 
+
 if (!isset($files) || !$files) $files=array();
 
 $navi=$count.' '.translate('images').'&nbsp;&nbsp;&nbsp;';
@@ -255,7 +250,7 @@ $navi=$count.' '.translate('images').'&nbsp;&nbsp;&nbsp;';
 if (count($files)>1){
 
 	$navi.='<select onchange="setCategory(this.value);">';
-	$navi.='<option>'.translate('Jump directly to a topic').'  </option>';
+	$navi.='<option value="">'.translate('Jump directly to a topic').'  </option>';
 	
 	foreach(array_keys($files) as $category){
 		$navi.='<option value="'.$catOnPage[$category].'###'.urlencode($category).'">'.$category.'  </option>';
@@ -264,9 +259,28 @@ if (count($files)>1){
 	$navi.='</select>&nbsp;&nbsp;&nbsp;';
 	
 
-}		
+}
+
+arsort($imageTags);
+
+foreach ($imageTags as $k=>$v){
+	if ($v==$count) unset($imageTags[$k]);
+}
+
+if($imageTags || $tagGiven){
+	$navi.='<select onchange="setTag(this.value);">';
+	$navi.='<option value="">'.translate('Filter by tag').'  </option>';
+	if ($folderGiven) $navi.='<option value="">'.translate('remove filter',true).'  </option>';
+	foreach ($imageTags as $k=>$v){
+		$readable=ucwords_new(str_replace('_',' ',$k)).' ('.$v.')';
+		$navi.='<option value="'.$k.'">'.$readable.'  </option>';
+	}
+	$navi.='</select>&nbsp;&nbsp;&nbsp;';
+} 
 
 $functionBar=$navi;$functionBar2=$navi;
+
+if ($navi) echo '<br><br><p>'.$navi.'</p>';
 
 if ($mayDownload) {
 	$functionBar='<a href="?folder='.urlencode($folder).'&amp;filter='.$filter.'&amp;mode=download"><img src="design/download1.png" alt="" />'.translate('download',true).'</a><span class="seperator"></span>'.$navi;
@@ -501,6 +515,18 @@ function setCategory(data){
 		var url="?folder='.$folder.'&page="+page+"&filter='.$filter.'#scroll"+cat;
 		window.location.href=url;
 	}
+}
+
+
+function setTag(data){
+	if (!data) {
+		var filter="";
+	} else {
+		var filter="'.(($filter)?$filter."%20":"").'tag_"+data;
+	}
+	
+	var url="?folder='.$folder.'&filter="+filter;
+	window.location.href=url;
 }
 
 function showAddress(){
