@@ -34,6 +34,7 @@ $translations['de']['gallery']='Galerie';
 $translations['de']['galleries']='Galerien';
 $translations['de']['events']='Ereignisse';
 $translations['de']['tags']='Tags';
+$translations['de']['people']='Personen';
 $translations['de']['Info / Legal']='Impressum';
 $translations['de']['Legal Information | About us']='Impressum';
 $translations['de']['login']='anmelden';
@@ -61,6 +62,8 @@ $translations['de']['see legal']='siehe Impressum';
 $translations['de']['search']='Suche';
 $translations['de']['with a codeword']='mit Kennwort';
 $translations['de']['Jump directly to a topic']='Direkt zu einem Thema springen';
+$translations['de']['Filter by tag']='Nach Tag filtern';
+$translations['de']['remove filter']='Filter entfernen';
 $translations['de']['images are shown on presenter']='Bilder werden angezeigt auf Präsentator';
 $translations['de']['switch back to local image display']='auf lokale Bildanzeige zurückwechseln';
 
@@ -123,6 +126,8 @@ $translations['de']['download event as ZIP']='Ereignis als ZIP herunterladen';
 $translations['de']['Here you can download the entire event in one big ZIP file.']='Du kannst hier das komplette Ereignis in einer großen ZIP-Datei herunterladen.';
 $translations['de']['The download may take very long depending on your internet connection.']='Der Download kann je nach Internetverbindung sehr lange dauern.';
 $translations['de']['Please only donwload the ZIP file, if you really need all photos. If you are just interested in a few shots, please use the individual image download instead.']='Bitte lade die ZIP-Datei nur herunter, wenn du wirklich alle Fotos herunterladen möchtest. Wenn du nur Interesse eine einigen wenigen Aufnahmen hast, verwende bitte die individuelle Herunterladefunktion der Bilder.';
+
+$translations['de']['the most crecent tags']='die aktuellsten Tags';
 
 //
 
