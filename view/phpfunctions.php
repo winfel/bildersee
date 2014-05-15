@@ -652,7 +652,7 @@ function getImages($folder,$reverse=false){global $userQuery,$filterSQL;
 
 	$reverse=($reverse)?'DESC':'';
 
-	$query="SELECT md5(`key`) as `key`,files.filename as filename, files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder as folderReadable,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE (($userQuery) AND replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') LIKE '$folder' $filterSQL) ORDER BY sortstring $reverse";
+	$query="SELECT md5(`key`) as `key`,files.filename as filename, files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder as folderReadable,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE (($userQuery) AND replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') LIKE '$folder' $filterSQL) ORDER BY sortstring $reverse LIMIT 20000";
 	
 	$search=mysql_query($query);
 	
@@ -667,7 +667,7 @@ function getImages($folder,$reverse=false){global $userQuery,$filterSQL;
 
 function getAlbums(){global $userQuery,$filterSQL;
 
-	$search=mysql_query("SELECT DISTINCT folder,category, `key` AS thumb, replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') as folderID FROM files WHERE $userQuery AND SUBSTR(folder,1,4)<'9' $filterSQL GROUP BY folder ORDER BY folder DESC");
+	$search=mysql_query("SELECT DISTINCT folder,category, `key` AS thumb, replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') as folderID, filename FROM files WHERE $userQuery AND SUBSTR(folder,1,4)<'9' $filterSQL GROUP BY folder ORDER BY folder DESC");
 	
 	$output=array();
 	
