@@ -655,7 +655,7 @@ foreach ($metadataRaw as $key=>$value){
 
 $output.='</td></table>';
 
-//*
+/*
 foreach ($skipped as $key=>$value){
 	echo'<b title="'.$value.'" style="display:inline;font-size:70%;font-weight:normal">'.$key.':'.$value.' , </b><br/>';
 }
