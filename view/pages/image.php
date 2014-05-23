@@ -380,8 +380,8 @@ if ($state=='non-existant') {
   
   // Prefetching of previous and next image
   
-  $nextURL=$config->imageGetterURL.'?key='.$next.'&width=1000000&height=1000';	
-  $prevURL=$config->imageGetterURL.'?key='.$prev.'&width=1000000&height=1000';	
+  $nextURL=$config->imageGetterURL.'?key='.$next;	
+  $prevURL=$config->imageGetterURL.'?key='.$prev;	
   
   $legalShort.= '<img src="'.$nextURL.'" width="1" height="1" />';
   $legalShort.= '<img src="'.$prevURL.'" width="1" height="1" />';

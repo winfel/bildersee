@@ -66,9 +66,9 @@
 	 if (!isset($text)) {
 	 	$copyright=ucwords_new(str_replace('_',' ',$copyright));
 	 	if ($copyright=='...'){
-	 		$copyright=$config->pageTitle;
+	 		$copyright='';
 	 	}
-	 	$text=chr(169).' '.utf8_decode($copyright);
+	 	$text=utf8_decode($copyright);
 	 	if ($copyright=='none') $text='';
 	 	
 	 }
@@ -202,11 +202,11 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
 	 
 	 if (!$minimum) {
 	 	
-	 	$size=($newwidth/1200*13);
+	 	$size=($newwidth/1200*17);
 	 	$offset=($newwidth/1200*10);
 	 	
-	 	if($size<8 || $offset<5){
-	 		$size=8;$offset=5;
+	 	if($size<10 || $offset<7){
+	 		$size=10;$offset=7;
 	 	}
 	 	
 	 	// Set the enviroment variable for GD
@@ -215,12 +215,14 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
 		// Name the font to be used (note the lack of the .ttf extension)
 		$font = 'design/MeriendaOne-Regular';
 	 	
-	 	$color = imagecolorresolve($temp, 0, 0, 0);
+	 	$color = imagecolorresolvealpha($temp, 0, 0, 0,63);
+	 	/*
 	 	imagefttext($temp, $size, 0, $offset, $newheight-$offset+1, $color, $font, $text);
 	 	imagefttext($temp, $size, 0, $offset, $newheight-$offset-1, $color, $font, $text);
 	 	imagefttext($temp, $size, 0, $offset-1, $newheight-$offset, $color, $font, $text);
 	 	imagefttext($temp, $size, 0, $offset+1, $newheight-$offset, $color, $font, $text);
-	 	$color = imagecolorresolve($temp, 255, 255, 255);
+	 	*/
+	 	$color = imagecolorresolvealpha($temp, 255, 255, 255,34);
 	 	imagefttext($temp, $size, 0, $offset, $newheight-$offset, $color, $font, $text);
 	
 		 //show a play icon
