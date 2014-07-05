@@ -373,6 +373,7 @@ function getFilterSQL($filter){
  	
  	if ($selection=='www') return $filterSQL;
  	if ($selection=='localhost') return $filterSQL;
+ 	if ($selection=='148') return $filterSQL;
  	
  	$filterSQL.=" AND concat(replace(filename,'/',' '),' ',files.tags,' ') LIKE '% $selection %'";
  
@@ -569,7 +570,9 @@ function cleanupCache(){global $config,$user;
 		if ($filename[0]=='.') continue;
 		$filename=$path.'/'.$filename;
 		$age=floor((time()-filemtime($filename))/60/60/24);
-		if ($age>=7){
+		if ($age>=14){ // check files older than 14 days
+			$size=filesize($filename);
+			if ($size<100*1024) continue; // do not check small files
 			@unlink($filename);
 			$i++;
 		}

@@ -297,6 +297,10 @@ ul {margin-left:40px}
 #visu .private {color:#CC7777}
 #visu .public {color:#77CC77}
 
+.overviewframe {
+	height:260px;float:left;width:200px
+}
+
 
 #visu .albuminfo{
 	font-size:13px;text-align:left;cursor:pointer;overflow:hidden;
@@ -458,9 +462,7 @@ small {
 	height:16px;
 }
 
-.overviewframe {
-	height:260px;float:left;width:200px
-}
+
 
 #overlay {
 	display:none;

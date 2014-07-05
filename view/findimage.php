@@ -8,7 +8,11 @@ $key=isset($_GET['key'])?$_GET['key']:false;
 
 if (!$key) die ('ERROR! No image!');
 
-$folder=mysql_query("SELECT folder,subfolder,filename FROM files WHERE $userQuery AND md5(`key`)='$key'");
+@$contextFilter=$_SESSION['last_filter'];
+$filterTemp=substr(getFilterSQL($contextFilter),5);
+if (!$filterTemp) $filterTemp='0';
+
+$folder=mysql_query("SELECT folder,subfolder,filename FROM files WHERE (($userQuery) OR ($filterTemp)) AND md5(`key`)='$key'");
 
 if (!$folder=mysql_fetch_object($folder)) die ('Image not found!');
 
@@ -20,8 +24,12 @@ if (!$topic && substr(basename($folder->filename),4,1)=='-'){
 
 $folder=$folder->folder;
 
+@$contextFilter=$_SESSION['last_filter'];
+$filterTemp=substr(getFilterSQL($contextFilter),5);
+if (!$filterTemp) $filterTemp='0';
 
-$images=mysql_query("SELECT md5(`key`) as `key`,subfolder,filename FROM files WHERE $userQuery AND `folder`='$folder' ORDER BY sortstring");
+
+$images=mysql_query("SELECT md5(`key`) as `key`,subfolder,filename FROM files WHERE (($userQuery) OR ($filterTemp)) AND `folder`='$folder' ORDER BY sortstring");
 
 $topics=array();
 while ($image=mysql_fetch_object($images)){
@@ -52,7 +60,7 @@ $page=$catOnPage[$topic];
 
 $folder=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($folder)))));
 
-header ("Location: index.php?folder=".urlencode($folder).'&page='.$page.'&filter=#scroll'.$key);
+header ("Location: index.php?folder=".urlencode($folder).'&page='.$page.'&filter='.$contextFilter.'#scroll'.$key);
 
 mysql_close();
 

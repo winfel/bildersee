@@ -41,9 +41,11 @@
 		$width=10000000; $height=10000000;
 	}
 	
+	/*
 	if (!$user && $download){
 		$width=2048;$height=2048;
 	}
+	*/
 	
 	$isLimited=($width>0);
 	$playIcon=false;
@@ -136,9 +138,14 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
 		
 	 $cachePath.='/'.$key.'.'.$limitWidth.'.'.$limitHeight.'.'.filesize($lokalurl).$minimum.$withText.'.jpg';
 	
+	 /*
 	 if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL']=='no-cache') {
 	 	if (file_exists($cachePath)) unlink($cachePath);
-	 }     
+	 } 
+	 */    
+	 
+	 $expires=date("D, d M Y H:i:s",time() + (3 * 60 * 60)).' GMT';
+	 header("Expires: $expires");  //in one week
 	 
 	 if (file_exists($cachePath)) {
 	 	header ('location: '.$config->cacheURL.'/'.basename($cachePath));die('FROM CACHE');
@@ -146,8 +153,6 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
 	 
 	 // END CACHING
 		
-	 $expires=date("D, d M Y H:i:s",time() + (3 * 60 * 60)).' GMT';
-	 header("Expires: $expires");  //in one week
 	 header("Content-type: image/jpeg");	
 		
 	 ini_set('memory_limit', '1024M');set_time_limit(60);ini_set('gd.jpeg_ignore_warning', 1);               
@@ -189,11 +194,11 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
 	 //Shrinking of the image
 	 if ($minimum){
 	 	$temp=ImageCreateTrueColor($limitWidth,$limitHeight);
-	 	fastimagecopyresampled($temp,$original,-($newwidth-$limitWidth)/2,-($newheight-$limitHeight)/4,0,0,$newwidth,$newheight,$origwidth,$origheight);
+	 	imagecopyresampled($temp,$original,-($newwidth-$limitWidth)/2,-($newheight-$limitHeight)/4,0,0,$newwidth,$newheight,$origwidth,$origheight);
 	 }
 	 else {
 	   $temp=ImageCreateTrueColor($newwidth,$newheight);
-	   fastimagecopyresampled($temp,$original,0,0,0,0,$newwidth,$newheight,$origwidth,$origheight);
+	   imagecopyresampled($temp,$original,0,0,0,0,$newwidth,$newheight,$origwidth,$origheight);
 	 } 
 	 
 	 if ($rotate=='rotate'){$temp=ImageRotateRightAngle ($temp, 180);}
@@ -213,7 +218,7 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
 		putenv('GDFONTPATH=' . realpath('.'));
 		
 		// Name the font to be used (note the lack of the .ttf extension)
-		$font = 'design/MeriendaOne-Regular';
+		$font = 'design/Chalkduster';
 	 	
 	 	$color = imagecolorresolvealpha($temp, 0, 0, 0,63);
 	 	/*
@@ -329,7 +334,7 @@ function ImageRotateRightAngle( $imgSrc, $angle )
     return( $imgDest ); 
 } 
 
-function fastimagecopyresampled (&$dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h, $quality = 3) {
+function fastimagecopyresampled (&$dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h, $quality = 4) {
   // Plug-and-Play fastimagecopyresampled function replaces much slower imagecopyresampled.
   // Just include this function and change all "imagecopyresampled" references to "fastimagecopyresampled".
   // Typically from 30 to 60 times faster when reducing high resolution images down to thumbnail size using the default quality setting.

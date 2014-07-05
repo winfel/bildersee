@@ -24,11 +24,12 @@ $state='non-existant';
 $contextQuery="$userQuery";
 if ($contextFolder) $contextQuery.=" AND replace(replace(replace(replace(lower(folder),' ',''),'_',''),'.',''),',','') LIKE '$contextFolder'";
 $contextQuery.=' '.getFilterSQL($contextFilter);
+$filterTemp=substr(getFilterSQL($contextFilter),5);
+if (!$filterTemp) $filterTemp='0';
 
-$search=mysql_query("SELECT filename,copyright,folder,tags,($userQuery) as hasRights,($contextQuery) as inContext FROM files WHERE md5(`key`)='$image'");
+$search=mysql_query("SELECT filename,copyright,folder,tags,($userQuery) as hasRights,($filterTemp) as inContext FROM files WHERE md5(`key`)='$image'");
 
 if ($search=mysql_fetch_object($search)){
-	
 	//determine rights
 	$state='no-rights';
 	if ($search->hasRights) $state='has-rights';
@@ -61,9 +62,8 @@ if ($contextOK){
 	$page=1;
 	$folder=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($search->folder)))));
 	$filter='';
-	$contextQuery="$userQuery";
+	$contextQuery="($userQuery OR ".$filterTemp.')';
 	if ($folder) $contextQuery.=" AND replace(replace(lower(folder),' ',''),'_','') LIKE '$folder'";
-	$contextQuery.=' '.getFilterSQL($filter);
 }
 $folderGiven=$folder!='%' && $folder!='%%';
 $tagGiven=stripos($filter,'tag_')!==false;
@@ -135,10 +135,11 @@ if ($state=='has-rights' || $state=='public'){
 	}
 	
 	$functionBar.='<span class="seperator"></span>';
+}
 
 	$functionBar.='<a href="getimage.php?key='.$image.'&download=1" target="_blank"><img src="design/download1.png" alt="" />'.translate('download',true).'</a>';
 
-}
+
 
 if ($state=='non-existant') {
 	echo '<h1>'.translate('An error has occured!').'</h1>';
@@ -583,8 +584,8 @@ $readables['DateTimeOriginal']='Creation Date';
 $readables['DateTimeCreated']='Creation Date';
 $readables['Model']='Camera';
 $readables['Lens']='Lens';
-$readables['Lens35efl']='Lens';
 $readables['LensModel']='Lens';
+$readables['LensID']='Lens';
 $readables['FocalLength35efl']='Focal Length';
 $readables['Aperture']='Aperture';
 $readables['ShutterSpeed']='Shutter Speed';
@@ -592,9 +593,13 @@ $readables['ISO']='ISO Film Speed';
 $readables['Flash']='Flash';
 $readables['SubjectDistance']='Subject Distance';
 $readables['ObjectDistance']='Subject Distance';
+$readables['ApproximateFocusDistance']='Focus Distance';
 $readables['Artist']='Camera Owner';
 $readables['Copyright']='Copyright Notice';
-$readables['OwnerName']='Owner';
+$readables['Creator']='Creator';
+$readables['Title']='Title';
+$readables['Rights']='Rights';
+
 
 foreach ($readables as $key=>$value){
 	$allowed[$key]=true;
@@ -621,6 +626,11 @@ foreach ($data as $category=>$entries){
 		
 	}
 }
+/*
+echo '<pre>';
+var_dump($skipped);
+echo '</pre>';
+*/
 
 $output='';
 

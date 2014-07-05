@@ -80,7 +80,7 @@ if (!$folder || $folder=='%') die ('Missing folder!');
 	
 	if (!file_exists($tempfolder)) die ('Could not cd to temp folder');
 	
-	$fp = popen('cd "'.$tempfolder.'/"; zip -0 -r - *', 'r');
+	$fp = popen('cd "'.$tempfolder.'/"; zip -0 -r - .', 'r');
 	
 	$bufsize = 8192;
 	$buff = '';

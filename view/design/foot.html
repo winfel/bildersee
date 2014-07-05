@@ -15,14 +15,14 @@
 <header>
 <?php
 
-echo '<a href="?filter=" '.isActive('events').' id="button_events"><img src="design/events1.png" alt="">'.translate('events',true).'</a>';
+echo '<a href="/" '.isActive('events').' id="button_events"><img src="'.$config->designURL.'/events1.png" alt="">'.translate('events',true).'</a>';
 seperateIfNot('events');
 
 if ($user){
-	 echo '<a href="?mode=tags" '.isActive('tags').' id="button_tags"><img src="design/tags1.png" alt="">'.translate('tags',true).'</a>';
+	 echo '<a href="?mode=tags" '.isActive('tags').' id="button_tags"><img src="'.$config->designURL.'/tags1.png" alt="">'.translate('tags',true).'</a>';
 	 seperateIfNot('tags');
 	 
-	 echo '<a href="?mode=people" '.isActive('people').' id="button_tags"><img src="design/login1.png" alt="">'.translate('people',true).'</a>';
+	 echo '<a href="?mode=people" '.isActive('people').' id="button_tags"><img src="'.$config->designURL.'/login1.png" alt="">'.translate('people',true).'</a>';
 	 seperateIfNot('people');	 
 	 
 } 
@@ -32,15 +32,15 @@ if (!$config->local){
 	// right side
 	
 	if (!$user) {
-		echo '<a '.isActive('login').' onclick="show(\'login\');this.className=\'activebutton\';return false" href="?mode=login" id="button_login"><img src="design/login1.png" alt="">'.translate('login',true).'</a>';
+		echo '<a '.isActive('login').' onclick="show(\'login\');this.className=\'activebutton\';return false" href="?mode=login" id="button_login"><img src="'.$config->designURL.'/login1.png" alt="">'.translate('login',true).'</a>';
 	} else {
-		echo '<a '.isActive('login').' href="?logout=1" id="button_login" ><img src="design/logout1.png" alt="">'.translate('logout',true).'</a>';
+		echo '<a '.isActive('login').' href="?logout=1" id="button_login" ><img src="'.$config->designURL.'/logout1.png" alt="">'.translate('logout',true).'</a>';
 	}
 	seperateIfNot('upload','rechts');
-	echo '<a href="'.$config->updateURL.'" '.isActive('upload').' id="button_upload"><img src="design/upload1.png" alt="">'.translate('upload',true).'</a>';
+	echo '<a href="'.$config->updateURL.'" '.isActive('upload').' id="button_upload"><img src="'.$config->designURL.'/upload1.png" alt="">'.translate('upload',true).'</a>';
 	seperateIfNot('upload','rechts');
 	
-	echo '<a href="?mode=legal" '.isActive('info').' id="button_info"><img src="design/info1.png" alt="">'.translate('Info / Legal',true).'</a>';
+	echo '<a href="?mode=legal" '.isActive('info').' id="button_info"><img src="'.$config->designURL.'/info1.png" alt="">'.translate('Info / Legal',true).'</a>';
 	
 	seperateIfNot('login','rechts');
 	
@@ -135,29 +135,6 @@ if (isset($functionBar2) && $functionBar2) {
 	//to load as well
 	processHash();
 </script>
-
-<!-- Piwik --> 
-<?php
-
-if ($page>1){
-	$pageTitle.=' (page '.$page.')';
-}
-?>
-
-
-<script type="text/javascript">
-var pkBaseURL = (("https:" == document.location.protocol) ? "https://analytics.datenwiese.de/" : "http://analytics.datenwiese.de/");
-document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
-</script><script type="text/javascript">
-try {
-var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 2);
-piwikTracker.setDocumentTitle("<?php echo $pageTitle; ?>");
-<?php if($user) echo 'piwikTracker.setCustomVariable(1, "User", "'.$user.'", "visit" );';?>
-piwikTracker.trackPageView();
-piwikTracker.enableLinkTracking();
-} catch( err ) {}
-</script><noscript><p><img src="http://analytics.datenwiese.de/piwik.php?idsite=2" style="border:0" alt="" /></p></noscript>
-<!-- End Piwik Tracking Code -->
 
 
 </body>

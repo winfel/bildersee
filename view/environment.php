@@ -7,6 +7,7 @@
 
  ini_set ('error_reporting', E_ALL);
  ini_set ('html_errors', 'Off');
+ ini_set ('display_errors' , 1 );
  
 if ($config->enableBrowserCaching) cache_control();
 

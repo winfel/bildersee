@@ -1,7 +1,5 @@
 <?
 
-date_default_timezone_set('UTC');
-
 $encode = getenv("HTTP_ACCEPT_ENCODING");
 if(ereg("gzip",$encode) && !isset($noBuffer)) {
    ob_start("ob_gzhandler");

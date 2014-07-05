@@ -1,11 +1,12 @@
 <?php
-//die (debug');
+ 
   /*
  
   SeeSite database update script
   
   */
   
+
   if ($_SERVER["HTTP_HOST"]=='localhost'){
  	die('This connot be done locally');
   }
@@ -55,64 +56,11 @@
   final_cleanup();
   mysql_query("truncate table $resultCacheTable");
   writeLog('update','Database has been updated');
+ 
   
-  tagStatistics();
   
-  function tagStatistics(){global $runTable;
-  
-  	$stats=array();
-  	$query=mysql_query("SELECT * FROM files ORDER BY sortstring DESC");
-  	$i=1;
-  	while ($file=mysql_fetch_object($query)){
-  		
-  		$i=$i*0.9999;
-  		$value=$i;
-  		
-  		$tags=$file->tags;
-  		
-  		$tags=explode(' ',$tags);
-  		foreach ($tags as $tag){
-	 	    if ($tag=='gk') continue;
-	    	if ($tag=='archiv') continue;
-	    	if ($tag=='person') continue;
-	    	if ($tag=='noperson') continue;
-	    	if ($tag=='public') continue;
-	    	if ($tag=='privat') continue;
-	    	if ($tag=='thumb') continue;
-	    	if ($tag=='top') continue;
-	    	if ($tag=='rotate') continue;
-	    	if ($tag=='rotatel') continue;
-	    	if ($tag=='rotater') continue;
-	    	if ($tag=='norotate') continue;
-	    	if ($tag=='norandom') continue;
-	    	if ($tag=='gruppe') continue;
-	    	if ($tag=='download') continue;
-	    	if ($tag=='nocopyrightnotice') continue;
-	    	if (stripos($tag,'gk_')===0) continue;
-	    	if (stripos($tag,'geo_')===0) continue;
-	    	if (stripos($tag,'codeword_')===0) continue;
-	    	if (stripos($tag,'copyright_')===0) continue;
-	    	if (stripos($tag,'thumb_')===0) continue;
-	    	if (stripos($tag,'year_')===0) continue;
-	    	if (stripos($tag,'autotag_')===0) continue;
-	    	if (stripos($tag,'photo_')===0) continue;
-	    	if (stripos($tag,'auswahl')===0) continue;
-  			@$stats[$tag]+=$value;
-  		}
-  		
-  	}
-  	
-  	mysql_query('TRUNCATE TABLE tagstats');
-  	
-  	foreach ($stats as $k=>$v){
-  		$v=sqrt(sqrt(sqrt($v)));
-  		$v=$v*8;
-	 	if ($v<14) continue;
-  		mysql_query("INSERT INTO tagstats (`tag`,`value`) VALUES ('$k','$v')");
-  	}
-  
-  }
-  
+  die ('Ready');
+
   function final_cleanup(){
   	
   	$query=mysql_query("SELECT * FROM filetags,files WHERE filetags.image=files.`key` AND filetags.tags LIKE '%delete%'");
@@ -247,7 +195,7 @@
     }
     
     function tableCopy($source,$destination){
-       mysql_query("CREATE TABLE $destination ENGINE=InnoDB SELECT * FROM $source ");
+       mysql_query("CREATE TABLE $destination ENGINE=MyISAM SELECT * FROM $source ");
     }
     
     function getFileChanges($sourceTable,$config){
