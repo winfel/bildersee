@@ -1,8 +1,11 @@
 <?php
 
+if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
+
+
 if (!$user) die();
 
-$activePart='tags';
+$activePart='people';
 $element=array();$element['link']='';$element['text']='Tags';$breadcrumb[]=$element;
 
 $pageTitle=translate('people',true);
@@ -28,14 +31,14 @@ while($line=mysql_fetch_assoc($search)){
 		    foreach ($string as $tag){
 		    	if (isset($temp[$tag]) && !isset($people[$tag])) {
 		    		$people[$tag]=$temp[$tag];
-		    		$people[$tag]['image']=$line->key;
+		    		$people[$tag]['image']=md5($line->key);
 		    		unset($temp[$tag]);
 		    	}
 		    }
 		    
 		 }
 
-		$search=mysql_query("SELECT `key`,tags FROM files WHERE files.tags LIKE '%portrait%' ORDER BY sortstring");
+		$search=mysql_query("SELECT md5(`key`) as `key`,tags FROM files WHERE files.tags LIKE '%portrait%' ORDER BY sortstring");
 		
 		
 		$tags=array();

@@ -25,6 +25,7 @@ function preventInjection(){
 		$value=str_replace("'",'',$value);
 		$value=str_replace('"','',$value);
 		$value=str_replace("\\",'',$value);
+		$value=str_replace("/",'',$value);
 		
 		$_GET[$key]=$value;
 	
@@ -35,6 +36,7 @@ function preventInjection(){
 		$value=str_replace("'",'',$value);
 		$value=str_replace('"','',$value);
 		$value=str_replace("\\",'',$value);
+		$value=str_replace("/",'',$value);
 		
 		$_POST[$key]=$value;
 	
@@ -173,7 +175,7 @@ function getReadableTags($string,$path=false){global $people,$config;
 	
 	$result=implode($result,', ');
 	
-	if (!$result) $result='untagged';
+	if (!$result) $result='';
 	
 	$result='<span class="'.$mode.'">'.$result.'</span>';
 	return $result;
@@ -209,6 +211,12 @@ if (!$path){
    			}
       	}
       }
+  
+   // Auto tag videos
+   
+  
+   $filename=basename($path);
+   if (stripos($filename,'.m4v')) $result['video']=true;
   
    // Search for copyright information in brackets
    
@@ -308,11 +316,14 @@ foreach ($autotagCache as $autotag){
    
    if (isset($result['privat']) && isset($result['public'])) unset($result['public']);  //private always wins
    
-   /*
-   if (strpos($path,'codeword_')===false && !isset($result['public']) && !isset($result['privat'])) $result[getFolderCodeword($folder)]=true; //automatically create codeword for nonpublic images
-   */
+   $autoCodeword=false;
+   if (strpos($path,'codeword_')===false && !isset($result['public']) && !isset($result['privat'])){
+   		$result[getFolderCodeword($folder)]=true; //automatically create codeword for nonpublic events
+   		$autoCodeword=true;
+   }
+ 
    
-   if (strpos($path,'codeword_')===false && !isset($result['public']) && !isset($result['privat'])) $result['privat']=true;
+   if (!$autoCodeword && strpos($path,'codeword_')===false && !isset($result['public']) && !isset($result['privat'])) $result['privat']=true;
       
    if (isset($result['palamos'])) {
    		$result['palamós']=true;
@@ -362,6 +373,7 @@ function getFilterSQL($filter){
  	
  	if ($selection=='www') return $filterSQL;
  	if ($selection=='localhost') return $filterSQL;
+ 	if ($selection=='148') return $filterSQL;
  	
  	$filterSQL.=" AND concat(replace(filename,'/',' '),' ',files.tags,' ') LIKE '% $selection %'";
  
@@ -422,18 +434,30 @@ function cache_control(){
 	header("Last-Modified: $eTag");
 }
 
-include('translations.de.php');
-include('translations.es.php');
-
-function translate($input,$upper=false){global $translations;
-	$output=$input;
-	@$data = ' '.strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+$language=false;
+function translate($input,$upper=false){global $translations,$language,$config;
 	
-	$lang='en';
-	if (strpos($data,'de')) $lang='de';
-	if (strpos($data,'es')) $lang='es';
+	if (!$language){
+		
+		$dir=scandir('translations');
+		
+		$allowed_langs = array();
+		
+		foreach($dir as $lang){
+			if ($lang[0]=='.') continue;
+			$lang=str_replace('.php','',$lang);
+			$allowed_langs[]=$lang;
+			@include('translations/'.$lang.'.php');
+		}
 	
-	if (isset($translations[$lang][$input])) $output=$translations[$lang][$input];
+		$lang = lang_getfrombrowser ($allowed_langs, 'en', null, false);
+		
+		$language=$lang;
+	}
+	
+	$output=$input;	
+	
+	if (isset($translations[$language][$input])) $output=$translations[$language][$input];
 	
 	$output=$output;
 	
@@ -478,7 +502,7 @@ function getFolderCodeword($folder){global $foldercodewords;
 	}
 	$output=$foldercodewords[$folder];
 	
-	return 'codeword_'.$output;
+	return 'codeword_direct'.$output;
 }
 
 function getAge($input,$relation=false,$showyears=true){
@@ -491,5 +515,211 @@ function getAge($input,$relation=false,$showyears=true){
 	
 	return $result;
 }
+
+function addToBreadcrumb($link,$text){global $breadcrumb;
+	$element=array();
+	$element['link']=$link;
+	$element['text']=$text;
+	$breadcrumb[]=$element;
+}
+
+function between($start,$stop,$string){
+	$string=explode('codeword_',$string);
+	$string=$string[1];
+	$string=explode(' ',$string);
+	$string=$string[0];
+	return $string;
+}
+
+function get_date($folder){
+   $d=explode(' ',$folder);
+   $d=$d[0];
+   $d=explode('-',$d);
+   switch (count($d)){
+   	  case 6:
+   	    $date=translateDate($d[0],$d[1],$d[2])." ".translate('till')." ".translateDate($d[3],$d[4],$d[5]);break;
+   	  case 5:
+   	    $date=translateDate($d[0],$d[1],$d[2])." ".translate('till')." ".translateDate($d[0],$d[3],$d[4]);break;
+   	  case 4:
+   	    $date=translateDate($d[0],$d[1],$d[2])." ".translate('till')." ".translateDate($d[0],$d[1],$d[3]);break;
+   	  case 3:
+   	    $date=translateDate($d[0],$d[1],$d[2]);break;
+   	  case 2:
+   	    $date="$d[0]-$d[1]";break;
+   	  case 1:
+   	    $date="$d[0]";break;
+   	  default:
+   	    $date="";break;
+   }
+   
+   return $date;
+}
+
+function timing(){global $startTime;
+	echo time()-$startTime;
+}
+
+function cleanupCache(){global $config,$user;
+
+	$path=$config->cachePath;
+	
+	$dir=scandir($path);
+	
+	$i=0;
+	foreach($dir as $filename){
+		if ($filename[0]=='.') continue;
+		$filename=$path.'/'.$filename;
+		$age=floor((time()-filemtime($filename))/60/60/24);
+		if ($age>=14){ // check files older than 14 days
+			$size=filesize($filename);
+			if ($size<100*1024) continue; // do not check small files
+			@unlink($filename);
+			$i++;
+		}
+		
+	}
+}
+
+// Browsersprache ermitteln
+function lang_getfrombrowser ($allowed_languages, $default_language, $lang_variable = null, $strict_mode = true) {
+        // $_SERVER['HTTP_ACCEPT_LANGUAGE'] verwenden, wenn keine Sprachvariable mitgegeben wurde
+        if ($lang_variable === null) {
+                @$lang_variable = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        }
+
+        // wurde irgendwelche Information mitgeschickt?
+        if (empty($lang_variable)) {
+                // Nein? => Standardsprache zurückgeben
+                return $default_language;
+        }
+
+        // Den Header auftrennen
+        $accepted_languages = preg_split('/,\s*/', $lang_variable);
+
+        // Die Standardwerte einstellen
+        $current_lang = $default_language;
+        $current_q = 0;
+
+        // Nun alle mitgegebenen Sprachen abarbeiten
+        foreach ($accepted_languages as $accepted_language) {
+                // Alle Infos über diese Sprache rausholen
+                $res = preg_match ('/^([a-z]{1,8}(?:-[a-z]{1,8})*)'.
+                                   '(?:;\s*q=(0(?:\.[0-9]{1,3})?|1(?:\.0{1,3})?))?$/i', $accepted_language, $matches);
+
+                // war die Syntax gültig?
+                if (!$res) {
+                        // Nein? Dann ignorieren
+                        continue;
+                }
+                
+                // Sprachcode holen und dann sofort in die Einzelteile trennen
+                $lang_code = explode ('-', $matches[1]);
+
+                // Wurde eine Qualität mitgegeben?
+                if (isset($matches[2])) {
+                        // die Qualität benutzen
+                        $lang_quality = (float)$matches[2];
+                } else {
+                        // Kompabilitätsmodus: Qualität 1 annehmen
+                        $lang_quality = 1.0;
+                }
+
+                // Bis der Sprachcode leer ist...
+                while (count ($lang_code)) {
+                        // mal sehen, ob der Sprachcode angeboten wird
+                        if (in_array (strtolower (join ('-', $lang_code)), $allowed_languages)) {
+                                // Qualität anschauen
+                                if ($lang_quality > $current_q) {
+                                        // diese Sprache verwenden
+                                        $current_lang = strtolower (join ('-', $lang_code));
+                                        $current_q = $lang_quality;
+                                        // Hier die innere while-Schleife verlassen
+                                        break;
+                                }
+                        }
+                        // Wenn wir im strengen Modus sind, die Sprache nicht versuchen zu minimalisieren
+                        if ($strict_mode) {
+                                // innere While-Schleife aufbrechen
+                                break;
+                        }
+                        // den rechtesten Teil des Sprachcodes abschneiden
+                        array_pop ($lang_code);
+                }
+        }
+
+        // die gefundene Sprache zurückgeben
+        return $current_lang;
+}
+
+function getImages($folder,$reverse=false){global $userQuery,$filterSQL;
+
+	$reverse=($reverse)?'DESC':'';
+
+	$query="SELECT md5(`key`) as `key`,files.filename as filename, files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder as folderReadable,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE (($userQuery) AND replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') LIKE '$folder' $filterSQL) ORDER BY sortstring $reverse LIMIT 20000";
+	
+	$search=mysql_query($query);
+	
+	$output=array();
+	
+	while($line=mysql_fetch_object($search)){
+		$output[]=$line;
+	}
+	
+	return $output;
+}
+
+function getAlbums(){global $userQuery,$filterSQL;
+
+	$search=mysql_query("SELECT DISTINCT folder,category, `key` AS thumb, replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') as folderID, filename FROM files WHERE $userQuery AND SUBSTR(folder,1,4)<'9' $filterSQL GROUP BY folder ORDER BY folder DESC");
+	
+	$output=array();
+	
+	while($line=mysql_fetch_object($search)){
+		
+		$category=$line->category;
+		
+		if (strpos($category,'(')!==false) $category='';
+		$category=ucwords(str_replace('_',' ',$category));
+		
+		if ($category=='2014') $category='';
+		if ($category=='2013') $category='';
+		if ($category=='2012') $category='';
+		if ($category=='2011') $category='';
+		if ($category=='2010') $category='';
+		if ($category=='2009') $category='';
+		if ($category=='2008') $category='';
+		if ($category=='2007') $category='';
+		if ($category=='2006') $category='';
+		if ($category=='2005') $category='';
+		if ($category=='2004') $category='';
+		if ($category=='2003') $category='';
+		if ($category=='2002') $category='';
+		if ($category=='2001') $category='';
+		if ($category=='2000') $category='';
+		
+		if ($category=='Partnerschaft') $category=translate('Twinning');
+		if ($category=='Djk') $category='DJK Rheda';
+		if ($category=='Ebr2012') $category='EBR 2012';
+		if ($category=='Ftcr') $category='FTCR';
+		if ($category=='Diverses') $category='';
+		
+		$line->category=$category;
+		
+		$output[$line->folder]=$line;
+	}
+	
+	$search=mysql_query("SELECT folder,md5(`key`) AS thumb FROM files WHERE $userQuery AND tags LIKE '%thumb%' $filterSQL GROUP BY sortstring");
+		
+	while ($moreInfo=mysql_fetch_object($search)){
+		if (!isset($output[$moreInfo->folder])) continue;
+		$line=$output[$moreInfo->folder];
+		$line->thumb=$moreInfo->thumb;
+		$output[$line->folder]=$line;
+	}
+	
+	return $output;
+
+}
+
 
 ?>

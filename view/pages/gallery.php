@@ -1,8 +1,9 @@
 <?php
 
-//echo htmlspecialchars(SID);
+if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
 
-$pageTitle=translate('gallery',true);
+
+$pageTitle=translate('galleries',true);
 $activePart='gallery';
 $pageDescription='';
 		
@@ -48,7 +49,7 @@ $pageDescription='';
 		
 		$t=time();
 		
-		$search=mysql_query("SELECT * FROM files WHERE  files.tags LIKE '%auswahl_%' ORDER BY sortstring");
+		$search=mysql_query("SELECT md5(`key`) as `key`,tags,copyright,sortstring FROM files WHERE  files.tags LIKE '%auswahl_%' ORDER BY sortstring DESC");
 		
 		//echo (time()-$t);
 		
@@ -73,11 +74,11 @@ $pageDescription='';
 		
 		if (!$selected){
 		
-			$element=array();$element['link']='';$element['text']=translate('gallery',true);$breadcrumb[]=$element;
+			$element=array();$element['link']='';$element['text']=$config->pageTitle.' '.translate('galleries',true);$breadcrumb[]=$element;
 		
-			echo '<h1>'.translate('gallery',true).'</h1>';
+			echo '<h1>'.$config->pageTitle.' '.translate('galleries',true).'</h1>';
 		
-			$selections=array_reverse($selections);
+			//$selections=array_reverse($selections);
 			
 			foreach ($selections as $selection=>$images){
 				$selection=substr($selection,8);
@@ -100,10 +101,10 @@ $pageDescription='';
 			$readable=ucwords_new(str_replace('_',' ',substr($selected,8)));
 			$pageTitle=$readable;
 			$pageDescription=translate('an online photo gallery',true);
-			$element=array();$element['link']='?mode=gallery';$element['text']=translate('gallery',true);$breadcrumb[]=$element;
+			$element=array();$element['link']='?mode=gallery';$element['text']=$config->pageTitle.' '.translate('galleries',true);$breadcrumb[]=$element;
 			$element=array();$element['link']='';$element['text']=$readable;$breadcrumb[]=$element;
 			
-			echo "<h1>$readable</h1>";
+			echo "<h1>".translate('gallery',true)." $readable</h1>";
 			
 			for($i=0;$i<count($images);$i++) {
 			
@@ -112,6 +113,12 @@ $pageDescription='';
 					$next=(isset($images[$i+1]))?$images[$i+1]->key:'';
 				
 					$imgurl=$config->imageGetterURL.'?key='.$entry->key.'&amp;width=300&amp;height=225';
+					
+					if ($i==0){
+						$unorderedURL='?mode=slideshow&folder=%&filter='.$selected;
+						$orderedURL=$unorderedURL.'&image='.$entry->key;
+						echo '<p>'.translate('start slideshow',true).': <a href="'.$orderedURL.'">'.translate('ordered').'</a>, <a href="'.$unorderedURL.'">'.translate('random').'</a></p>';
+					}
 					
 					$year=substr($entry->sortstring,1,4);
 					
@@ -209,30 +216,5 @@ $pageDescription='';
 				
 
 		 </script>";
-		 
-		 
-function get_date($folder){
-	   $d=explode(' ',$folder);
-	   $d=$d[0];
-	   $d=explode('-',$d);
-	   switch (count($d)){
-	   	  case 6:
-	   	    $date=translateDate($d[0],$d[1],$d[2])." ".translate('till')." ".translateDate($d[3],$d[4],$d[5]);break;
-	   	  case 5:
-	   	    $date=translateDate($d[0],$d[1],$d[2])." ".translate('till')." ".translateDate($d[0],$d[3],$d[4]);break;
-	   	  case 4:
-	   	    $date=translateDate($d[0],$d[1],$d[2])." ".translate('till')." ".translateDate($d[0],$d[1],$d[3]);break;
-	   	  case 3:
-	   	    $date=translateDate($d[0],$d[1],$d[2]);break;
-	   	  case 2:
-	   	    $date="$d[0]-$d[1]";break;
-	   	  case 1:
-	   	    $date="$d[0]";break;
-	   	  default:
-	   	    $date="";break;
-	   }
-	   
-	   return $date;
-}
 
 ?>

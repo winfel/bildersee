@@ -1,11 +1,12 @@
 <?php
-//die (debug');
+ 
   /*
  
   SeeSite database update script
   
   */
   
+
   if ($_SERVER["HTTP_HOST"]=='localhost'){
  	die('This connot be done locally');
   }
@@ -24,8 +25,6 @@
   mysql_query("truncate table $resultCacheTable");
      
   writeLog('update','Updated called');
- 
-  
   
   if (tableExists($runTable)){
      if (tableAge($runTable)>30*60) 
@@ -57,7 +56,11 @@
   final_cleanup();
   mysql_query("truncate table $resultCacheTable");
   writeLog('update','Database has been updated');
+ 
   
+  
+  die ('Ready');
+
   function final_cleanup(){
   	
   	$query=mysql_query("SELECT * FROM filetags,files WHERE filetags.image=files.`key` AND filetags.tags LIKE '%delete%'");
@@ -192,7 +195,7 @@
     }
     
     function tableCopy($source,$destination){
-       mysql_query("CREATE TABLE $destination SELECT * FROM $source");
+       mysql_query("CREATE TABLE $destination ENGINE=MyISAM SELECT * FROM $source ");
     }
     
     function getFileChanges($sourceTable,$config){
@@ -217,7 +220,9 @@
 		    $fullpath=$path.'/'.$line; 
 		    if (is_dir($fullpath)) continue;
 		    if (stripos($lowline,'.db')===false
-		     && stripos($lowline,'.tmp')===false) {  
+		     && stripos($lowline,'.tmp')===false
+		     && stripos($lowline,'.webm')===false
+		     && stripos($lowline,'.preview.jpg')===false) {  
 		       if (isset($list[$fullpath])) unset($list[$fullpath]); else $list[$fullpath]='add';
 		       //HERE
 		    } 

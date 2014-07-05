@@ -35,6 +35,13 @@ if (isset($_SESSION['user'])){
 	$userQuery=$_SESSION['userQuery'];
 } else die ('ERROR! No session');
 
+//get the key
+
+$request=mysql_query("SELECT `key` FROM files WHERE md5(`key`)='$key'");
+if ($request=mysql_fetch_object($request)) {
+	$key=$request->key;
+}
+
 
 mysql_query("DELETE FROM filetags WHERE `image`='$key'");
 mysql_query("INSERT INTO filetags (tags,image) VALUES('$tags','$key')");

@@ -7,8 +7,10 @@
     } else {
         var hash = location.hash;
         namespace.replaceHash = function(newhash) {
+        	/*
         	if (location.hash !== hash) history.back();
             location.hash = newhash;
+            */
         };
     }
 })(window);
@@ -34,6 +36,9 @@ function processHash(direct){
 }
 
 function scrollToNew(to){
+	
+	window.scrollTo(0,to); return;
+	/*
 	var from=getScrollY();
 	var distance=(to-from)/10;
 	var value=(distance>0)?distance:distance*-1;
@@ -41,6 +46,7 @@ function scrollToNew(to){
 	window.scrollTo(0,Math.round(from+distance));
 	if (from==getScrollY()) return;
 	window.setTimeout(function(){scrollToNew(to);},10);
+	*/
 }
 
 function getElementPosition(e){
@@ -200,4 +206,46 @@ function hide(id){
 
 function login_error(){
 	alert("You could not be logged in. Please check your username and password!");
+}
+
+function toggleFullScreen() {
+  if ((document.fullscreenElement && document.fullscreenElement !== null) ||    // alternative standard method
+      (!document.mozFullScreenElement && !document.webkitFullscreenElement)) {  // current working methods
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.mozRequestFullScreen) {
+      document.documentElement.mozRequestFullScreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+    } 
+  } else {
+    if (document.cancelFullScreen) {
+      document.cancelFullScreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitCancelFullScreen) {
+      document.webkitCancelFullScreen();
+    }
+  }
+}
+
+var hider=false;
+var hider2=false;
+function message(text){
+	var el=document.getElementById('message');
+	el.style.display='block';
+	el.style.opacity='1.0';
+	el.innerHTML=text;
+	if (hider){
+		window.clearTimeout(hider);
+		window.clearTimeout(hider2);
+		hider=false;
+		hider2=false;
+	}
+	hider=window.setTimeout(function(){
+		el.style.opacity='0.0';
+	},3000);
+	hider2=window.setTimeout(function(){
+		el.style.display='none';
+	},5000);
 }

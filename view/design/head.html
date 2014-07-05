@@ -3,17 +3,21 @@
  <head>
   <title>#HEADING# - <?php echo $config->pageTitle;?></title>
   <meta name="description" content="#DESCRIPTION# - <?php echo $config->pageDescription;?>" />
-  <link rel="apple-touch-icon" href="<?php echo $config->designURL;?>/webclip.png"/>
-  <link rel="icon" type="image/ico" href="<?php echo $config->designURL;?>/favicon.ico">
-  <link rel="SHORTCUT ICON" type="image/ico" href="<?php echo $config->designURL;?>/favicon.ico" />
+  <meta property="og:description" content="#DESCRIPTION# - <?php echo $config->pageDescription;?>" />
+  <meta property="og:title" content="#HEADING# - <?php echo $config->pageTitle;?>"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="#THUMBNAIL#"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1; minimum-scale=1; user-scalable=0;" />
   <meta name="format-detection" content="telephone=no">
+  <link rel="apple-touch-icon" href="<?php echo $config->designURL;?>/webclip.png"/>
+  <link rel="icon" type="image/ico" href="<?php echo $config->designURL;?>/favicon.ico">
+  <link rel="SHORTCUT ICON" type="image/ico" href="<?php echo $config->designURL;?>/favicon.ico" /> 
   <link rel="stylesheet" href="<?php echo $config->designURL;?>/design.css" type="text/css" />
-  <script type="text/javascript" src="zxml.js.php"></script>
-  <script type="text/javascript" src="jsfunctions.js?version=092912"></script>
+  <script type="text/javascript" src="<?php echo $config->viewURL;?>/zxml.js"></script>
+  <script type="text/javascript" src="<?php echo $config->viewURL;?>/jsfunctions.js?version=092912"></script>
 
 <!--[if lt IE 9]>
 <script>
@@ -28,10 +32,12 @@ function(){h.innerHTML="";k.removeChild(h);k.appendChild(f);l.styleSheet.cssText
 
   </head>
 
-<body onload="this.onorientationchange=this.onresize;processHash();" onresize="scrollHandlerDelayed();resizeHandlerDelayed();" onscroll="scrollHandlerDelayed()">
+<body onload="this.onorientationchange=this.onresize;" onresize="scrollHandlerDelayed();resizeHandlerDelayed();" onscroll="scrollHandlerDelayed()">
 <script>
   var hash=window.location.hash; //used in processHash in onload
 </script>
+
+<div id="message"></div>
 
 <div id="downarrow"></div>
 
@@ -40,7 +46,7 @@ function(){h.innerHTML="";k.removeChild(h);k.appendChild(f);l.styleSheet.cssText
 				<p><?php echo translate('Registred users have access to further albums and photos. Access is only granted on a personal basis.');?> (<a href="?mode=legal"><?php echo translate('see legal',true);?></a>)</p>
 				<form method="post">
 				<table>
-				<tr><td><?php echo translate('user',true);?>: </td><td><input name="user" size="8" type="text" /></td></tr>
+				<tr><td><?php echo translate('user',true);?>: </td><td><input name="user" size="8" type="text" autocorrect = "off" autocapitalize = "off" /></td></tr>
 				<tr><td><?php echo translate('password',true);?>: </td><td><input name="password" size="8" type="password" /></td></tr>
 				<tr><td><input value="<?php echo translate('cancel',true);?>" type="button" onclick="hide('login');document.getElementById('button_login').className='';" /></td><td style="text-align:right"><input value="<?php echo translate('login',true);?>" type="submit" /></td></tr>
 				</table>
@@ -52,4 +58,3 @@ function(){h.innerHTML="";k.removeChild(h);k.appendChild(f);l.styleSheet.cssText
 
 <div id="visu">
  <div id="maincontent">
-

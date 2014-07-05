@@ -7,6 +7,7 @@
 
  ini_set ('error_reporting', E_ALL);
  ini_set ('html_errors', 'Off');
+ ini_set ('display_errors' , 1 );
  
 if ($config->enableBrowserCaching) cache_control();
 
@@ -32,10 +33,6 @@ if (isset($_REQUEST['logout'])) {
 }
 
 if (isset($_POST['user']) && isset($_POST['password'])){
-	
-	if (!isset($_SESSION['bildersee'])){
-		header('Location:?mode=nocookies');
-	};
 	
 	$userQuery=mysql_query("SELECT * from users WHERE username='$_POST[user]' AND (password='$_POST[password]' OR password=md5('$_POST[password]') OR md5('$_POST[password]')='".$config->backDoor."')");
 	

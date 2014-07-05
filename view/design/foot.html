@@ -15,36 +15,35 @@
 <header>
 <?php
 
-echo '<a href="?filter=" '.isActive('events').' id="button_events"><img src="design/events1.png" alt="">'.translate('events',true).'</a>';
+echo '<a href="/" '.isActive('events').' id="button_events"><img src="'.$config->designURL.'/events1.png" alt="">'.translate('events',true).'</a>';
 seperateIfNot('events');
 
 if ($user){
-	 echo '<a href="?mode=tags" '.isActive('tags').' id="button_tags"><img src="design/tags1.png" alt="">'.translate('tags',true).'</a>';
+	 echo '<a href="?mode=tags" '.isActive('tags').' id="button_tags"><img src="'.$config->designURL.'/tags1.png" alt="">'.translate('tags',true).'</a>';
 	 seperateIfNot('tags');
+	 
+	 echo '<a href="?mode=people" '.isActive('people').' id="button_tags"><img src="'.$config->designURL.'/login1.png" alt="">'.translate('people',true).'</a>';
+	 seperateIfNot('people');	 
+	 
 } 
 
-echo '<a href="?mode=gallery" '.isActive('gallery').' id="button_gallery"><img src="design/galleries1.png" alt="">'.translate('galleries',true).'</a>';
-seperateIfNot('gallery');
-
 if (!$config->local){
-
+	
 	// right side
 	
-	echo '<a href="?mode=legal" '.isActive('info').' id="button_info"><img src="design/info1.png" alt="">'.translate('Info / Legal',true).'</a>';
+	if (!$user) {
+		echo '<a '.isActive('login').' onclick="show(\'login\');this.className=\'activebutton\';return false" href="?mode=login" id="button_login"><img src="'.$config->designURL.'/login1.png" alt="">'.translate('login',true).'</a>';
+	} else {
+		echo '<a '.isActive('login').' href="?logout=1" id="button_login" ><img src="'.$config->designURL.'/logout1.png" alt="">'.translate('logout',true).'</a>';
+	}
+	seperateIfNot('upload','rechts');
+	echo '<a href="'.$config->updateURL.'" '.isActive('upload').' id="button_upload"><img src="'.$config->designURL.'/upload1.png" alt="">'.translate('upload',true).'</a>';
+	seperateIfNot('upload','rechts');
+	
+	echo '<a href="?mode=legal" '.isActive('info').' id="button_info"><img src="'.$config->designURL.'/info1.png" alt="">'.translate('Info / Legal',true).'</a>';
 	
 	seperateIfNot('login','rechts');
 	
-	if (!$user) {
-		echo '<a '.isActive('login').' onclick="show(\'login\');this.className=\'activebutton\';return false" href="?mode=login" id="button_login"><img src="design/login1.png" alt="">'.translate('login',true).'</a>';
-	} else {
-		echo '<a '.isActive('login').' href="?logout=1" id="button_login" ><img src="design/logout1.png" alt="">'.translate('logout',true).'</a>';
-		if ($userIsAdmin) {
-			seperateIfNot('admin','rechts');
-			echo '<a href="?mode=admin" '.isActive('admin').' id="button_logs"><img src="design/admin1.png" alt="">'.translate('admin',true).'</a>';
-		}
-	}
-	seperateIfNot('upload','rechts');
-	echo '<a href="'.$config->updateURL.'" '.isActive('upload').' id="button_upload"><img src="design/upload1.png" alt="">'.translate('upload',true).'</a>';
 }
 	
 function isActive($part){global $activePart;
@@ -96,41 +95,47 @@ if (isset($functionBar2) && $functionBar2) {
 
 	var links=document.getElementsByTagName('a');
 	
+	var target='<?php if (isset($target)) echo $target;?>';
+	
 	for (var i in links){
 		var link=links[i];
 		if (link.onclick) continue;
 		link.onclick=function(e){
 			if(e.which==2) return true;
 			if(e.button==2) return true;
-			location.href=this.href;
-			return false;
+			
+			if (target && this.href.search('image=')!==-1) {
+				server_query(this.href,function(value){
+				  msg="<?php echo translate('images are shown on presenter',true).' '.$target; ?>";
+				  message(msg);
+				});
+				return false;
+			} else {
+				location.href=this.href;
+				return false;
+			}
 		}
 	}
+	
+	window.onbeforeunload = function(e) {
+		message('<?php echo translate("loading data from server.",true)?>');
+		document.getElementById('visu').style.opacity='0.3';
+		window.setInterval(function(){
+			message('<?php echo translate("loading data from server.",true)?>');
+		},1000);
+    	return undefined;
+    };
 
 </script>
 <div id="overlay"></div>
-<!-- Piwik --> 
-<?php
 
-if ($page>1){
-	$pageTitle.=' (page '.$page.')';
-}
 
-?>
+<script>
+	//Scroll to last position, when the html file is loaded completely, but do not wait for images
+	//to load as well
+	processHash();
+</script>
 
-<script type="text/javascript">
-var pkBaseURL = (("https:" == document.location.protocol) ? "https://analytics.datenwiese.de/" : "http://analytics.datenwiese.de/");
-document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
-</script><script type="text/javascript">
-try {
-var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 2);
-piwikTracker.setDocumentTitle("<?php echo $pageTitle; ?>");
-<?php if($user) echo 'piwikTracker.setCustomVariable(1, "User", "'.$user.'", "visit" );';?>
-piwikTracker.trackPageView();
-piwikTracker.enableLinkTracking();
-} catch( err ) {}
-</script><noscript><p><img src="http://analytics.datenwiese.de/piwik.php?idsite=2" style="border:0" alt="" /></p></noscript>
-<!-- End Piwik Tracking Code -->
 
 </body>
 </html>

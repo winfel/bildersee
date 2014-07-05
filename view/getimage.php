@@ -7,48 +7,59 @@
 	
 	$config=new Config(); 
 	
-	
-	if (isset($_GET['key'])){
-	   $input=($_GET['key']);
-	} else {
-		die ('error');
-	}
+	if (isset($_GET['key'])){$input=($_GET['key']);} else {die ('error');}
 	
 	$userIsAdmin=false;
 	if(isset($_SESSION['userIsAdmin'])) $userIsAdmin=$_SESSION['userIsAdmin'];
 	
-	
-	$result=mysql_query("SELECT filename,copyright,tags FROM files WHERE `key`='$input'");
+	$result=mysql_query("SELECT filename,copyright,tags FROM files WHERE md5(`key`)='$input' OR `key`='$input'");
 	$resultSet=mysql_fetch_object($result);
 	@$getFile=($resultSet->filename);
 	@$getTags=($resultSet->tags);
 	@$copyright=($resultSet->copyright);
 	
-	$width=0; $height=0;
+	$width=0; $height=0; $size='1080';
 	
-	
+	if (isset($_GET['size'])) $size=$_GET['size'];
 	if (isset($_GET['width'])) $width=$_GET['width']; 
 	if (isset($_GET['height'])) $height=$_GET['height'];
 	if (isset($_GET['minimum'])) $minimum='minimum'; else $minimum='';
+	if (isset($_GET['download'])) $download=true; else $download=false;
+
+	if (!$width&&!$height&&!$download){
+		switch ($size){
+			case 'smallthumb':$width=170;$height=170;$minimum='minimum';$download=false;break;
+			case 'thumb':$width=250;$height=250;$minimum='minimum';$download=false;break;
+			case 'preview':$width=450;$height=338;$minimum='';$download=false;break;
+			default:
+				$width=1000000;$height=1080;$minimum='';$download=false;
+			break;
+		}
+	}
 	
-	if (!$userIsAdmin && $width==0){
+	if (!$userIsAdmin && $width==0 &&!$download){
 		$width=10000000; $height=10000000;
 	}
 	
-	$isLimited=($width>0);
+	/*
+	if (!$user && $download){
+		$width=2048;$height=2048;
+	}
+	*/
 	
-	if (!file_exists($getFile)) {
-	$getFile=$config->viewPath.'/design/missingimage.jpg';
+	$isLimited=($width>0);
+	$playIcon=false;
+	
+	if (stripos($getFile,'.m4v')) {
+		$getFile=str_replace('.m4v','.preview.jpg',$getFile);
+		$playIcon=true;
 	}
 	
-	//header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-	$expires=date("D, d M Y H:i:s",time() + (3 * 60 * 60)).' GMT';
-	header("Expires: $expires");  //in one week
-	header("Content-type: image/jpeg");
-	//echo $getFile;
+	if (!file_exists($getFile)) {
+		$getFile=$config->viewPath.'/design/missingimage.jpg';
+	}
 	
-	
-	if (isset($_GET['download'])) header('Content-Disposition: attachment; filename="'.basename($getFile).'"');
+	if ($download) header('Content-Disposition: attachment; filename="'.basename($getFile).'"');
 	
 	$nocopyrightnotice=(strpos($getTags,'nocopyright')!==false);
 	
@@ -57,9 +68,9 @@
 	 if (!isset($text)) {
 	 	$copyright=ucwords_new(str_replace('_',' ',$copyright));
 	 	if ($copyright=='...'){
-	 		$copyright=$config->pageTitle;
+	 		$copyright='';
 	 	}
-	 	$text=chr(169).' '.utf8_decode($copyright);
+	 	$text=utf8_decode($copyright);
 	 	if ($copyright=='none') $text='';
 	 	
 	 }
@@ -80,161 +91,175 @@
 	 	$entry='Image access from '.$server;
 	 } else $entry='Direct URL access';
 	 
-	 shrinkImage($getFile,$width,$height,$rotate,$config->cachePath,$input,$text,$minimum);
+	 shrinkImage($getFile,$width,$height,$rotate,$config->cachePath,$input,$text,$minimum,$playIcon);
 	 
 	}
 	else {
 	 readfile($getFile);
 	}
 	
-function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,$text='',$minimum=''){global $config;	
+function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,$text='',$minimum='',$playIcon=false){global $config;	
 	
- //TODO Handling of different formats
- if (stripos($lokalurl,'.youtube')){
- 	 	$id=file_get_contents($lokalurl);
-	 	$content=file_get_contents('http://i3.ytimg.com/vi/'.$id.'/0.jpg');
-	 	$lokalurl=$cachePath.'/'.$id.'.jpg';
-	 	file_put_contents($lokalurl,$content);
- }
- 
- if (!$rotate){
- 	@$exif = exif_read_data($lokalurl);
- 	@$ort = $exif['Orientation'];
-    switch($ort)
-    {
-                      
-        case 3: // 180 rotate left
-            $rotate='rotate';
-        break;
-                                  
-        case 6: // 90 rotate right
-            $rotate='right';
-        break;
-               
-        case 8:    // 90 rotate left
-            $rotate='left';
-        break;
-    }
- }
- 
- if ($rotate=='right' || $rotate=='left'){
- 	$temp=$limitHeight;
- 	$limitHeight=$limitWidth;
- 	$limitWidth=$temp;
- }
- 
- $withText=str_replace('%','_',rawurlencode($text));
+	 if (stripos($lokalurl,'.youtube')){
+	 	
+	 	 //Get a youtube preview
+	 	
+	 	 $id=file_get_contents($lokalurl);
+		 $content=file_get_contents('http://i3.ytimg.com/vi/'.$id.'/0.jpg');
+		 $lokalurl=$cachePath.'/'.$id.'.jpg';
+		 file_put_contents($lokalurl,$content);
+	 }
+	 
+	 if (!$rotate){
+	 	
+	 	//Try to determine image rotation from exif data
+	 	
+	 	@$exif = exif_read_data($lokalurl);
+	 	@$ort = $exif['Orientation'];
+	    switch($ort){
+	        case 3: $rotate='rotate'; break; // 180 rotate left
+	        case 6: $rotate='right'; break; // 90 rotate right          
+	        case 8: $rotate='left';  break;  // 90 rotate left
+	    }
+	 }
+	 
+	 if ($rotate=='right' || $rotate=='left'){
+	 	
+	 	// Swap width and hight limitations n case of a rotated image
+	 	
+	 	$temp=$limitHeight;
+	 	$limitHeight=$limitWidth;
+	 	$limitWidth=$temp;
+	 }
+	 
+	 $withText=str_replace('%','_',rawurlencode($text));
+		
+	 // CACHING	
+		
+	 $cachePath.='/'.$key.'.'.$limitWidth.'.'.$limitHeight.'.'.filesize($lokalurl).$minimum.$withText.'.jpg';
 	
- $cachePath.='/'.$key.'.'.$limitWidth.'.'.$limitHeight.'.'.filesize($lokalurl).$minimum.$withText.'.jpg';
-
- if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL']=='no-cache') {
- 	if (file_exists($cachePath)) unlink($cachePath);
- }
-
-        
- 
- if (file_exists($cachePath)) {
- 	//writeLog('update','Got'.$cachePath.' from cache');
- 	header ('location: '.$config->cacheURL.'/'.basename($cachePath));
- 	die('');
- 	//return readfile($cachePath);
- } //else writeLog('update','Did not find '.$cachePath.' in cache');
+	 /*
+	 if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL']=='no-cache') {
+	 	if (file_exists($cachePath)) unlink($cachePath);
+	 } 
+	 */    
+	 
+	 $expires=date("D, d M Y H:i:s",time() + (3 * 60 * 60)).' GMT';
+	 header("Expires: $expires");  //in one week
+	 
+	 if (file_exists($cachePath)) {
+	 	header ('location: '.$config->cacheURL.'/'.basename($cachePath));die('FROM CACHE');
+	 } 
+	 
+	 // END CACHING
+		
+	 header("Content-type: image/jpeg");	
+		
+	 ini_set('memory_limit', '1024M');set_time_limit(60);ini_set('gd.jpeg_ignore_warning', 1);               
+	 
+	 if (!$original=@imagecreatefromfile($lokalurl)) return;	
+	 
+	 // determine new image dimensions
+	 $size=GetImageSize($lokalurl);
+	 $origwidth=$size[0];$origheight=$size[1];
+	 
+	 /*
+	 //no upsizing
+	 if ($origwidth<$limitWidth) $limitWidth=$origwidth;
+	 if ($origheight<$limitHeight) $limitHeight=$origheight;
+	 */
+	 
+	 $relationWidth=$origwidth/$limitWidth;
+	 $relationHeight=$origheight/$limitHeight;
+	 
+	 //if minimum is set, a square image is created
+	 if (!$minimum){
+	   if ($relationHeight>$relationWidth){
+	   	  $newheight=$limitHeight;
+	 	  $newwidth=floor($origwidth/$relationHeight);
+	   } else {
+	 	  $newwidth=$limitWidth;
+	 	  $newheight=floor($origheight/$relationWidth);
+	   }
+	 } else {
+	 	$newheight=$limitHeight;
+	 	$newwidth=$limitWidth;
+	 	if ($relationHeight>$relationWidth){
+	     $newheight=floor($origheight/$relationWidth);
+	   } else {
+	 	  $newwidth=floor($origwidth/$relationHeight);
+	   }
+	 }
+	 
+	 //Shrinking of the image
+	 if ($minimum){
+	 	$temp=ImageCreateTrueColor($limitWidth,$limitHeight);
+	 	imagecopyresampled($temp,$original,-($newwidth-$limitWidth)/2,-($newheight-$limitHeight)/4,0,0,$newwidth,$newheight,$origwidth,$origheight);
+	 }
+	 else {
+	   $temp=ImageCreateTrueColor($newwidth,$newheight);
+	   imagecopyresampled($temp,$original,0,0,0,0,$newwidth,$newheight,$origwidth,$origheight);
+	 } 
+	 
+	 if ($rotate=='rotate'){$temp=ImageRotateRightAngle ($temp, 180);}
+	 if ($rotate=='right'){$temp=ImageRotateRightAngle ($temp, 90);$newheight=$newwidth;}
+	 if ($rotate=='left'){$temp=ImageRotateRightAngle ($temp, 270);$newheight=$newwidth;}
+	 
+	 if (!$minimum) {
+	 	
+	 	$size=($newwidth/1200*17);
+	 	$offset=($newwidth/1200*10);
+	 	
+	 	if($size<10 || $offset<7){
+	 		$size=10;$offset=7;
+	 	}
+	 	
+	 	// Set the enviroment variable for GD
+		putenv('GDFONTPATH=' . realpath('.'));
+		
+		// Name the font to be used (note the lack of the .ttf extension)
+		$font = 'design/Chalkduster';
+	 	
+	 	$color = imagecolorresolvealpha($temp, 0, 0, 0,63);
+	 	/*
+	 	imagefttext($temp, $size, 0, $offset, $newheight-$offset+1, $color, $font, $text);
+	 	imagefttext($temp, $size, 0, $offset, $newheight-$offset-1, $color, $font, $text);
+	 	imagefttext($temp, $size, 0, $offset-1, $newheight-$offset, $color, $font, $text);
+	 	imagefttext($temp, $size, 0, $offset+1, $newheight-$offset, $color, $font, $text);
+	 	*/
+	 	$color = imagecolorresolvealpha($temp, 255, 255, 255,34);
+	 	imagefttext($temp, $size, 0, $offset, $newheight-$offset, $color, $font, $text);
 	
- ini_set('memory_limit', '1024M');
- set_time_limit(60);
- ini_set('gd.jpeg_ignore_warning', 1);               
- 
- if (!$alt=@imagecreatefromfile($lokalurl)) {
- 	return;
- }	
- 	
- $size=GetImageSize($lokalurl);
- $origwidth=$size[0];$origheight=$size[1];
- 
- if ($origwidth<$limitWidth) $limitWidth=$origwidth;
- if ($origheight<$limitHeight) $limitHeight=$origheight;
- 
- $relationWidth=$origwidth/$limitWidth;
- $relationHeight=$origheight/$limitHeight;
- 
- if (!$minimum){
-   if ($relationHeight>$relationWidth){
-   	  $newheight=$limitHeight;
- 	  $newwidth=floor($origwidth/$relationHeight);
-   } else {
- 	  $newwidth=$limitWidth;
- 	  $newheight=floor($origheight/$relationWidth);
-   }
- } else {
- 	$newheight=$limitHeight;
- 	$newwidth=$limitWidth;
- 	if ($relationHeight>$relationWidth){
-     $newheight=floor($origheight/$relationWidth);
-   } else {
- 	  $newwidth=floor($origwidth/$relationHeight);
-   }
- }
- 
- //Shrinking of the image
- if ($minimum){
- 	$temp=ImageCreateTrueColor($limitWidth,$limitHeight);
- 	ImageCopyResampled($temp,$alt,-($newwidth-$limitWidth)/2,-($newheight-$limitHeight)/4,0,0,$newwidth,$newheight,$origwidth,$origheight);
- }
- else {
-   $temp=ImageCreateTrueColor($newwidth,$newheight);
-   ImageCopyResampled($temp,$alt,0,0,0,0,$newwidth,$newheight,$origwidth,$origheight);
- } 
- 
- if ($rotate=='rotate'){
- 	$temp=ImageRotateRightAngle ($temp, 180);
- }
- 
- if ($rotate=='right'){
- 	$temp=ImageRotateRightAngle ($temp, 90);
- 	$newheight=$newwidth;
- }
- 
- if ($rotate=='left'){
- 	$temp=ImageRotateRightAngle ($temp, 270);
- 	$newheight=$newwidth;
- }
- 
- if (!$minimum) {
- 	
- 	$size=($newwidth/1200*13);
- 	$offset=($newwidth/1200*10);
- 	
- 	if($size<8 || $offset<5){
- 		$size=8;$offset=5;
- 	}
- 	
- 	// Set the enviroment variable for GD
-	putenv('GDFONTPATH=' . realpath('.'));
-	
-	// Name the font to be used (note the lack of the .ttf extension)
-	$font = 'design/MeriendaOne-Regular';
- 	
- 	$color = imagecolorresolve($temp, 0, 0, 0);
- 	imagefttext($temp, $size, 0, $offset, $newheight-$offset+1, $color, $font, $text);
- 	imagefttext($temp, $size, 0, $offset, $newheight-$offset-1, $color, $font, $text);
- 	imagefttext($temp, $size, 0, $offset-1, $newheight-$offset, $color, $font, $text);
- 	imagefttext($temp, $size, 0, $offset+1, $newheight-$offset, $color, $font, $text);
- 	$color = imagecolorresolve($temp, 255, 255, 255);
- 	imagefttext($temp, $size, 0, $offset, $newheight-$offset, $color, $font, $text);
- 	
- }
- 
- $quality=($newheight*$newwidth<=300*300)?75:95;
- if ($newheight*$newwidth<=100*100) $quality=20;
- imageinterlace($temp,1);
- ImageJPEG($temp,$cachePath,$quality);
- if ($newheight*$newwidth>=300*300){
-  	$command= ('exiftool -TagsFromFile "'.$lokalurl.'" --Orientation "'.$cachePath.'"');
-  	exec($command);
- }
- echo (file_get_contents($cachePath));
- imagedestroy($temp);
- imagedestroy($alt);
+		 //show a play icon
+		 
+		 if ($playIcon){
+		 	$colorCircle=imagecolorallocatealpha ( $temp,255,255,255,30 );
+		 	$colorTriangle=imagecolorallocatealpha ( $temp,0,0,0,30 );
+		 	imagefilledellipse ( $temp , $newwidth/2 , $newheight/2 ,  100 ,  100 , $colorCircle );
+		 	imagefilledpolygon ( $temp , array($newwidth/2-20,  $newheight/2-35, $newwidth/2+35,  $newheight/2, $newwidth/2-20,  $newheight/2+35) , 3 , $colorTriangle );
+		 }
+	 	
+	 }
+	 
+	 //create output image
+	 
+	 $quality=($newheight*$newwidth<=300*300)?75:85;
+	 if ($newheight*$newwidth<=100*100) $quality=20;
+	 imageinterlace($temp,1);
+	 ImageJPEG($temp,$cachePath,$quality);
+	 
+	 //copy original exif data to new file
+	 
+	 if ($newheight*$newwidth>=300*300){
+	  	$command= ('exiftool -overwrite_original -TagsFromFile "'.$lokalurl.'" --Orientation "'.$cachePath.'"');
+	  	exec($command);
+	 }
+	 
+	 //deliver newly created image
+	 
+	 echo (file_get_contents($cachePath));
+	 imagedestroy($temp);
+	 imagedestroy($original);
 }
 
 function imagecreatefromfile($path, $user_functions = false)
@@ -308,6 +333,29 @@ function ImageRotateRightAngle( $imgSrc, $angle )
 
     return( $imgDest ); 
 } 
-mysql_close();
+
+function fastimagecopyresampled (&$dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h, $quality = 4) {
+  // Plug-and-Play fastimagecopyresampled function replaces much slower imagecopyresampled.
+  // Just include this function and change all "imagecopyresampled" references to "fastimagecopyresampled".
+  // Typically from 30 to 60 times faster when reducing high resolution images down to thumbnail size using the default quality setting.
+  // Author: Tim Eckel - Date: 09/07/07 - Version: 1.1 - Project: FreeRingers.net - Freely distributable - These comments must remain.
+  //
+  // Optional "quality" parameter (defaults is 3). Fractional values are allowed, for example 1.5. Must be greater than zero.
+  // Between 0 and 1 = Fast, but mosaic results, closer to 0 increases the mosaic effect.
+  // 1 = Up to 350 times faster. Poor results, looks very similar to imagecopyresized.
+  // 2 = Up to 95 times faster.  Images appear a little sharp, some prefer this over a quality of 3.
+  // 3 = Up to 60 times faster.  Will give high quality smooth results very close to imagecopyresampled, just faster.
+  // 4 = Up to 25 times faster.  Almost identical to imagecopyresampled for most images.
+  // 5 = No speedup. Just uses imagecopyresampled, no advantage over imagecopyresampled.
+
+  if (empty($src_image) || empty($dst_image) || $quality <= 0) { return false; }
+  if ($quality < 5 && (($dst_w * $quality) < $src_w || ($dst_h * $quality) < $src_h)) {
+    $temp = imagecreatetruecolor ($dst_w * $quality + 1, $dst_h * $quality + 1);
+    imagecopyresized ($temp, $src_image, 0, 0, $src_x, $src_y, $dst_w * $quality + 1, $dst_h * $quality + 1, $src_w, $src_h);
+    imagecopyresampled ($dst_image, $temp, $dst_x, $dst_y, 0, 0, $dst_w, $dst_h, $dst_w * $quality, $dst_h * $quality);
+    imagedestroy ($temp);
+  } else imagecopyresampled ($dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h);
+  return true;
+}
 
 ?>

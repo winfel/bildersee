@@ -16,6 +16,8 @@ ob_start();
 
 include_once('environment.php');
 
+if ($config->local && $_SERVER['HTTP_HOST']!='localhost') die('<h1>Local access only</h1>');
+
 $startTime=time();	//Debug
 
 // Basic variables for a certain page and naviation information. Information is set in
@@ -24,6 +26,7 @@ $startTime=time();	//Debug
 $activePart='events';	// the actively selected mode - 'events' if nothing else is given	
 $breadcrumb=array();	// navigational breadcrumb
 $pageTitle='';			// the title of the current page
+$thumbnail=$config->designURL.'/webclip.png';
 $sideBar='';
 $pageDescription='';	// the description of the current page
 
@@ -39,7 +42,7 @@ include('design/head.html');
 //This even works, when the user has no rights but is passed a URL directly
 if ($image){
 	switch($mode){
-		case 'diashow':include('pages/diashow.php');break;
+		case 'slideshow':include('pages/slideshow.php');break;
 		default:include('pages/image.php');
 	}
 		
@@ -48,21 +51,17 @@ if ($image){
 		
 		//when not logged in, modes are restricted to a very few. Paricularly administration and tagging
 		//are not accessible
-		if (!$user && $mode!='nocookies' && $mode!='gallery' && $mode!='login' && $mode!='tags' && $mode!='legal' && $mode!='privacy' && $mode!='upload') $mode='';
+		if (!$user && $mode!='gallery' && $mode!='tags' && $mode!='legal' && $mode!='privacy' && $mode!='upload') $mode='';
 		
 		//these modes are specified directly by url
 		switch ($mode){
 		 case 'tags':include('pages/tags.php');break;
 		 case 'people':include('pages/people.php');break;
-		 case 'logs':include('pages/logs.php');break;
-		 case 'admin':include('pages/admin.php');break;
 		 case 'taginfo':include('pages/taginfo.php');break;
 		 case 'tagchange':include('pages/tagchange.php');break;
 		 case 'stats':include('pages/stats.php');break;
 		 case 'legal':include('pages/legal.php');break;
 		 case 'privacy':include('pages/privacy.php');break;
-		 case 'login':include('pages/login.php');break;
-		 case 'nocookies':include('pages/nocookies.php');break;
 		 case 'gallery':include('pages/gallery.php');break;
 		 
 		 //the default mode "overwiew" shows the most recent event
@@ -77,6 +76,7 @@ if ($image){
 		
 		switch ($mode){
 			case 'download':include('pages/download.php');break;
+			case 'slideshow':include('pages/slideshow.php');break;
 			default: include ('pages/event.php'); break;
 
 		}
@@ -93,6 +93,7 @@ ob_end_clean();
 
 //inserting page heading and description into the otherwise fully created page
 $output=str_replace('#HEADING#',$pageTitle,$output);
+$output=str_replace('#THUMBNAIL#',$thumbnail,$output);
 $output=str_replace('#DESCRIPTION#',$pageDescription,$output);
 
 echo $output;
