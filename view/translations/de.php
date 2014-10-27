@@ -85,6 +85,7 @@ $translations['de']['Double click to add a description']='Zum Hinzufügen der Be
 $translations['de']['Enter a description for this image:']='Gib eine Beschreibung für dieses Bild ein:';
 $translations['de']['Please enter a description for this event:']='Gib eine Beschreibung für dieses Ereignis ein:';
 $translations['de']['Please enter the codeword:']='Gib bitte das Kennwort ein:';
+$translations['de']['The password prompt is blocked. Please click the yellow information bar at the top of the window and try again!']='Die Passworteingabe ist blockiert. Klicke bitte auf die gelbe Informationsleiste oben im Fester und versuche es erneut!';
 $translations['de']['Your search did not return any results!']='Ihre Suche lieferte keine Ergebnisse!';
 
 $translations['de']['till']='bis';
@@ -128,6 +129,8 @@ $translations['de']['The download may take very long depending on your internet 
 $translations['de']['Please only donwload the ZIP file, if you really need all photos. If you are just interested in a few shots, please use the individual image download instead.']='Bitte lade die ZIP-Datei nur herunter, wenn du wirklich alle Fotos herunterladen möchtest. Wenn du nur Interesse eine einigen wenigen Aufnahmen hast, verwende bitte die individuelle Herunterladefunktion der Bilder.';
 
 $translations['de']['the most crecent tags']='die aktuellsten Tags';
+
+$translations['de']['You are using an outdated Version of Microsoft Internet Explorer. This website is likely not working properly. Please consider updating to Internet Explorer 11 or use recent versions of Firefox, Chrome, Safari or Opera.']='Sie nutzen eine veraltete Version des Microsoft Internet Explorers. Diese Website wird mit diesem Browser wahrscheinlich nicht richtig funktionieren. Erwägen Sie bitte eine Aktualisierung auf eine aktuelle Version des Internet Explorers oder verwenden Sie aktuelle Versionen von Firefox, Chrome, Safari oder Opera.';
 
 //
 
