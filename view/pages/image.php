@@ -60,10 +60,10 @@ if ($contextOK){
 	$filter=$contextFilter;
 } else {
 	$page=1;
-	$folder=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($search->folder)))));
+	$folder=str_replace("'","\\'",$search->folder);
 	$filter='';
 	$contextQuery="($userQuery OR ".$filterTemp.')';
-	if ($folder) $contextQuery.=" AND replace(replace(lower(folder),' ',''),'_','') LIKE '$folder'";
+	if ($folder) $contextQuery.=" AND folder LIKE '$folder'";
 }
 $folderGiven=$folder!='%' && $folder!='%%';
 $tagGiven=stripos($filter,'tag_')!==false;
@@ -117,22 +117,12 @@ $functionBar='';
 
 if ($state=='has-rights' || $state=='public'){
 	
-	if ($tagGiven){
 
-		$url='index.php?folder='.urlencode($folder).'&filter='.$filter.'&page='.$page.'#scroll'.$image;
-		$functionBar.='<a href="'.$url.'"><img src="design/overview1.png" alt="" />'.translate('overview',true).'</a>';
-		
-		if ($user){
-			$url='findimage.php?key='.$image;
-			$functionBar.= '<a href="'.$url.'"><img src="design/context1.png" alt="" />'.translate('context',true).'</a>';
-		}
-		
-	} else {
-		
-		$url='findimage.php?key='.$image;
-		$functionBar.='<a href="'.$url.'"><img src="design/overview1.png" alt="" />'.translate('overview',true).'</a>';
-		
-	}
+	$url='index.php?folder='.urlencode($folder).'&filter='.$filter.'&page='.$page.'#scroll'.$image;
+	$functionBar.='<a href="'.$url.'"><img src="design/overview1.png" alt="" />'.translate('overview',true).'</a>';
+	
+	$url='findimage.php?key='.$image;
+	$functionBar.= '<a href="'.$url.'"><img src="design/context1.png" alt="" />'.translate('context',true).'</a>';
 	
 	$functionBar.='<span class="seperator"></span>';
 }
