@@ -23,7 +23,7 @@ header {
 	background:-o-linear-gradient(top, #4d5768, #313741);
 	background:linear-gradient(top, #4d5768, #313741);
 	background:-o-linear-gradient(top, #4d5768, #313741);
-	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#4d5768', endColorstr='#313741');
+	background:-ms-linear-gradient(top, #4d5768, #313741);
 	color:white;z-index:155;
 	overflow:hidden;
 	white-space:nowrap;
@@ -42,9 +42,9 @@ header {
 	background:black;
 	background:-moz-linear-gradient(top, #3d3d3d, #222222);
 	background:-o-linear-gradient(top, #3d3d3d, #222222); 
+	background:-ms-linear-gradient(top, #3d3d3d, #222222); 
 	background:linear-gradient(top, #3d3d3d, #222222); 	
 	background:-webkit-gradient(linear, left top, left bottom, from(#3d3d3d), to(#222222));
-	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#3d3d3d', endColorstr='#222222');
 	border-top:1px solid #4f4f4f;
 	color:white;
 	text-align:left;
@@ -69,9 +69,9 @@ header {
 	padding-left:5px;
 	background:-moz-linear-gradient(top, #ddd, #fff);
 	background:-o-linear-gradient(top, #ddd, #fff); 
+	background:-ms-linear-gradient(top, #ddd, #fff); 
 	background:linear-gradient(top, #ddd, #fff); 	
 	background:-webkit-gradient(linear, left top, left bottom, from(#ddd), to(#fff));
-	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#dddddd', endColorstr='#ffffff');
 	box-shadow:inset 1px 1px 2px #333;
 	-webkit-box-shadow:inset 1px 1px 2px #333;
 }
@@ -81,6 +81,10 @@ header {
 	background:white;
 	box-shadow:inset 1px 1px 2px #444;
 	-webkit-box-shadow:inset 1px 1px 2px #444;
+	box-shadow:inset 1px 1px 2px #444;
+	-o-box-shadow:inset 1px 1px 2px #444;
+	-moz-box-shadow:inset 1px 1px 2px #444;
+	-ms-box-shadow:inset 1px 1px 2px #444;
 }
 
 #breadcrumb .element, #breadcrumb div.seperator {
@@ -105,13 +109,16 @@ header {
   -o-transition-property: opacity;
   -o-transition-duration: 2s;
   -o-transition-delay: 0s;
+  -ms-transition-property: opacity;
+  -ms-transition-duration: 2s;
+  -ms-transition-delay: 0s;
   transition-property: opacity;
   transition-duration: 2s;
   transition-delay: 0s;
   background:rgba(0,0,0,0.8);
   width:400px;
   padding:20px;
-  position:absolute;
+  position:fixed;
   bottom:50px;
   left:50%;
   margin-left:-210px;
@@ -153,9 +160,9 @@ header {
 	background:black;
 	background:-moz-linear-gradient(top, #3d3d3d, #222222);
 	background:-o-linear-gradient(top, #3d3d3d, #222222); 
+	background:-ms-linear-gradient(top, #3d3d3d, #222222); 
 	background:linear-gradient(top, #3d3d3d, #222222); 	
 	background:-webkit-gradient(linear, left top, left bottom, from(#3d3d3d), to(#222222));
-	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#3d3d3d', endColorstr='#222222');
 	border-top:1px solid #4f4f4f;
 	color:white;
 	text-align:left;
@@ -199,7 +206,11 @@ header div.trenner, header div.trennerrechts {
 	height:100%;width:1px;overflow:hidden;float:left;margin:0;
 	border-right:1px solid black;
 	opacity:0.5;
-	box-shadow: 0px 0px 1px #ccc; -webkit-box-shadow: 0px 0px 1px #ccc; -moz-box-shadow: 0px 0px 1px #ccc;
+	box-shadow: 0px 0px 1px #ccc; 
+	-webkit-box-shadow: 0px 0px 1px #ccc; 
+	-moz-box-shadow: 0px 0px 1px #ccc;
+	-o-box-shadow: 0px 0px 1px #ccc;
+	-ms-box-shadow: 0px 0px 1px #ccc;
 
 }
 
@@ -221,6 +232,10 @@ header a.activebutton{
 	background:#30353f;
 	box-shadow:inset 0px 0px 15px #000000;
 	-webkit-box-shadow:inset 0px 0px 15px #000000;
+	box-shadow:inset 0px 0px 15px #000000;
+	-moz-box-shadow:inset 0px 0px 15px #000000;
+	-o-box-shadow:inset 0px 0px 15px #000000;
+	-ms-box-shadow:inset 0px 0px 15px #000000;
 	border-radius: 1px; /*Opera bugfix to make inset shadow work*/
 }
 
@@ -236,11 +251,15 @@ header #pagetitle {
 	background:white;
 	background:-moz-linear-gradient(top, #fff, #eee);
 	background:-o-linear-gradient(top, #fff, #eee); 
+	background:-ms-linear-gradient(top, #fff, #eee); 
 	background:linear-gradient(top, #fff, #eee); 	
 	background:-webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
-	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee');
 	position:fixed;z-index:255;right:5px;top:43px;
-	box-shadow: 0 1px 5px #666; -webkit-box-shadow: 0 1px 5px #666; -moz-box-shadow: #666 0px 1px 5px;
+	box-shadow: 0 1px 5px #666; 
+	-webkit-box-shadow: 0 1px 5px #666; 
+	-moz-box-shadow: #666 0px 1px 5px;
+	-ms-box-shadow: #666 0px 1px 5px;
+	-o-box-shadow: #666 0px 1px 5px;
 	border-radius:5px;-moz-border-radius:5px;
 }
 
@@ -292,7 +311,11 @@ ul {margin-left:40px}
 #visu .thumb {cursor: pointer;width:458px;height:363px;}
 
 #visu .thumb img, #theimage {
-	box-shadow: 2px 2px 5px #222; -webkit-box-shadow: 2px 2px 5px #222;-moz-box-shadow: #222 2px 2px 5px;}
+	box-shadow: 2px 2px 5px #222; 
+	-webkit-box-shadow: 2px 2px 5px #222;
+	-moz-box-shadow: #222 2px 2px 5px;
+	-ms-box-shadow: #222 2px 2px 5px;
+	-o-box-shadow: #222 2px 2px 5px;}
 
 #visu .private {color:#CC7777}
 #visu .public {color:#77CC77}
@@ -316,11 +339,23 @@ ul {margin-left:40px}
 #visu .albuminfo .readable {color:#ddd;font-size:15px;}
 
 #visu .albuminfo img {
-	box-shadow: 2px 2px 5px #222; -webkit-box-shadow: 2px 2px 5px #222;background:#999;-moz-box-shadow: #222 2px 2px 5px;border-radius:5px;-moz-border-radius:5px;display:block;margin-bottom:7px;
+	background:#999;
+	box-shadow: 2px 2px 5px #222; 
+	-webkit-box-shadow: 2px 2px 5px #222;
+	-moz-box-shadow: #222 2px 2px 5px;
+	-o-box-shadow: #222 2px 2px 5px;
+	-ms-box-shadow: #222 2px 2px 5px;
+	border-radius:5px;
+	-moz-border-radius:5px;display:block;margin-bottom:7px;
 }
 
 #visu .albuminfo:hover img
- {box-shadow: 2px 2px 5px #000; -webkit-box-shadow: 2px 2px 5px #000;-moz-box-shadow: #000 2px 2px 5px;background:#fff;}
+ {box-shadow: 2px 2px 5px #000; 
+ -webkit-box-shadow: 2px 2px 5px #000;
+ -moz-box-shadow: #000 2px 2px 5px;
+ -ms-box-shadow: #000 2px 2px 5px;
+ -o-box-shadow: #000 2px 2px 5px;
+ background:#fff;}
 
 #visu .albuminfo:hover .readable {text-decoration:underline}
 
@@ -334,6 +369,7 @@ background:white;text-align:left;max-width:990px;margin:auto;color: black;paddin
 }
 
 #keywordnotice, #notice, #warning {
+	background:white;
 	padding:10px; background:rgba(255,255,255,0.7);
     color:black;margin:10px 0;
 	text-shadow: none;font-size:80%;
@@ -368,7 +404,13 @@ input {font-size:13px}
 #welcome {margin-right:320px;font-size:130%}
 
 #searchbox {
-	background:white;padding:10px;width:400px;margin:auto;margin-bottom:20px;box-shadow: 0 1px 5px #666; -webkit-box-shadow: 0 1px 5px #666; -moz-box-shadow: #666 0px 1px 5px;z-index:200;
+	background:white;padding:10px;width:400px;margin:auto;margin-bottom:20px;
+	box-shadow: 0 1px 5px #666;
+	-webkit-box-shadow: 0 1px 5px #666;
+	-moz-box-shadow: #666 0px 1px 5px;
+	-o-box-shadow: #666 0px 1px 5px;
+	-ms-box-shadow: #666 0px 1px 5px;
+	z-index:200;
 }
 
 #imagediv {background:url(ajax-loader.gif) 50% 200px no-repeat;min-height:300px}
@@ -389,7 +431,11 @@ input {font-size:13px}
 .welcomeimage {
 	color:white;text-decoration:none;font-size:15px;display:block;
 	border:1px solid black;width:92px;height:92px;margin:3px;padding:2px;
-	box-shadow: 0px 0px 3px #000; -webkit-box-shadow: 0px 0px 3px #000; -moz-box-shadow: #000 0px 0px 3px;
+	box-shadow: 0px 0px 3px #000; 
+	-webkit-box-shadow: 0px 0px 3px #000; 
+	-moz-box-shadow: #000 0px 0px 3px;
+	-o-box-shadow: #000 0px 0px 3px;
+	-ms-box-shadow: #000 0px 0px 3px;
 }
 
 small {
@@ -441,10 +487,14 @@ small {
 	background:white;
 	background:-moz-linear-gradient(top, #fff, #eee);
 	background:-o-linear-gradient(top, #fff, #eee); 
+	background:-ms-linear-gradient(top, #fff, #eee); 
 	background:linear-gradient(top, #fff, #eee); 	
 	background:-webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
-	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee');
-	box-shadow: 0 1px 7px #333; -webkit-box-shadow: 0 1px 7px #333; -moz-box-shadow: #333 0px 1px 7px;
+	box-shadow: 0 1px 7px #333; 
+	-webkit-box-shadow: 0 1px 7px #333; 
+	-moz-box-shadow: #333 0px 1px 7px;
+	-o-box-shadow: #333 0px 1px 7px;
+	-ms-box-shadow: #333 0px 1px 7px;
 	border-radius:5px;-moz-border-radius:5px;
 	z-index:200;
 }
