@@ -60,7 +60,7 @@ $page=$catOnPage[$topic];
 
 $folder=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($folder)))));
 
-header ("Location: index.php?folder=".urlencode($folder).'&page='.$page.'&filter='.$contextFilter.'#scroll'.$key);
+header ("Location: index.php?folder=".urlencode($folder).'&page='.$page.'&filter=#scroll'.$key);
 
 mysql_close();
 
