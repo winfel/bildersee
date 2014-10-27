@@ -119,6 +119,7 @@ function keypressed (Ereignis) {
   if (Tastencode==39 || Tastencode==32) {
   	var nextlink=document.getElementById('nextlink');
   	           if (nextlink){
+  	           	  loadingMessage();
   	           	  location.href=nextlink.href;
   				}
   }
@@ -126,12 +127,14 @@ function keypressed (Ereignis) {
   if (Tastencode==37) {
   	var prevlink=document.getElementById('prevlink');
   	           if (prevlink){
+  	           	  loadingMessage();
   	           	  location.href=prevlink.href;
   				}
   }
   if (Tastencode==27) {
   	var backlink=document.getElementById('backlink');
   	           if (backlink){
+  	           	  loadingMessage();
   	           	  location.href=backlink.href;
   				}
   }
@@ -249,3 +252,32 @@ function message(text){
 		el.style.display='none';
 	},5000);
 }
+
+var tx=false;
+var ty=false;
+function touchStart(event){
+	if (event.touches.length!==1) return;
+	tx = event.touches[0].pageX;
+	ty = event.touches[0].pageY;
+}
+function touchMove(event){}
+function touchEnd(event){
+	if (event.changedTouches.length!==1) return;
+	var dx = tx - event.changedTouches[0].pageX;
+	var dy = ty - event.changedTouches[0].pageY;
+	
+	if (dx>150) {
+  		var nextlink=document.getElementById('nextlink');
+  		loadingMessage();
+	    if (nextlink){location.href=nextlink.href;}
+	}
+	if (dx<-150) {
+  		var prevlink=document.getElementById('prevlink');
+  		loadingMessage();
+	    if (prevlink){location.href=prevlink.href;}
+	}
+
+	
+	
+}
+function touchCancel(event){}

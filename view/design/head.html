@@ -57,4 +57,14 @@ function(){h.innerHTML="";k.removeChild(h);k.appendChild(f);l.styleSheet.cssText
 <input type="text" placeholder="<?php echo translate('search',true);?>" onkeyup="filterDelayed();" id="filter" size="30">
 
 <div id="visu">
- <div id="maincontent">
+ <div id="maincontent" 
+  ontouchstart="touchStart(event);"
+  ontouchmove="touchMove(event);"
+  ontouchend="touchEnd(event);"
+  ontouchcancel="touchCancel(event);">
+ 
+<script>
+if(navigator.userAgent.search("MSIE")>0){
+	document.write("<div style=\"background:red;color:black;padding:15px;margin:7px;text-align:left;\"><?php echo translate('You are using an outdated Version of Microsoft Internet Explorer. This website is likely not working properly. Please consider updating to Internet Explorer 11 or use recent versions of Firefox, Chrome, Safari or Opera.');?></div>");
+}
+</script>
