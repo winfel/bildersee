@@ -206,6 +206,27 @@ function onScroll(){
 	},1000);
 	
 }
+
+function loadImages(){
+	var element=document.getElementById("images");
+	var images=element.getElementsByTagName("img");
+	
+	for (var i in images){
+		var image=images[i];
+		
+		var y=getElementPosition(image);
+		
+		if (image.title) {
+			image.src=image.title;
+			image.title="";
+			window.setTimeout(function(){loadImages();},1000);
+			return;
+		}
+		
+	}
+			
+}
+
 </script>';
 
 
@@ -432,6 +453,10 @@ echo '<script>
 
 function enterCodeword(){
 	var result=prompt("'.translate('Please enter the codeword:').'","");
+	if (result==null && navigator.appName=="Microsoft Internet Explorer"){
+		alert("'.translate('The password prompt is blocked. Please click the yellow information bar at the top of the window and try again!').'");
+		return;
+	}
 	if (!result) result=""; else result="codeword_"+result.toLowerCase();
 	
 	var folder="'.urlencode($folder).'";
@@ -537,6 +562,8 @@ function showAddress(){
 
 
 onScroll();
+
+loadImages();
 
 </script>';
 
