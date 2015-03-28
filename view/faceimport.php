@@ -12,6 +12,7 @@
   }
   
   set_time_limit(30*60);
+  ini_set('memory_limit', '1024M');
  
   $resultCacheTable='resultcache';
   $runTable='running';
@@ -40,7 +41,7 @@
   		$file=file_get_contents($config->tempPath.'/facelist');
   		$data=json_decode(gzuncompress($file),true);
   		$dbdata=array();
-  		$query=mysql_query("SELECT files.tags as alltags, filetags.tags as filetags, filename, `key` FROM files LEFT JOIN filetags ON files.`key`=filetags.image WHERE files.tags LIKE '%year_2014%'");
+  		$query=mysql_query("SELECT files.tags as alltags, filetags.tags as filetags, filename, `key` FROM files LEFT JOIN filetags ON files.`key`=filetags.image");
 		while ($dbentry=mysql_fetch_object($query)){
 			$dbdata[$dbentry->filename]=$dbentry;
 		}
@@ -48,7 +49,7 @@
   			$filename=str_replace('#',$config->contentPath,$entry['filename']);
   			
   			if (!isset($dbdata[$filename])){
-  				//echo "$filename not in db selection\n";
+  				//echo $entry['filename']." not in db selection\n";
   				continue;
   			}
   		

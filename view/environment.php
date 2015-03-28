@@ -30,6 +30,7 @@ $userIsAdmin=false;
 if (isset($_REQUEST['logout'])) {
 	unset($_SESSION['user']);
 	unset($_SESSION['userQuery']);
+	unset($_SESSION['lang']);
 }
 
 if (isset($_POST['user']) && isset($_POST['password'])){
