@@ -34,6 +34,7 @@ if (isset($_SESSION['last_target']) && $_SESSION['last_target']){
 }
 
 echo '<script>
+
 function setFilter(filter){
 	location.href="?filter="+filter;
 }
@@ -59,6 +60,7 @@ function onScroll(){
 		
 		if (y>top-200 && y<top+height+400) {
 			image.src=image.title;
+			image.srcset=image.title+" 1x, "+image.title+"1.5x 1.5x, "+image.title+"2x 2x";
 		}	
 	}
 }
@@ -102,6 +104,8 @@ while ($entry=array_shift($search)){
 	} else {
 		$readable=substr($entry->category,3);
 	}
+	
+	$readable=ucfirst(translateWords($readable));
 	
 	$month=substr($entry->folder,0,7);
 	
