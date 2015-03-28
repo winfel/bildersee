@@ -246,6 +246,8 @@ header #pagetitle {
 	text-align:left;
 }
 
+span.untranslated {color:red}
+
 #login {
 	display:none;width:250px;float:right;text-align:left;padding:15px;
 	background:white;
@@ -587,7 +589,7 @@ box-shadow: 0 0 20px #000; -webkit-box-shadow: 0 0 20px #000; -moz-box-shadow: #
 	.imageframe {width:100%;height:auto;padding:0;margin:0}
 	#visu .thumb {width:100%;height:auto;padding:0;margin:0}
 	.previmage {width:100%;height:auto;padding:0;margin:0}
-	.thumb img {width:100%;}
+	.thumb img {max-width:100%;}
 	.previmage td.tag {height:auto;padding:5px 0 10px 0}
 }
 
