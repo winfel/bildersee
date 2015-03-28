@@ -1,16 +1,18 @@
 <?php
 
+$translations['es']['loading data from server.']='cargando datos del servidor';
+
 //$translations['es']['data privacy statement']='Datenschutzerklärung';
 
 $translations['es']['Twinning']='Hermanamiento';
 
-//$translations['es']['slideshow']='Diashow';
+$translations['es']['slideshow']='presentación';
 //$translations['es']['Network disruption! Trying the next image.']='Netzwerkstörung! Versuche, mit dem nächsten Bild fortzufahren';
 //$translations['es']['Slideshow is running slower due to slow network response time!']='Diashow läuft langsamer auf Grund langsamer Netzwerkverbindung!';
 //$translations['es']['Press ENTER to view in fullscreen. Press ESC or double click to leave the slideshow.']='Drücken Sie ENTER, um in den Vollbildmudus zu wechseln. Drücken Sie ESC oder machen Sie einen Doppelklick, um die Diashow zu verlassen.';
 
 
-//$translations['es']['share']='Teilen';
+$translations['es']['share']='compartir';
 //$translations['es']['An error has occured!']='Ein Fehler ist aufgetreten!';
 //$translations['es']['An image with this address could not be found. Please check if you have typed in or copied the address correctly.']='Unter dieser Adresse konnte kein Bild gefunden werden. Bitte überprüfen Sie, ob Sie die Adresse richtig eingeben oder kopiert haben.';
 //$translations['es']['This event does not exist or you do not have access rights.']='Dieses Ereignis existiert nicht oder Sie haben nicht die notwendigen Zugriffsrechte.';
@@ -18,15 +20,16 @@ $translations['es']['Twinning']='Hermanamiento';
 //$translations['es']['jump to']='Springe zu';
 
 $translations['es']['years']='años';
-//$translations['es']['search for people']='Nach Personen suchen';
-$translations['es']['gallery']='Galeria';
-$translations['es']['galleries']='Galerias';
-$translations['es']['events']='Eventos';
-$translations['es']['tags']='Palabras claves';
-$translations['de']['Info / Legal']='Impressum';
+$translations['es']['search for people']='buscar personas';
+$translations['es']['gallery']='galería';
+$translations['es']['galleries']='galerías';
+$translations['es']['events']='eventos';
+$translations['es']['tags']='etiquetas';
+$translations['es']['people']='personas';
+$translations['es']['Info / Legal']='Aviso Legal';
 $translations['es']['Legal Information | About us']='Aviso Legal | Sobre nosotros';
-$translations['es']['login']='login';
-//$translations['es']['logout']='abmelden';
+$translations['es']['login']='iniciar sesión';
+$translations['es']['logout']='salir';
 $translations['es']['admin']='Admin';
 $translations['es']['upload']='subir';
 $translations['es']['an online photo gallery']='una galeria de fotos en la red';
@@ -38,9 +41,9 @@ $translations['es']['images']='imágenes';
 $translations['es']['on']='en';
 $translations['es']['download']='descargar';
 $translations['es']['an image in']='un imágen en';
-//$translations['es']['metadata']='Metadaten';
+$translations['es']['metadata']='metadatos';
 $translations['es']['location']='lugar';
-$translations['es']['overview']='Visión general';
+$translations['es']['overview']='visión general';
 $translations['es']['context']='Contexto';
 $translations['es']['user']='Usuario';
 $translations['es']['password']='Contraseña';
@@ -48,7 +51,10 @@ $translations['es']['cancel']='Cancelar';
 //$translations['es']['see legal']='siehe Impressum';
 $translations['es']['search']='Buscar';
 $translations['es']['with a codeword']='con una contraseña';
-//$translations['es']['Jump directly to a topic']='Direkt zu einem Thema springen';
+$translations['es']['Jump directly to a topic']='Pasa directamente a un tema';
+$translations['es']['Filter by tag']='Filtrar por etiqueta';
+$translations['es']['Filter by person']='Filtrar por persona';
+$translations['es']['remove filter']='Eliminar filtro';
 
 $translations['es']['January']='Enero';
 $translations['es']['February']='Febrero';
@@ -62,7 +68,7 @@ $translations['es']['September']='Septiembre';
 $translations['es']['October']='Octubre';
 $translations['es']['November']='Noviembre';
 $translations['es']['December']='Deciembre';
-$translations['es']['Hello #NAME#. Welcome to #PAGETITLE#']='¡Hola #NAME#! Bienvenidos a #PAGETITLE#!';
+$translations['es']['Hello #NAME#. Welcome to #PAGETITLE#!']='¡Hola #NAME#. Bienvenidos a #PAGETITLE#!';
 //$translations['de']['Double click to change the description']='Zum Ändern der Beschreibung doppelklicken';
 //$translations['de']['Double click to add a description']='Zum Hinzufügen der Beschreibung doppelklicken';
 //$translations['de']['Enter a description for this image:']='Gib eine Beschreibung für dieses Bild ein:';
@@ -77,9 +83,9 @@ $translations['es']['Author\'s rights']='Drechos de los autores';
 $translations['es']['Privacy / Data Protection']='Protección de datos';
 $translations['es']['Right to the Personal Image']='Derecho a la propia imágen';
 
-//$translations['es']['This event is not publically visible, but can directly be accessed:']='Dieses Ereignis ist nicht öffentlich sichtbar, kann aber direkt aufgerufen werden:';
+$translations['es']['This event is not publically visible, but can directly be accessed:']='Este evento no esta disponible públicamente, pero se pueda acceder directamente:';
 
-//$translations['es']['Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed with the following codeword:']='Nur eine Auswahl der Bilder dieses Egeignisses ist öffentlich verfügbar. Das komplette Ereignis (mit der Ausnahme explizit privater Bilder) kann mit dem folgenden Kennwort angesehen werden:';
+$translations['es']['Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed with the following codeword:']='Solo una pequeña selección de este evento esta disponible púplicamente. Todo el evento (con la excepción de imágenes expresamente privadas) se puede ver con la contraseña siguiente:';
 
 //Right to the Personal Image
 

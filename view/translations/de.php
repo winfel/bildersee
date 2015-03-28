@@ -63,6 +63,7 @@ $translations['de']['search']='Suche';
 $translations['de']['with a codeword']='mit Kennwort';
 $translations['de']['Jump directly to a topic']='Direkt zu einem Thema springen';
 $translations['de']['Filter by tag']='Nach Tag filtern';
+$translations['de']['Filter by person']='Nach Person filtern';
 $translations['de']['remove filter']='Filter entfernen';
 $translations['de']['images are shown on presenter']='Bilder werden angezeigt auf Präsentator';
 $translations['de']['switch back to local image display']='auf lokale Bildanzeige zurückwechseln';
