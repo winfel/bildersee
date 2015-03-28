@@ -78,6 +78,7 @@ function pretty($entry){
 	$entry=str_replace('_Oe','Ö',$entry);
 	$entry=str_replace('_Ue','Ü',$entry);
 	$entry=str_replace('_ss','ß',$entry);
+	$entry=str_replace('_n','ñ',$entry);
 	$entry=str_replace('_,',"'",$entry);
 	
 	$entry=str_replace('Palamos','Palamós',$entry);
@@ -236,6 +237,8 @@ if (!$path){
 		   	$possible=str_replace('__oe','ö',$possible);
 		   	$possible=str_replace('__ue','ü',$possible);
 		   	$possible=str_replace('__ss','ß',$possible);
+		   	$possible=str_replace('__n','ñ',$possible);
+		   	$possible=str_replace('__o','ó',$possible);
 		   	$possible=str_replace(' ','_',$possible);
 		   	
 		   	if ($possible=='winfel') $possible='felix_winkelnkemper';
@@ -264,6 +267,7 @@ if (!$path){
 		   	$onetag=str_replace('__ue','ü',$onetag);
 		   	$onetag=str_replace('__ss','ß',$onetag);
 		   	$onetag=str_replace('__o','ó',$onetag);
+		   	$onetag=str_replace('__n','ñ',$onetag);
    		    $result[strtolower($onetag)]=true;
    		}
    } 
@@ -435,7 +439,7 @@ function cache_control(){
 }
 
 $language=false;
-function translate($input,$upper=false){global $translations,$language,$config;
+function translate($input,$upper=false){global $translations,$words,$language,$config;
 	
 	if (!$language){
 		
@@ -455,15 +459,52 @@ function translate($input,$upper=false){global $translations,$language,$config;
 		$language=$lang;
 	}
 	
-	$output=$input;	
+	$output=$input;
 	
-	if (isset($translations[$language][$input])) $output=$translations[$language][$input];
-	
-	$output=$output;
+	if (isset($translations[$language]) && isset($translations[$language][$input])) $output=$translations[$language][$input];
 	
 	if ($upper) $output=ucfirst($output);
 	
 	return $output;
+}
+
+
+function translateWords($input){global $words,$translations,$language,$config;
+	
+	if (!$language){
+		
+		$dir=scandir('translations');
+		
+		$allowed_langs = array();
+		
+		foreach($dir as $lang){
+			if ($lang[0]=='.') continue;
+			$lang=str_replace('.php','',$lang);
+			$allowed_langs[]=$lang;
+			@include('translations/'.$lang.'.php');
+		}
+	
+		$lang = lang_getfrombrowser ($allowed_langs, 'en', null, false);
+		
+		$language=$lang;
+	}
+	
+	if (!isset($words[$language])) return $input;
+	
+	$output=' '.$input.' ';
+	$output=str_replace('-',' - ',$output);
+	$output=str_replace(',',' , ',$output);
+	$output=str_replace('.',' . ',$output);
+	
+	foreach ($words[$language] as $k=>$v){
+		$output=str_replace(' '.$k.' ',' '.$v.' ',$output);
+	}
+	
+	$output=str_replace(' - ','-',$output);
+	$output=str_replace(' , ',',',$output);
+	$output=str_replace(' . ','.',$output);
+	
+	return trim($output);
 }
 
 function ucwords_new($text){   //ucfirst that capitalizes letters after hyphens.
@@ -582,7 +623,14 @@ function cleanupCache(){global $config,$user;
 
 // Browsersprache ermitteln
 function lang_getfrombrowser ($allowed_languages, $default_language, $lang_variable = null, $strict_mode = true) {
-        // $_SERVER['HTTP_ACCEPT_LANGUAGE'] verwenden, wenn keine Sprachvariable mitgegeben wurde
+        
+        if (isset($_GET['lang'])) {
+        	$_SESSION['lang']=$_GET['lang'];
+        	return $_GET['lang'];
+        }
+        
+        if (isset($_SESSION['lang'])) return $_SESSION['lang'];
+        
         if ($lang_variable === null) {
                 @$lang_variable = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
         }
@@ -648,6 +696,7 @@ function lang_getfrombrowser ($allowed_languages, $default_language, $lang_varia
         }
 
         // die gefundene Sprache zurückgeben
+        $_SESSION['lang']=$current_lang;
         return $current_lang;
 }
 

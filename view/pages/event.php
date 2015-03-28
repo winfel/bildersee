@@ -43,6 +43,7 @@ $hasThumb=false;
 
 $peopleList=false;
 $imageTags=array();
+$peopleTags=array();
 
    
 while ($line=array_shift($search)){
@@ -63,8 +64,8 @@ while ($line=array_shift($search)){
 		}
 		
 		if ($folderGiven){
-			if (!$tagGiven) addToBreadcrumb('',$pageTitle);
-			else addToBreadcrumb('?folder='.urlencode($folder),$pageTitle);
+			if (!$tagGiven) addToBreadcrumb('',ucfirst(translateWords($pageTitle)));
+			else addToBreadcrumb('?folder='.urlencode($folder),ucfirst(translateWords($pageTitle)));
 		} 
 		
 		if ($tagGiven) {
@@ -111,7 +112,7 @@ while ($line=array_shift($search)){
 		}
 		
 		if (isset($peopleList[$ele])){
-			 //if ($user) @$imageTags[$ele]++;
+			 if ($user) @$peopleTags[$ele]++;
 			 continue;
 		} else {
 			@$imageTags[$ele]++;
@@ -187,6 +188,7 @@ function onScroll(){
 		
 		if (image.title && y>top-200 && y<top+height+400) {
 			image.src=image.title;
+			image.srcset=image.title+" 1x, "+image.title+"2x 2x";
 			image.title="";
 		}
 		
@@ -218,6 +220,7 @@ function loadImages(){
 		
 		if (image.title) {
 			image.src=image.title;
+			image.srcset=image.title+" 1x, "+image.title+"1.5x 1.5x, "+image.title+"2x 2x";
 			image.title="";
 			window.setTimeout(function(){loadImages();},1000);
 			return;
@@ -230,7 +233,7 @@ function loadImages(){
 </script>';
 
 
-if ($folderGiven && isset($folderReadable)){echo '<h1>'.$pageTitle.' <nobr>('.get_date($folderReadable).')</nobr></h1>';}
+if ($folderGiven && isset($folderReadable)){echo '<h1>'.ucfirst(translateWords($pageTitle)).' <nobr>('.get_date($folderReadable).')</nobr></h1>';}
 
 $byString='';
 
@@ -274,7 +277,7 @@ if (count($files)>1){
 	$navi.='<option value="">'.translate('Jump directly to a topic').'  </option>';
 	
 	foreach(array_keys($files) as $category){
-		$navi.='<option value="'.$catOnPage[$category].'###'.urlencode($category).'">'.$category.'  </option>';
+		$navi.='<option value="'.$catOnPage[$category].'###'.urlencode($category).'">'.ucfirst(translateWords($category)).'  </option>';
 	}
 	
 	$navi.='</select>&nbsp;&nbsp;&nbsp;';
@@ -282,7 +285,8 @@ if (count($files)>1){
 
 }
 
-arsort($imageTags);
+ksort($imageTags);
+ksort($peopleTags);
 
 foreach ($imageTags as $k=>$v){
 	if ($v==$count) unset($imageTags[$k]);
@@ -293,6 +297,16 @@ if($imageTags || $tagGiven){
 	$navi.='<option value="">'.translate('Filter by tag').'  </option>';
 	if ($folderGiven) $navi.='<option value="">'.translate('remove filter',true).'  </option>';
 	foreach ($imageTags as $k=>$v){
+		$readable=ucwords_new(str_replace('_',' ',$k)).' ('.$v.')';
+		$navi.='<option value="'.$k.'">'.$readable.'  </option>';
+	}
+	$navi.='</select>&nbsp;&nbsp;&nbsp;';
+} 
+
+if($peopleTags || $tagGiven){
+	$navi.='<select onchange="setTag(this.value);">';
+	$navi.='<option value="">'.translate('Filter by person').'  </option>';
+	foreach ($peopleTags as $k=>$v){
 		$readable=ucwords_new(str_replace('_',' ',$k)).' ('.$v.')';
 		$navi.='<option value="'.$k.'">'.$readable.'  </option>';
 	}
@@ -367,7 +381,7 @@ foreach ($files as $category=>$entries){
 	
 	if ($catOnPage[$category]!=$page) continue;
 		
-	if ($category && count($catOnPage)>1) echo '<h2 id="'.urlencode($category).'">'.$category.'</h2>';
+	if ($category && count($catOnPage)>1) echo '<h2 id="'.urlencode($category).'">'.ucfirst(translateWords($category)).'</h2>';
 	
 	foreach ($entries as $entry){
 		
@@ -563,7 +577,7 @@ function showAddress(){
 
 onScroll();
 
-loadImages();
+//loadImages();
 
 </script>';
 
