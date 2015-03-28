@@ -6,6 +6,7 @@
 	include_once ('environment.php');
 	
 	$config=new Config(); 
+	$quality=false;
 	
 	if (isset($_GET['key'])){$input=($_GET['key']);} else {die ('error');}
 	
@@ -28,11 +29,17 @@
 
 	if (!$width&&!$height&&!$download){
 		switch ($size){
-			case 'smallthumb':$width=170;$height=170;$minimum='minimum';$download=false;break;
-			case 'thumb':$width=250;$height=250;$minimum='minimum';$download=false;break;
-			case 'preview':$width=450;$height=338;$minimum='';$download=false;break;
+			case 'smallthumb':$width=170;$height=170;$minimum='minimum';$quality=85;$download=false;break;
+			case 'smallthumb1.5x':$width=255;$height=255;$minimum='minimum';$quality=75;$download=false;break;
+			case 'smallthumb2x':$width=340;$height=340;$minimum='minimum';$quality=65;$download=false;break;
+			case 'thumb':$width=250;$height=250;$minimum='minimum';$quality=85;$download=false;break;
+			case 'thumb1.5x':$width=375;$height=375;$minimum='minimum';$quality=75;$download=false;break;
+			case 'thumb2x':$width=500;$height=500;$minimum='minimum';$quality=65;$download=false;break;
+			case 'preview':$width=450;$height=338;$minimum='';$download=false;$quality=85;break;
+			case 'preview1.5x':$width=675;$height=507;$minimum='';$download=false;$quality=75;break;
+			case 'preview2x':$width=900;$height=676;$minimum='';$download=false;$quality=65;break;
 			default:
-				$width=1000000;$height=1080;$minimum='';$download=false;
+				$width=1000000;$height=1080;$minimum='';$quality=85;$download=false;
 			break;
 		}
 	}
@@ -40,12 +47,6 @@
 	if (!$userIsAdmin && $width==0 &&!$download){
 		$width=10000000; $height=10000000;
 	}
-	
-	/*
-	if (!$user && $download){
-		$width=2048;$height=2048;
-	}
-	*/
 	
 	$isLimited=($width>0);
 	$playIcon=false;
@@ -80,25 +81,15 @@
 	 else if (strpos($getTags,'rotatel')!==false) $rotate='left';
 	 else if (strpos($getTags,'norotate')!==false) $rotate='none';
 	 else if (strpos($getTags,'rotate')!==false) $rotate='rotate';
-
-	 if(isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] !== null && $_SERVER['HTTP_REFERER'] !== '') {
-	 	$server=$_SERVER['HTTP_REFERER'];
-	 	$server=str_replace('http://','',$server);
-	 	$server=str_replace('https://','',$server);
-	 	$server=str_replace('www.','',$server);
-	 	$server=explode('/',$server);
-	 	$server=$server[0];
-	 	$entry='Image access from '.$server;
-	 } else $entry='Direct URL access';
 	 
-	 shrinkImage($getFile,$width,$height,$rotate,$config->cachePath,$input,$text,$minimum,$playIcon);
+	 shrinkImage($getFile,$width,$height,$rotate,$config->cachePath,$input,$text,$minimum,$playIcon,$quality);
 	 
 	}
 	else {
 	 readfile($getFile);
 	}
 	
-function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,$text='',$minimum='',$playIcon=false){global $config;	
+function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,$text='',$minimum='',$playIcon=false,$quality=false){global $config;	
 	
 	 if (stripos($lokalurl,'.youtube')){
 	 	
@@ -144,12 +135,15 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
 	 } 
 	 */    
 	 
+	 
 	 $expires=date("D, d M Y H:i:s",time() + (3 * 60 * 60)).' GMT';
 	 header("Expires: $expires");  //in one week
+	 
 	 
 	 if (file_exists($cachePath)) {
 	 	header ('location: '.$config->cacheURL.'/'.basename($cachePath));die('FROM CACHE');
 	 } 
+	
 	 
 	 // END CACHING
 		
@@ -219,14 +213,7 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
 		
 		// Name the font to be used (note the lack of the .ttf extension)
 		$font = 'design/Chalkduster';
-	 	
-	 	$color = imagecolorresolvealpha($temp, 0, 0, 0,63);
-	 	/*
-	 	imagefttext($temp, $size, 0, $offset, $newheight-$offset+1, $color, $font, $text);
-	 	imagefttext($temp, $size, 0, $offset, $newheight-$offset-1, $color, $font, $text);
-	 	imagefttext($temp, $size, 0, $offset-1, $newheight-$offset, $color, $font, $text);
-	 	imagefttext($temp, $size, 0, $offset+1, $newheight-$offset, $color, $font, $text);
-	 	*/
+		
 	 	$color = imagecolorresolvealpha($temp, 255, 255, 255,34);
 	 	imagefttext($temp, $size, 0, $offset, $newheight-$offset, $color, $font, $text);
 	
@@ -243,14 +230,16 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
 	 
 	 //create output image
 	 
-	 $quality=($newheight*$newwidth<=300*300)?75:85;
-	 if ($newheight*$newwidth<=100*100) $quality=20;
+	 if (!$quality){
+		 $quality=($newheight*$newwidth<=400*400)?75:85;
+		 if ($newheight*$newwidth<=100*100) $quality=20;
+	 }
 	 imageinterlace($temp,1);
 	 ImageJPEG($temp,$cachePath,$quality);
 	 
 	 //copy original exif data to new file
 	 
-	 if ($newheight*$newwidth>=300*300){
+	 if ($newheight*$newwidth>=600*600){
 	  	$command= ('exiftool -overwrite_original -TagsFromFile "'.$lokalurl.'" --Orientation "'.$cachePath.'"');
 	  	exec($command);
 	 }
@@ -333,29 +322,5 @@ function ImageRotateRightAngle( $imgSrc, $angle )
 
     return( $imgDest ); 
 } 
-
-function fastimagecopyresampled (&$dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h, $quality = 4) {
-  // Plug-and-Play fastimagecopyresampled function replaces much slower imagecopyresampled.
-  // Just include this function and change all "imagecopyresampled" references to "fastimagecopyresampled".
-  // Typically from 30 to 60 times faster when reducing high resolution images down to thumbnail size using the default quality setting.
-  // Author: Tim Eckel - Date: 09/07/07 - Version: 1.1 - Project: FreeRingers.net - Freely distributable - These comments must remain.
-  //
-  // Optional "quality" parameter (defaults is 3). Fractional values are allowed, for example 1.5. Must be greater than zero.
-  // Between 0 and 1 = Fast, but mosaic results, closer to 0 increases the mosaic effect.
-  // 1 = Up to 350 times faster. Poor results, looks very similar to imagecopyresized.
-  // 2 = Up to 95 times faster.  Images appear a little sharp, some prefer this over a quality of 3.
-  // 3 = Up to 60 times faster.  Will give high quality smooth results very close to imagecopyresampled, just faster.
-  // 4 = Up to 25 times faster.  Almost identical to imagecopyresampled for most images.
-  // 5 = No speedup. Just uses imagecopyresampled, no advantage over imagecopyresampled.
-
-  if (empty($src_image) || empty($dst_image) || $quality <= 0) { return false; }
-  if ($quality < 5 && (($dst_w * $quality) < $src_w || ($dst_h * $quality) < $src_h)) {
-    $temp = imagecreatetruecolor ($dst_w * $quality + 1, $dst_h * $quality + 1);
-    imagecopyresized ($temp, $src_image, 0, 0, $src_x, $src_y, $dst_w * $quality + 1, $dst_h * $quality + 1, $src_w, $src_h);
-    imagecopyresampled ($dst_image, $temp, $dst_x, $dst_y, 0, 0, $dst_w, $dst_h, $dst_w * $quality, $dst_h * $quality);
-    imagedestroy ($temp);
-  } else imagecopyresampled ($dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h);
-  return true;
-}
 
 ?>
