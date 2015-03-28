@@ -61,10 +61,13 @@ if ($contextOK){
 } else {
 	$page=1;
 	$folder=str_replace("'","\\'",$search->folder);
+	$folder=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($folder)))));
 	$filter='';
 	$contextQuery="($userQuery OR ".$filterTemp.')';
 	if ($folder) $contextQuery.=" AND folder LIKE '$folder'";
+	
 }
+	
 $folderGiven=$folder!='%' && $folder!='%%';
 $tagGiven=stripos($filter,'tag_')!==false;
 $codewordGiven=stripos($filter,'codeword_')!==false;	
@@ -334,6 +337,8 @@ if ($state=='non-existant') {
 	</script>
 	
 	';	
+
+//HIER SLIDESHOW
 	
 	if ($state=='has-rights' || $state=='public'){
 	
