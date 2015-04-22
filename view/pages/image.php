@@ -64,7 +64,7 @@ if ($contextOK){
 	$folder=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($folder)))));
 	$filter='';
 	$contextQuery="($userQuery OR ".$filterTemp.')';
-	if ($folder) $contextQuery.=" AND folder LIKE '$folder'";
+	if ($folder) $contextQuery.=" AND replace(replace(replace(replace(lower(folder),' ',''),'_',''),'.',''),',','') LIKE '$folder'";
 	
 }
 	
@@ -317,22 +317,6 @@ if ($state=='non-existant') {
 			  
 		}
 		
-		function shareOnFacebook(state){
-			
-			var text="'.translate("attention",true).': ";
-			if (state!="public") text+="'.translate("This has not been made public. If you share it on Facebook, it becomes available to everyone you share it with.").' ";
-			text+="'.translate("Please respect author\'s rights and the rights to the personal image when sharing photos on Facebook! Do you still want to share the image on facebook?").'";
-			
-			if (confirm(text)){
-				var reference=location.href;
-				
-				'.($config->local?('reference=reference.replace("http://localhost","'.$config->localReplacement.'");'):'').'
-				
-				var FBURL="http://www.facebook.com/sharer/sharer.php?u="+escape(reference);
-				var myWindow = window.open(FBURL, "Facebook", "width=780,height=200,toolbar=no,menubar=no,resizable=no,scrollbars=no,status=no");
-		 		myWindow.focus();
-			}
-		}
 	
 	</script>
 	
@@ -346,9 +330,6 @@ if ($state=='non-existant') {
 		$url='index.php?mode=slideshow&folder='.urlencode($folder).'&filter='.$filter.'&image='.$image;
 		$functionBar='<a href="'.$url.'" class="notonsmall"><img src="design/galleries1.png" alt="" />'.translate('slideshow',true).'</a>'.$functionBar;
 		
-		$functionBar='<span class="seperator notonsmall"></span>'.$functionBar;
-		$url='javascript:shareOnFacebook(\''.$state.'\');';
-		$functionBar='<a href="'.$url.'" class="notonsmall"><img src="design/share1.png" alt="" />'.translate('share',true).'</a>'.$functionBar;
 	}
 	
 	@$exif=parseExif($filename,$geo);

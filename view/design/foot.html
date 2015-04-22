@@ -15,14 +15,14 @@
 <header>
 <?php
 
-echo '<a href="/" '.isActive('events').' id="button_events"><img src="'.$config->designURL.'/events1.png" alt="">'.translate('events',true).'</a>';
+echo '<a href="?" '.isActive('events').' id="button_events"><img src="design/events1.png" alt="">'.translate('events',true).'</a>';
 seperateIfNot('events');
 
 if ($user){
-	 echo '<a href="?mode=tags" '.isActive('tags').' id="button_tags"><img src="'.$config->designURL.'/tags1.png" alt="">'.translate('tags',true).'</a>';
+	 echo '<a href="?mode=tags" '.isActive('tags').' id="button_tags"><img src="design/tags1.png" alt="">'.translate('tags',true).'</a>';
 	 seperateIfNot('tags');
 	 
-	 echo '<a href="?mode=people" '.isActive('people').' id="button_tags"><img src="'.$config->designURL.'/login1.png" alt="">'.translate('people',true).'</a>';
+	 echo '<a href="?mode=people" '.isActive('people').' id="button_tags"><img src="design/login1.png" alt="">'.translate('people',true).'</a>';
 	 seperateIfNot('people');	 
 	 
 } 
@@ -32,15 +32,15 @@ if (!$config->local){
 	// right side
 	
 	if (!$user) {
-		echo '<a '.isActive('login').' onclick="show(\'login\');this.className=\'activebutton\';return false" href="?mode=login" id="button_login"><img src="'.$config->designURL.'/login1.png" alt="">'.translate('login',true).'</a>';
+		echo '<a '.isActive('login').' onclick="show(\'login\');this.className=\'activebutton\';return false" href="?mode=login" id="button_login"><img src="design/login1.png" alt="">'.translate('login',true).'</a>';
 	} else {
-		echo '<a '.isActive('login').' href="?logout=1" id="button_login" ><img src="'.$config->designURL.'/logout1.png" alt="">'.translate('logout',true).'</a>';
+		echo '<a '.isActive('login').' href="?logout=1" id="button_login" ><img src="design/logout1.png" alt="">'.translate('logout',true).'</a>';
 	}
 	seperateIfNot('upload','rechts');
-	echo '<a href="'.$config->updateURL.'" '.isActive('upload').' id="button_upload"><img src="'.$config->designURL.'/upload1.png" alt="">'.translate('upload',true).'</a>';
+	echo '<a href="'.$config->updateURL.'" '.isActive('upload').' id="button_upload"><img src="design/upload1.png" alt="">'.translate('upload',true).'</a>';
 	seperateIfNot('upload','rechts');
 	
-	echo '<a href="?mode=legal" '.isActive('info').' id="button_info"><img src="'.$config->designURL.'/info1.png" alt="">'.translate('Info / Legal',true).'</a>';
+	echo '<a href="?mode=legal" '.isActive('info').' id="button_info"><img src="design/info1.png" alt="">'.translate('Info / Legal',true).'</a>';
 	
 	seperateIfNot('login','rechts');
 	

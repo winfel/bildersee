@@ -418,7 +418,11 @@ input {font-size:13px}
 #imagediv {background:url(ajax-loader.gif) 50% 200px no-repeat;min-height:300px}
 #theimage {opacity:0}
 
-#images h2 {margin-bottom:0;clear:both;}
+#images {
+  
+}
+
+#images h2 {margin-bottom:0;margin-top:25px;clear:both;}
 
 .previmage {width:466px; margin:0 auto 0 auto;height:100%;}
 
@@ -530,27 +534,6 @@ small {
 #overlay img {
 box-shadow: 0 0 20px #000; -webkit-box-shadow: 0 0 20px #000; -moz-box-shadow: #000 0px 0px 20px;
 }
-
-@media all and (min-width:200px) {.overviewframe {width:100%;}}
-@media all and (min-width:400px) {.overviewframe {width:50%;}}
-@media all and (min-width:600px) {.overviewframe {width:33.3%;}}
-@media all and (min-width:800px) {.overviewframe {width:25%;}}
-@media all and (min-width:1000px) {.overviewframe {width:20%;}}
-@media all and (min-width:1300px) {.overviewframe {width:16.6%;}}
-@media all and (min-width:1400px) {.overviewframe {width:14%;}}
-@media all and (min-width:1600px) {.overviewframe {width:12.5%;}}
-@media all and (min-width:1800px) {.overviewframe {width:11%;}}
-@media all and (min-width:2000px) {.overviewframe {width:10%;}}
-@media all and (min-width:2200px) {.overviewframe {width:9%;}}
-@media all and (min-width:2400px) {.overviewframe {width:8.33%;}}
-@media all and (min-width:2600px) {.overviewframe {width:7.69%;}}
-@media all and (min-width:2800px) {.overviewframe {width:7.14%;}}
-@media all and (min-width:3000px) {.overviewframe {width:6.66%;}}
-@media all and (min-width:3200px) {.overviewframe {width:6.25%;}}
-@media all and (min-width:3400px) {.overviewframe {width:5.88%;}}
-@media all and (min-width:3600px) {.overviewframe {width:5.55%;}}
-@media all and (min-width:3800px) {.overviewframe {width:5.26%;}}
-@media all and (min-width:4000px) {.overviewframe {width:5%;}}
 
 @media all and (max-width:399px) {
 	.overviewframe {width:100;height:260px;float:none;width:100%;height:70px;margin-bottom:5px;overflow:hidden}

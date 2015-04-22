@@ -187,9 +187,15 @@ function onScroll(){
 		var y=getElementPosition(image);
 		
 		if (image.title && y>top-200 && y<top+height+400) {
-			image.src=image.title;
-			image.srcset=image.title+" 1x, "+image.title+"2x 2x";
+			
+			var data=imageData[image.title];
+			
+			var imgurl="previmage.php?key="+image.title+"&amp;size=";
+			
+			image.src=imgurl;
+			image.srcset=data.prevImage1x+" 1x, "+data.prevImage15x+" 1.5x, "+data.prevImage2x+" 2x";
 			image.title="";
+
 		}
 		
 		if (!hash && y>top+20) {
@@ -209,26 +215,67 @@ function onScroll(){
 	
 }
 
-function loadImages(){
-	var element=document.getElementById("images");
-	var images=element.getElementsByTagName("img");
+function onResize(){
 	
-	for (var i in images){
-		var image=images[i];
+	var windowWidth=window.getWidth();
+	
+	//get lines
+	
+	var lines=[];
+	var line=-1;
+	var oldCategory="UNDEFINED";
+	var filled=0;
+	for (var i in imageDataArray){
+		var image=imageDataArray[i];
 		
-		var y=getElementPosition(image);
+		var consumedWidth=image.margin+image.minWidth+image.margin;
 		
-		if (image.title) {
-			image.src=image.title;
-			image.srcset=image.title+" 1x, "+image.title+"1.5x 1.5x, "+image.title+"2x 2x";
-			image.title="";
-			window.setTimeout(function(){loadImages();},1000);
-			return;
+		if (image.category!=oldCategory || filled+consumedWidth>windowWidth) {
+			line++;
+			lines[line]=[];
+			filled=0;
+		}
+		
+		filled+=consumedWidth;
+		
+		lines[line].push(image);
+		
+		var oldCategory=image.category;
+	}
+
+	for (var i in lines){
+		var line=lines[i];
+		var number=line.length;
+
+		var border=3.5;
+		
+		var availWidth=windowWidth-2*border*number;
+		
+		var totalWidth=0;
+		
+		for (var j in line){
+			totalWidth+=line[j].minWidth;
+		}
+		
+		var factor=availWidth/totalWidth;
+		
+		for (var j in line){
+			var image=line[j];
+			var width=Math.round(image.minWidth*factor);
+			var height=Math.round(image.minHeight*factor);
+			
+			var element=document.getElementById("img"+image.id);
+			
+			element.width=Math.min(image.maxWidth,Math.round(width));
+			element.height=Math.min(image.maxHeight,Math.round(height));
 		}
 		
 	}
-			
+	
+	return
+		
 }
+
 
 </script>';
 
@@ -375,7 +422,27 @@ if (count($jumpNavi)){
 	echo '</p>';
 }
 
-echo '<div id="images">';
+echo '
+
+<script>
+  var imageDataArray=[];
+  var imageData={};
+</script>
+
+<div id="images">';
+
+function cacheURL($key,$size){global $config;
+   
+	 if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL']=='no-cache') {
+	 	return false;
+	 }     
+	
+	$filename='/'.$key.'.'.$size.'.jpg';
+	
+	if (file_exists($config->cachePath.$filename)){return $config->cacheURL.$filename;}
+	
+	return false;
+}
 
 foreach ($files as $category=>$entries){
 	
@@ -390,10 +457,14 @@ foreach ($files as $category=>$entries){
 			$functionBar='<span class="seperator"></span>'.$functionBar;
 			$url='index.php?mode=slideshow&folder='.urlencode($folder).'&filter='.$filter;
 			$functionBar='<a href="'.$url.'"><img src="design/galleries1.png" alt="" />'.translate('slideshow',true).'</a>'.$functionBar;
+			if ($user){
+				$functionBar='<span class="seperator"></span>'.$functionBar;
+				$url='index.php?mode=tagging&folder='.urlencode($folder).'&filter='.$filter;
+				$functionBar='<a href="'.$url.'"><img src="design/tags1.png" alt="" />'.translate('tagging view',true).'</a>'.$functionBar;
+			}
 		}
 		
 		$url='?image='.urlencode($entry->key);
-		$imgurl=$config->imageGetterURL.'?key='.$entry->key.'&amp;size=preview';
 				
 		$readable=getReadableTags($entry->tags,$entry->sortstring);
 		
@@ -403,24 +474,37 @@ foreach ($files as $category=>$entries){
 
 		$frameclass=($user)?'imageframe':'imageframe nouser_imageframe';
 		
-		echo '
-		<div class="'.$frameclass.'" id="'.$entry->key.'">
-		<table class="previmage">
-		 <tr>
-		  <td class="thumb"><a href="'.$url.'"><img alt="" src="design/ajax-loader.gif" title="'.$imgurl.'" id="img'.$entry->key.'"></a></td>
-		 </tr>';
+
+		$size=GetImageSize($entry->filename);
+	 	$origwidth=$size[0];$origheight=$size[1];
+	 	$setHeight=250;
+	 	$setWidth=round($setHeight/$origheight*$origwidth);
+	 	
+	 	$prevImage1x="previmage.php?key=".$entry->key."&amp;size=1x";
+	 	$prevImage15x="previmage.php?key=".$entry->key."&amp;size=1.5x";
+	 	$prevImage2x="previmage.php?key=".$entry->key."&amp;size=2x";
+	 	
+	 	if (cacheURL($entry->key,'1x')){$prevImage1x=cacheURL($entry->key,'1x');}
+	 	if (cacheURL($entry->key,'1.5x')){$prevImage15x=cacheURL($entry->key,'1.5x');}
+	 	if (cacheURL($entry->key,'2x')){$prevImage2x=cacheURL($entry->key,'2x');}
+	 	
+	 	echo '<script>
+	 		var thisImageData={};
+	 		thisImageData.category="'.$category.'";
+	 		thisImageData.id="'.$entry->key.'";
+	 		thisImageData.maxWidth='.($setWidth*2).';
+	 		thisImageData.maxHeight='.($setHeight*2).';
+	 		thisImageData.minWidth='.$setWidth.';
+	 		thisImageData.minHeight='.$setHeight.';
+	 		thisImageData.margin=3;
+	 		thisImageData.prevImage1x="'.$prevImage1x.'";
+	 		thisImageData.prevImage15x="'.$prevImage15x.'";
+	 		thisImageData.prevImage2x="'.$prevImage2x.'";
+	 		imageDataArray.push(thisImageData);
+	 		imageData["'.$entry->key.'"]=thisImageData;
+	 	</script>';
 		
-		if ($user) echo '
-		 <tr>
-		  <td class="tag '.$mode.'" onclick="changeState(\''.$entry->key.'\',true)" id="tags'.$entry->key.'">
-		   <span>'.$readable.'</span>
-		   <textarea onblur="changeState(\''.$entry->key.'\',false)" onkeyup="handleEnter(event,\''.$entry->key.'\');" >'.$entry->filetags.' </textarea><textarea>'.$entry->filetags.' </textarea>
-		  </td>
-		 </tr>
-		 ';
-		
-		echo '</table>
-		</div>';
+		echo '<a href="'.$url.'"><img alt="" src="design/blind.gif" title="'.$entry->key.'" id="img'.$entry->key.'" width="'.$setWidth.'" height="'.$setHeight.'" style="margin:3px;margin-bottom:0;background:#444" class="eventimage"></a>';
 	}
 }
 
@@ -441,29 +525,8 @@ if (count($jumpNavi)){
 	echo '</p>';
 }
 
-if ($hasPublic){
-		$functionBar='<span class="seperator"></span>'.$functionBar;
-		$url='javascript:shareOnFacebook();';
-		$functionBar='<a href="'.$url.'"><img src="design/share1.png" alt="" />'.translate('share',true).'</a>'.$functionBar;
-}
-
 echo '<script>
 
-		function shareOnFacebook(){
-			
-			var text="'.translate("attention",true).': ";
-			text+="'.translate("Please respect author\'s rights and the rights to the personal image when sharing photos on Facebook! Do you still want to share the image on facebook?").'";
-			
-			if (confirm(text)){
-				var reference=location.href;
-				
-				'.($config->local?('reference=reference.replace("http://localhost","'.$config->localReplacement.'");'):'').'
-				
-				var FBURL="http://www.facebook.com/sharer/sharer.php?u="+escape(reference);
-				var myWindow = window.open(FBURL, "Facebook", "width=780,height=200,toolbar=no,menubar=no,resizable=no,scrollbars=no,status=no");
-		 		myWindow.focus();
-			}
-		}
 
 function enterCodeword(){
 	var result=prompt("'.translate('Please enter the codeword:').'","");
@@ -478,67 +541,6 @@ function enterCodeword(){
 	location.href="?folder="+folder+"&filter="+result;
 }
 
-
-function handleEnter(e,key){
-	var characterCode;
-	if(e && e.which){e = e;characterCode = e.which;} 
-	else {e = event;characterCode = e.keyCode;}
-	
-	if(characterCode == 13){activateNext(key);return false;} 
-	else {return true;}
-}
-
-function activateNext(key){
-	changeState(key,false);
-
-	var nextKey=false;var found=false;
-
-	var tds=document.getElementsByTagName("td");
-
-	for(var i in tds){
-		var td=tds[i];
-		if (!td.className || td.className.search("tag")==-1) continue;
-
-		if (found) {
-			nextKey=td.id.substring(4);
-		}
-
-		if (td.id=="tags"+key) found=true; else found=false;
-	}
-
-	if (nextKey) changeState(nextKey,true);
-}
-
-function updateValue(key,value){
-	var tagArea=document.getElementById("tags"+key);
-	tagArea.getElementsByTagName("span")[0].innerHTML=value;
-	var mode="neutral";
-	if(value.search("privat")!==-1) mode="private";
-	if(value.search("public")!==-1) mode="public";
-	document.getElementById("tags"+key).className="tag "+mode;
-}
-
-function changeState(key,state){
-	if ('.($config->local?'true':'false').') return;  //changeStated switched off, if in local mode
-	
-	var tagArea=document.getElementById("tags"+key);
-	
-	tagArea.getElementsByTagName("span")[0].style.display=(state)?"none":"block";
-	tagArea.getElementsByTagName("textarea")[0].style.display=(state)?"block":"none";
-	
-	if (state) tagArea.getElementsByTagName("textarea")[0].focus();
-	else {
-		if (tagArea.getElementsByTagName("textarea")[0].value.trim() 
-		!=tagArea.getElementsByTagName("textarea")[1].value.trim() ){
-			tagArea.getElementsByTagName("textarea")[1].value=
-			tagArea.getElementsByTagName("textarea")[0].value;
-			var invalue=tagArea.getElementsByTagName("textarea")[0].value.trim();
-			server_query("updatetag.php?key="+key+"&tags="+invalue,function(value){
-				updateValue(key,value);
-			});
-		}
-	}
-}
 
 function setCategory(data){
 	data=data.split("###");
@@ -574,7 +576,7 @@ function showAddress(){
 	
 }
 
-
+onResize();
 onScroll();
 
 //loadImages();

@@ -76,7 +76,8 @@ if ($image){
 		
 		switch ($mode){
 			case 'download':include('pages/download.php');break;
-			case 'slideshow':include('pages/slideshow.php');break;
+			case 'slideshow':include('pages/slideshow.php');break;;
+			case 'tagging':include('pages/tagging.php');break;;
 			default: include ('pages/event.php'); break;
 
 		}

@@ -109,7 +109,7 @@ while ($entry=array_shift($search)){
 	
 	$month=substr($entry->folder,0,7);
 	
-	if ($month!==$lastMonth) echo '<h2 style="clear:both;text-align:left;margin-left:20px;">'.@$months[substr($month,5,2)].' '.substr($month,0,4).'</h2>';
+	if ($month!==$lastMonth) echo '<h2 style="clear:both;text-align:left;margin-left:13px;">'.@$months[substr($month,5,2)].' '.substr($month,0,4).'</h2>';
 	
 	$lastMonth=$month;
 	

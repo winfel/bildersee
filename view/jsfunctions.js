@@ -16,13 +16,17 @@
 })(window);
 
 function processHash(direct){
+	console.log('processHash');
 	var type=hash.substring(1,7);
 	if (type=="scroll"){
 				
 		var elementID=hash.substr(7);
 		var element=document.getElementById(elementID);
 		if (!element) {
-			return;
+			 element=document.getElementById('img'+elementID);
+			if (!element) {
+				return;
+			}
 		}
 		var position=getElementPosition(element)-75;
 		

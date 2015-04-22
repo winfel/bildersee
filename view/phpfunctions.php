@@ -730,6 +730,10 @@ function getAlbums(){global $userQuery,$filterSQL;
 		if (strpos($category,'(')!==false) $category='';
 		$category=ucwords(str_replace('_',' ',$category));
 		
+		if ($category=='2018') $category='';
+		if ($category=='2017') $category='';
+		if ($category=='2016') $category='';
+		if ($category=='2015') $category='';
 		if ($category=='2014') $category='';
 		if ($category=='2013') $category='';
 		if ($category=='2012') $category='';
