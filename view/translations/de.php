@@ -133,6 +133,10 @@ $translations['de']['the most crecent tags']='die aktuellsten Tags';
 
 $translations['de']['You are using an outdated Version of Microsoft Internet Explorer. This website is likely not working properly. Please consider updating to Internet Explorer 11 or use recent versions of Firefox, Chrome, Safari or Opera.']='Sie nutzen eine veraltete Version des Microsoft Internet Explorers. Diese Website wird mit diesem Browser wahrscheinlich nicht richtig funktionieren. Erwägen Sie bitte eine Aktualisierung auf eine aktuelle Version des Internet Explorers oder verwenden Sie aktuelle Versionen von Firefox, Chrome, Safari oder Opera.';
 
+$translations['de']['this is only the selection of best pictures of this event.']='Sie sehen hier die Auswahl der besten Bilder dieses Ereignisses.';
+$translations['de']['show all pictures']='Alle Bilder anzeigen';
+$translations['de']['only show a selection of the best pictures']='Nur eine Auswahl der besten Bilder anzeigen';
+
 //
 
 ?>

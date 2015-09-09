@@ -3,6 +3,7 @@
 include_once ('environment.php');
  
 preventInjection();
+set_time_limit (0);
  
 $folder=isset($_GET['folder'])?$_GET['folder']:false;
 
@@ -40,6 +41,7 @@ if (!$folder || $folder=='%') die ('Missing folder!');
 	$oldlength=0;
 	
 	while ($length!==$oldlength){
+		set_time_limit (0);
 		$oldlength=$length;
 		foreach ($files as $id=>$entry){
 			$entry=$entry->temp;

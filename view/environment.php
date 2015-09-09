@@ -15,10 +15,10 @@ session_start();
  
 preventInjection();
  
-$folder=isset($_GET['folder'])?$_GET['folder']:false;
+$folder=isset($_GET['folder'])?trim($_GET['folder']):false;
 $image=isset($_GET['image'])?$_GET['image']:false;
 $page=isset($_GET['page'])?$_GET['page']:1;
-$filter=isset($_GET['filter'])?$_GET['filter']:'';
+$filter=isset($_GET['filter'])?trim($_GET['filter']):'';
 $mode=isset($_GET['mode'])?$_GET['mode']:'events';
 
 $filterSQL=getFilterSQL($filter);

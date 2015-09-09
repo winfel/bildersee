@@ -113,25 +113,11 @@ if (isset($functionBar2) && $functionBar2) {
 				});
 				return false;
 			} else {
-				loadingMessage();
 				location.href=this.href;
 				return false;
 			}
 		}
 	}
-	
-	window.onbeforeunload = function(e) {
-		loadingMessage();
-    	return undefined;
-    };
-    
-    function loadingMessage(){
-    	message('<?php echo translate("loading data from server.",true)?>');
-		document.getElementById('visu').style.opacity='0.3';
-		window.setInterval(function(){
-			message('<?php echo translate("loading data from server.",true)?>');
-		},1000);
-    }
 
 </script>
 <div id="overlay"></div>

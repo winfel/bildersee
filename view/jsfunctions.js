@@ -123,7 +123,6 @@ function keypressed (Ereignis) {
   if (Tastencode==39 || Tastencode==32) {
   	var nextlink=document.getElementById('nextlink');
   	           if (nextlink){
-  	           	  loadingMessage();
   	           	  location.href=nextlink.href;
   				}
   }
@@ -131,14 +130,12 @@ function keypressed (Ereignis) {
   if (Tastencode==37) {
   	var prevlink=document.getElementById('prevlink');
   	           if (prevlink){
-  	           	  loadingMessage();
   	           	  location.href=prevlink.href;
   				}
   }
   if (Tastencode==27) {
   	var backlink=document.getElementById('backlink');
   	           if (backlink){
-  	           	  loadingMessage();
   	           	  location.href=backlink.href;
   				}
   }
@@ -251,9 +248,11 @@ function message(text){
 	}
 	hider=window.setTimeout(function(){
 		el.style.opacity='0.0';
+		hider=false;
 	},3000);
 	hider2=window.setTimeout(function(){
 		el.style.display='none';
+		hider2=false;
 	},5000);
 }
 
@@ -272,12 +271,10 @@ function touchEnd(event){
 	
 	if (dx>150) {
   		var nextlink=document.getElementById('nextlink');
-  		loadingMessage();
 	    if (nextlink){location.href=nextlink.href;}
 	}
 	if (dx<-150) {
   		var prevlink=document.getElementById('prevlink');
-  		loadingMessage();
 	    if (prevlink){location.href=prevlink.href;}
 	}
 

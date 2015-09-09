@@ -12,6 +12,7 @@ if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securi
 @$contextPage=$_SESSION['last_page'];
 @$contextFolder=$_SESSION['last_folder'];
 @$contextFilter=$_SESSION['last_filter'];
+
 $contextOK=false;
 
 if (isset($_GET['target'])){
@@ -21,8 +22,9 @@ if (isset($_GET['target'])){
 
 //determine the state of the image (public? user has rights?)
 $state='non-existant';
-$contextQuery="$userQuery";
-if ($contextFolder) $contextQuery.=" AND replace(replace(replace(replace(lower(folder),' ',''),'_',''),'.',''),',','') LIKE '$contextFolder'";
+$contextQuery="($userQuery";
+if ($contextFolder) $contextQuery.=" OR replace(replace(replace(replace(lower(folder),' ',''),'_',''),'.',''),',','') LIKE '$contextFolder'";
+$contextQuery.=')';
 $contextQuery.=' '.getFilterSQL($contextFilter);
 $filterTemp=substr(getFilterSQL($contextFilter),5);
 if (!$filterTemp) $filterTemp='0';
@@ -58,14 +60,14 @@ if ($contextOK){
 	$page=$contextPage;
 	$folder=$contextFolder;
 	$filter=$contextFilter;
+	
 } else {
 	$page=1;
 	$folder=str_replace("'","\\'",$search->folder);
 	$folder=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($folder)))));
 	$filter='';
 	$contextQuery="($userQuery OR ".$filterTemp.')';
-	if ($folder) $contextQuery.=" AND replace(replace(replace(replace(lower(folder),' ',''),'_',''),'.',''),',','') LIKE '$folder'";
-	
+	if ($folder) $contextQuery.=" AND replace(replace(replace(replace(lower(folder),' ',''),'_',''),'.',''),',','') LIKE '$folder'";	
 }
 	
 $folderGiven=$folder!='%' && $folder!='%%';
@@ -75,15 +77,17 @@ $codewordGiven=stripos($filter,'codeword_')!==false;
 //determine previous and next image
 $prev=false;$next=false;
 
+
 if ($state!='no-rights'){
 	
 	$reverse=($folder=='%')?'DESC':'';
 	
 	$search=mysql_query("SELECT md5(`key`) as `key` FROM files WHERE $contextQuery ORDER BY sortstring $reverse");
-
+	
 	$thisimage=false;$temp=false;
 
 	while ((!$thisimage || !$next) && $element=mysql_fetch_object($search)){
+		
 		if ($thisimage) $next=$element->key;
 		if ($element->key==$image) {
 			$thisimage=$element;
@@ -124,8 +128,10 @@ if ($state=='has-rights' || $state=='public'){
 	$url='index.php?folder='.urlencode($folder).'&filter='.$filter.'&page='.$page.'#scroll'.$image;
 	$functionBar.='<a href="'.$url.'"><img src="design/overview1.png" alt="" />'.translate('overview',true).'</a>';
 	
-	$url='findimage.php?key='.$image;
-	$functionBar.= '<a href="'.$url.'"><img src="design/context1.png" alt="" />'.translate('context',true).'</a>';
+	if ($user){
+		$url='findimage.php?key='.$image;
+		$functionBar.= '<a href="'.$url.'"><img src="design/context1.png" alt="" />'.translate('context',true).'</a>';
+	}
 	
 	$functionBar.='<span class="seperator"></span>';
 }
@@ -179,9 +185,32 @@ if ($state=='non-existant') {
 				file_put_contents ($targetPath,$image);
 			} 
 			
+			//Display image tag data
 			
-			$targetPath=$config->tempPath.'/spy';
-			file_put_contents ($targetPath,$image);
+			if ($user){
+				$imagedata=mysql_query("SELECT * FROM files WHERE md5(`key`) ='$image'");
+				
+				if ($imagedata=mysql_fetch_object($imagedata)){
+					$theseTags='';
+					$readable=getReadableTags($imagedata->tags,$imagedata->sortstring);
+					
+					$imagedata=mysql_query("SELECT * FROM filetags WHERE md5(`image`) ='$image'");
+					if ($imagedata=mysql_fetch_object($imagedata)){
+						$theseTags=$imagedata->tags;
+					}
+					echo '
+					   <div id="imagetags" onclick="changeState(\''.$image.'\',true)">
+					   <span>'.$readable.'</span>
+					   <textarea onblur="changeState(\''.$image.'\',false)" onkeyup="handleEnter(event,\''.$image.'\');" >'.$theseTags.' </textarea><textarea>'.$theseTags.' </textarea>
+					   </div>
+					 ';
+
+					
+				}
+			}
+			
+			//$targetPath=$config->tempPath.'/spy';
+			//file_put_contents ($targetPath,$image);
 			/**/
 			
 			
@@ -208,6 +237,43 @@ if ($state=='non-existant') {
 	
 	echo '
 	<script>
+	
+		  function changeState(key,state){
+				if ('.($config->local?'true':'false').') return;  //changeStated switched off, if in local mode
+				
+				var tagArea=document.getElementById("imagetags");
+				
+				tagArea.getElementsByTagName("span")[0].style.display=(state)?"none":"block";
+				tagArea.getElementsByTagName("textarea")[0].style.display=(state)?"block":"none";
+				
+				if (state) tagArea.getElementsByTagName("textarea")[0].focus();
+				else {
+					if (tagArea.getElementsByTagName("textarea")[0].value.trim() 
+					!=tagArea.getElementsByTagName("textarea")[1].value.trim() ){
+						tagArea.getElementsByTagName("textarea")[1].value=
+						tagArea.getElementsByTagName("textarea")[0].value;
+						var invalue=tagArea.getElementsByTagName("textarea")[0].value.trim();
+						server_query("updatetag.php?key="+key+"&tags="+invalue,function(value){
+							updateValue(key,value);
+						});
+					}
+				}
+			}
+				
+			function handleEnter(e,key){
+				var characterCode;
+				if(e && e.which){e = e;characterCode = e.which;} 
+				else {e = event;characterCode = e.keyCode;}
+				
+				if(characterCode == 13){changeState(key,false);return false;} 
+				else {return true;}
+			}
+			
+			function updateValue(key,value){
+				var tagArea=document.getElementById("imagetags");
+				tagArea.getElementsByTagName("span")[0].innerHTML=value;
+			}
+	
 	
 		  function changeDescription(key,oldValue){
 		  	  var newValue=prompt("'.translate('Enter a description for this image:').'",oldValue);

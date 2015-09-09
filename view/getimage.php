@@ -60,7 +60,10 @@
 		$getFile=$config->viewPath.'/design/missingimage.jpg';
 	}
 	
-	if ($download) header('Content-Disposition: attachment; filename="'.basename($getFile).'"');
+	if ($download) {
+		header("Content-type: image/jpeg");
+		header('Content-Disposition: attachment; filename="'.basename($getFile).'"');
+	}
 	
 	$nocopyrightnotice=(strpos($getTags,'nocopyright')!==false);
 	

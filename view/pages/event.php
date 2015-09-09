@@ -2,21 +2,12 @@
 
 if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
 
+//Determining target attribute for remote screen
 if (isset($_GET['target'])){
 	$target=$_GET['target'];
 	$_SESSION['last_target']=$target;
 }
-
 @$target=$_SESSION['last_target'];
-
-$pageTitle=translate('search result',true);
-$pageDescription=translate('an online photo gallery',true);
-
-$folder=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($folder)))));
-
-$reverse=($folder=='%');
-
-$page=isset($_GET['page'])?$_GET['page']:1;
 
 //this is used for returning to the site;
 
@@ -24,37 +15,58 @@ $_SESSION['last_page']=$page;
 $_SESSION['last_folder']=$folder;
 $_SESSION['last_filter']=$filter;
 
-$codewordPossible=false;
-$codeword=false;
-$autocodeword=false;
-$hasPublic=false;
-$folderGiven=$folder!='%' && $folder!='%%';
-$tagGiven=stripos($filter,'tag_')!==false;
-$codewordGiven=stripos($filter,'codeword_')!==false;
-$restrictedToAuthor=stripos($filter,'copyright_')!==false;
-
-$mayDownload=!$config->local && $folderGiven && ($user||$codewordGiven);
-
+//Do the actual search
+$folder=str_replace('.','',str_replace(',','',str_replace('_','',str_replace(' ','',strtolower($folder)))));
+$reverse=($folder=='%');
 $search=getImages($folder,$reverse);
 
-$copyrights=array();
-$count=0;
-$hasThumb=false;
+//## SET INITAL VALUES ##
 
-$peopleList=false;
-$imageTags=array();
-$peopleTags=array();
+$pageTitle=translate('search result',true);  // page title, likely to be overridden by event title
+$pageDescription=translate('an online photo gallery',true); // page description, likely to be overridden by event description
 
+$page=isset($_GET['page'])?$_GET['page']:1; //page number. 1 if not specified
+
+// for codeword handling
+$codewordPossible=false; //is set to true later, if the result contains images which have a codeword
+$codeword=false; //containts the codeword provided by url if present
+$autocodeword=false; //true if the provided codeword is an automatically created one
+$codewordGiven=stripos($filter,'codeword_')!==false; //true if a codeword has been provided
+
+$hasPublic=false; // true if the result contains public images
+
+$folderGiven=$folder!='%' && $folder!='%%'; //true if the search result is an album
+$tagGiven=stripos($filter,'tag_')!==false; //true if there has been any tag restriction
+
+$restrictedToAuthor=stripos($filter,'copyright_')!==false; //true if the result has been resticted to a single photographer
+
+$mayDownload=!$config->local && $folderGiven && ($user||$codewordGiven); //set to true if the album may be downloaded
+
+$count=0; // image counter
+$hasThumb=false; //true if the album contains a thumbnail
+
+$copyrights=array(); //list of photographers
+$peopleList=array(); //list of all people
+$imageTags=array(); //list of image tags
+$peopleTags=array(); //list of image people
+$selectionList=array(); //list of images in a selection
+
+//#### RESULT PROCESSING ####
+
+//passing through the search result image by image and thereby gathering all data necessary for
+//result output including navigation etc.
    
 while ($line=array_shift($search)){
 		
 	$count++;
 	
-	if ($count==1 && $folderGiven && !($folder=='%' || $folder=='%%')) {
+	//if the result is an album/folder, determin the folder title
+	if ($count==1 && $folderGiven) {
 		$pageTitle=pretty(trim(substr($line->folderReadable,strpos($line->folderReadable,' '))));
 		$folderReadable=$line->folderReadable;
 	}
 	
+	//on first image create breadcrumb navigation
 	if ($count==1){
 		if (!$folderGiven && $tagGiven) {
 			$activePart='tags';
@@ -79,8 +91,7 @@ while ($line=array_shift($search)){
 		}
 	}
 	
-	
-	
+	//create list of subcategories
 	if ($folderGiven){
 		$category=$line->subfolder;
 	} else {
@@ -88,6 +99,10 @@ while ($line=array_shift($search)){
 	    if ($line->subfolder) $category.=' - '.$line->subfolder;
 	}
 	
+	//add the image data to the category
+	$files[$category][]=$line;
+	
+	//go through the tags of every image and add them to tag and people data for navigation
 	foreach (explode(' ',$line->tags) as $ele){
 		if ($ele==' ') continue;
 		if ($ele=='') continue;
@@ -99,16 +114,18 @@ while ($line=array_shift($search)){
 		if (stripos($ele,'copyright_')!==false) continue;
 		if (stripos($ele,'codeword_')!==false) continue;
 		
-		if (!$peopleList){
+		if (!$peopleList){ //load full people list used to determine if a tag is a person
 			$query="SELECT * FROM people";
-	
 			$psearch=mysql_query($query);
-			
 			$peopleList=array();
 			
 			while($pline=mysql_fetch_object($psearch)){
 				$peopleList[$pline->tag]=true;
 			}
+		}
+		
+		if ($ele=='selection'){
+			$selectionList[]=$line;
 		}
 		
 		if (isset($peopleList[$ele])){
@@ -119,10 +136,12 @@ while ($line=array_shift($search)){
 		}
 		
 	}	  
-	
-	$files[$category][]=$line;
+
+	//update information if the result contains public images, images with password or images with 	
 	$codewordPossible=$codewordPossible || (stripos($line->tags,'codeword_') !==false);
 	$hasPublic=$hasPublic || (stripos($line->tags,'public') !==false);
+	
+	//determine, if the image is the the thumbnail
 	if (!$config->local && (stripos($line->tags,'download') !==false)) $mayDownload=true;
 	if ((stripos($line->tags,'thumb') !==false)){
 		$thumb=$line->key;
@@ -144,6 +163,10 @@ while ($line=array_shift($search)){
 	}
 
 }
+
+
+// ### RESULT DISPLAY ####
+
 
 if (isset($thumb)) $thumbnail=$config->imageGetterURL.'?key='.$thumb.'&size=thumb';
 
@@ -217,7 +240,7 @@ function onScroll(){
 
 function onResize(){
 	
-	var windowWidth=window.getWidth();
+	var windowWidth=document.documentElement.clientWidth||window.getWidth();
 	
 	//get lines
 	
@@ -360,6 +383,7 @@ if($peopleTags || $tagGiven){
 	$navi.='</select>&nbsp;&nbsp;&nbsp;';
 } 
 
+
 $functionBar=$navi;$functionBar2=$navi;
 
 if ($navi) echo '<br><br><p>'.$navi.'</p>';
@@ -475,8 +499,9 @@ foreach ($files as $category=>$entries){
 		$frameclass=($user)?'imageframe':'imageframe nouser_imageframe';
 		
 
-		$size=GetImageSize($entry->filename);
+		$size=@GetImageSize($entry->filename);
 	 	$origwidth=$size[0];$origheight=$size[1];
+	 	if (!$origheight) continue; //Do not care about images that cannot be loaded
 	 	$setHeight=250;
 	 	$setWidth=round($setHeight/$origheight*$origwidth);
 	 	
@@ -524,6 +549,7 @@ if (count($jumpNavi)){
 	echo implode($jumpNavi,', ');
 	echo '</p>';
 }
+
 
 echo '<script>
 

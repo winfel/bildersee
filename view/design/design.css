@@ -415,6 +415,12 @@ input {font-size:13px}
 	z-index:200;
 }
 
+/* Under image tagging */
+
+#imagetags {margin-top:3px;}
+#imagetags span{width:100%;text-align:center;padding:5px;display:block}
+#imagetags textarea{width:100%;text-align:center;display:none}
+
 #imagediv {background:url(ajax-loader.gif) 50% 200px no-repeat;min-height:300px}
 #theimage {opacity:0}
 
@@ -426,7 +432,6 @@ input {font-size:13px}
 
 .previmage {width:466px; margin:0 auto 0 auto;height:100%;}
 
-/* HIER */
 
 .previmage td.tag{
 	color:#bbb;font-size:12px;vertical-align:top;height:80px;overflow:hidden;width:308px;
