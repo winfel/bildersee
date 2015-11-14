@@ -402,13 +402,16 @@ if ($codewordGiven && $autocodeword){
 
 if (!$user && $codewordPossible && !$autocodeword && !$codewordGiven && $folderGiven) {
 	
-	echo '<p id="keywordnotice">'.translate('Due to privacy reasons, you only see a selection of photos of this event. You get access to all photos, if you know the codeword.').' <a href="javascript:enterCodeword();">'.translate('Enter the codeword now!').'</a></p>';
+	echo '<div id="keywordnotice">'.translate('Due to privacy reasons, you only see a selection of photos of this event. You get access to all photos, if you know the codeword.').'<br><br>'.translate('codeword',true).': <input type="text" id="codeword" onkeyup="handleEnter(event)"><input type="button" value="'.translate('send',true).'" onclick="codewordEntered();"></div>';
 
 }
 
 if ($user && $codeword && !$autocodeword && !$codewordGiven && $folderGiven && $hasPublic) {
 	
-	echo '<p id="notice">'.translate('Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed with the following codeword:').' <b>'.$codeword.'</b></p>';
+	$url=$config->viewURL.'/?folder='.urlencode($folder).'&filter=codeword_'.$codeword;
+	if ($config->local){$url=str_replace('http://localhost',$config->localReplacement,$url);}
+	
+	echo '<p id="notice">'.translate('Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed with the following codeword:').' <b>'.$codeword.'</b> '.translate('or directly using this address:').'<br><br><a href="'.$url.'" onclick="return showAddress(this);">'.translate('go to address',true).'</a></p>';
 
 }
 
@@ -416,7 +419,7 @@ if ($user && $codeword && $autocodeword && !$codewordGiven && $folderGiven && $h
 	$url=$config->viewURL.'/?folder='.urlencode($folder).'&filter=codeword_'.$codeword;
 	if ($config->local){$url=str_replace('http://localhost',$config->localReplacement,$url);}
 	
-	echo '<p id="notice">'.translate('Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed under this address:').' <a href="'.$url.'" onclick="return showAddress(this);">'.translate('go to address',true).'</a></p>';
+	echo '<p id="notice">'.translate('Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed under this address:').'<br><br><a href="'.$url.'" onclick="return showAddress(this);">'.translate('go to address',true).'</a></p>';
 
 }
 
@@ -424,7 +427,7 @@ if ($user && $codeword && !$codewordGiven && $folderGiven && !$hasPublic) {
 	$url=$config->viewURL.'/?folder='.urlencode($folder).'&filter=codeword_'.$codeword;
 	if ($config->local){$url=str_replace('http://localhost',$config->localReplacement,$url);}
 	
-	$out='<p id="notice">'.translate('This event is not publically visible, but can directly be accessed:').' <a href="'.$url.'" onclick="return showAddress(this);">'.translate('go to address',true).'</a></p>';
+	$out='<p id="notice">'.translate('This event is not publically visible, but can directly be accessed:').'<br><br><a href="'.$url.'" onclick="return showAddress(this);">'.translate('go to address',true).'</a></p>';
 	echo $out;
 
 }
@@ -553,20 +556,26 @@ if (count($jumpNavi)){
 
 echo '<script>
 
+function handleEnter(e){
+	var characterCode;
+	if(e && e.which){e = e;characterCode = e.which;} 
+	else {e = event;characterCode = e.keyCode;}
+	
+	if(characterCode == 13){codewordEntered();return false;} 
+	else {return true;}
+}
 
-function enterCodeword(){
-	var result=prompt("'.translate('Please enter the codeword:').'","");
-	if (result==null && navigator.appName=="Microsoft Internet Explorer"){
-		alert("'.translate('The password prompt is blocked. Please click the yellow information bar at the top of the window and try again!').'");
-		return;
-	}
+function codewordEntered(){
+	
+	var result=document.getElementById("codeword");
+	result=result.value;
+	
 	if (!result) result=""; else result="codeword_"+result.toLowerCase();
 	
 	var folder="'.urlencode($folder).'";
 	
 	location.href="?folder="+folder+"&filter="+result;
 }
-
 
 function setCategory(data){
 	data=data.split("###");

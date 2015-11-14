@@ -450,7 +450,6 @@ if (!$data) return;
 
 $allowed=array();
 $allowed['FileSize']=true;
-$allowed['FocalLength35efl']=true;
 $allowed['ShutterSpeed']=true;
 $allowed['DateTimeCreated']=true;
 $allowed['Aperture']=true;
@@ -461,29 +460,17 @@ $allowed['Make']=true;
 $allowed['Model']=true;
 $allowed['Software']=true;
 $allowed['MeteringMode']=true;
-$allowed['LightSource']=true;
 $allowed['ExposureCompensation']=true;
 $allowed['ExposureProgram']=true;
-$allowed['ScaleFactor35efl']=true;
-$allowed['CircleOfConfusion']=true;
-$allowed['LightValue']=true; 
-$allowed['FOV']=true;
-$allowed['HyperfocalDistance']=true;
 $allowed['Artist']=true;
 $allowed['Copyright']=true;
 $allowed['Lens']=true;
-$allowed['SerialNumber']=true;
+$allowed['FileName']=true;
 $allowed['SubjectDistance']=true;
 $allowed['ExposureMode']=true;
-$allowed['InternalSerialNumber']=true;
 $allowed['Orientation']=true;
 $allowed['Contrast']=true;
 
-$allowed['WhiteBalance']=true;
-$allowed['SceneCaptureType']=true;
-$allowed['Sharpness']=true;
-$allowed['SubjectDistanceRange']=true;
-$allowed['Saturation']=true;
 $allowed['FujiFlashMode']=true;
 $allowed['FlashExposureComp']=true;
 $allowed['Macro']=true;
@@ -565,20 +552,12 @@ $allowed['AutoISO']=true;
 $allowed['ColorMode']=true;
 $allowed['Enhancement']=true;
 $allowed['Filter']=true;
-$allowed['BracketSequence']=true;
-
-$allowed['DateTimeOriginal']=true;
-$allowed['CanonModelID']=true;
 
 $allowed['ColorReproduction']=true;
 $allowed['Anti-Blur']=true;
 $allowed['LongExposureNoiseReduction']=true;
 
-$allowed['LensInfo']=true;
 $allowed['LensModel']=true;
-$allowed['DOF']=true;
-$allowed['AutoDynamicRange']=true;
-$allowed['LensSerialNumber']=true;
 $allowed['BWMode']=true;
 $allowed['AFAreaMode']=true;
 $allowed['ContrastMode']=true;
@@ -619,28 +598,25 @@ $allowed['Transform']=true;
 $allowed['FlashWarning']=true;  
 
 $readables=array();
-$readables['FileName']='Filename';
 $readables['FileSize']='File Size';
 $readables['ImageSize']='Dimensions';
 $readables['DateTimeOriginal']='Creation Date';
 $readables['DateTimeCreated']='Creation Date';
 $readables['Model']='Camera';
+$readables['ScaleFactor35efl']='Focal length multiplier';
 $readables['Lens']='Lens';
 $readables['LensModel']='Lens';
 $readables['LensID']='Lens';
-$readables['FocalLength35efl']='Focal Length';
-$readables['Aperture']='Aperture';
 $readables['ShutterSpeed']='Shutter Speed';
+$readables['FocalLength']='Focal Length';
+$readables['Aperture']='Aperture';
 $readables['ISO']='ISO Film Speed';
 $readables['Flash']='Flash';
 $readables['SubjectDistance']='Subject Distance';
 $readables['ObjectDistance']='Subject Distance';
-$readables['ApproximateFocusDistance']='Focus Distance';
 $readables['Artist']='Camera Owner';
 $readables['Copyright']='Copyright Notice';
-$readables['Creator']='Creator';
 $readables['Title']='Title';
-$readables['Rights']='Rights';
 
 
 foreach ($readables as $key=>$value){
@@ -683,6 +659,54 @@ if (isset($metadataRaw['Make']) && isset($metadataRaw['Model'])){
 	$model=$metadataRaw['Model'];
 	unset($metadataRaw['Make']);
 	if (stripos($model,$make)===false) $metadataRaw['Model']="$make $model";
+}
+
+if ($metadataRaw['Model']=='OLYMPUS OPTICAL CO.,LTD C3000Z') $metadataRaw['ScaleFactor35efl']=4.3;
+if ($metadataRaw['Model']=='Panasonic DMC-FZ20') $metadataRaw['ScaleFactor35efl']=6.02;
+if ($metadataRaw['Model']=='RICOH CaplioG3 modelM') $metadataRaw['ScaleFactor35efl']=6.4;
+if ($metadataRaw['Model']=='FUJIFILM X10') $metadataRaw['ScaleFactor35efl']=3.94;
+if ($metadataRaw['Model']=='Canon EOS 6D') $metadataRaw['ScaleFactor35efl']=1;
+if ($metadataRaw['Model']=='Canon EOS 550D') $metadataRaw['ScaleFactor35efl']=1.6;
+if ($metadataRaw['Model']=='Canon EOS 60D') $metadataRaw['ScaleFactor35efl']=1.6;
+if ($metadataRaw['Model']=='Canon EOS 70D') $metadataRaw['ScaleFactor35efl']=1.6;
+if ($metadataRaw['Model']=='Canon EOS 7D') $metadataRaw['ScaleFactor35efl']=1.6;
+if ($metadataRaw['Model']=='Canon EOS 7D Mark II') $metadataRaw['ScaleFactor35efl']=1.6;
+if ($metadataRaw['Model']=='FinePix F31fd') $metadataRaw['ScaleFactor35efl']=4.6;
+if ($metadataRaw['Model']=='Canon IXUS 125 HS') $metadataRaw['ScaleFactor35efl']=5.6;
+if ($metadataRaw['Model']=='Canon DIGITAL IXUS 100 IS') $metadataRaw['ScaleFactor35efl']=5.6;
+
+if (isset($metadataRaw['ScaleFactor35efl']) && $metadataRaw['ScaleFactor35efl']!=1){
+	$crop=$metadataRaw['ScaleFactor35efl'];
+	$focal=$metadataRaw['FocalLength'];
+	$aperture=$metadataRaw['Aperture'];
+	$iso=$metadataRaw['ISO'];
+	$metadataRaw['FocalLength']=$metadataRaw['FocalLength'].' (equiv '.(round($crop*$focal*2)/2).'mm on 35mm sensor)';
+	$metadataRaw['Aperture']=$metadataRaw['Aperture'].' (equiv '.(round($crop*$aperture*10)/10).' on 35mm sensor)';
+	$metadataRaw['ISO']=$metadataRaw['ISO'].' (equiv '.(round($iso*$crop*$crop/10)*10).' on 35mm sensor)';
+}
+
+if (isset($metadataRaw['ScaleFactor35efl'])){
+	$crop=$metadataRaw['ScaleFactor35efl'];
+	if ($crop==1) {
+		$metadataRaw['ScaleFactor35efl'].=' Full-frame (sensor as big as a 35mm sensor)';
+	} else {
+		if ($crop==1.6) $metadataRaw['ScaleFactor35efl'].=' Canon APSC';
+		if ($crop==1.3) $metadataRaw['ScaleFactor35efl'].=' Canon APSH';
+		if ($crop==1.5) $metadataRaw['ScaleFactor35efl'].=' APSC';
+		if ($crop==2) $metadataRaw['ScaleFactor35efl'].=' Four Thirds';
+		if ($crop>1){
+			$metadataRaw['ScaleFactor35efl'].=' (sensor size 1/'.(round($crop*$crop*4)/4).' of a 35mm sensor)';
+		} else {
+			$metadataRaw['ScaleFactor35efl'].=' (sensor '.($crop*$crop).' times as big as a 35mm sensor)';
+		}
+	}
+}
+
+if (isset($metadataRaw['ImageSize'])){
+	$data=explode('x',$metadataRaw['ImageSize']);
+	$pixels=$data[0]*$data[1];
+	$mpixels=round($pixels/100000)/10;
+	$metadataRaw['ImageSize'].=' ('.$mpixels.' megapixels)';
 }
 
 $metadata=array();

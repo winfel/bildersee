@@ -85,6 +85,8 @@ $translations['de']['Double click to change the description']='Zum Ändern der B
 $translations['de']['Double click to add a description']='Zum Hinzufügen der Beschreibung doppelklicken';
 $translations['de']['Enter a description for this image:']='Gib eine Beschreibung für dieses Bild ein:';
 $translations['de']['Please enter a description for this event:']='Gib eine Beschreibung für dieses Ereignis ein:';
+$translations['de']['codeword']='Kennwort';
+$translations['de']['send']='senden';
 $translations['de']['Please enter the codeword:']='Gib bitte das Kennwort ein:';
 $translations['de']['The password prompt is blocked. Please click the yellow information bar at the top of the window and try again!']='Die Passworteingabe ist blockiert. Klicke bitte auf die gelbe Informationsleiste oben im Fester und versuche es erneut!';
 $translations['de']['Your search did not return any results!']='Ihre Suche lieferte keine Ergebnisse!';
@@ -100,6 +102,8 @@ $translations['de']['This event is not publically visible, but can directly be a
 
 $translations['de']['Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed with the following codeword:']='Nur eine Auswahl der Bilder dieses Egeignisses ist öffentlich verfügbar. Das komplette Ereignis (mit der Ausnahme explizit privater Bilder) kann mit dem folgenden Kennwort angesehen werden:';
 $translations['de']['Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed under this address:']='Nur eine Auswahl der Bilder dieses Egeignisses ist öffentlich verfügbar. Das komplette Ereignis (mit der Ausnahme explizit privater Bilder) kann unter folgender Adresse angesehen werden:';
+
+$translations['de']['or directly using this address:']='oder direkt unter dieser Adresse:';
 
 //Right to the Personal Image
 

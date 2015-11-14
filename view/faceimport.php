@@ -27,7 +27,7 @@
    }
     else {
        writeLog('faces','An update is running');
-       die ('An update is running');
+       die ("An update is running\n");
     }
  
 
@@ -45,8 +45,12 @@
 		while ($dbentry=mysql_fetch_object($query)){
 			$dbdata[$dbentry->filename]=$dbentry;
 		}
+		
+		$allPicasaFaces=array();
   		foreach ($data as $entry){
   			$filename=str_replace('#',$config->contentPath,$entry['filename']);
+  			
+  			
   			
   			if (!isset($dbdata[$filename])){
   				//echo $entry['filename']." not in db selection\n";
@@ -61,6 +65,7 @@
   			$changed=false;
   			
   			foreach ($entry['faces'] as $candidate){
+  				$allPicasaFaces[$candidate]=true;
   				if (strpos($filetags,$candidate)!==false) continue;
   				echo "Adding $candidate to ".$entry['filename']."\n";
   				$count++;
@@ -77,9 +82,27 @@
   			}
   			
   		}
+  		
+  		echo 'Added '.$count." faces.\n";
+  		
+  		foreach (array_keys($allPicasaFaces) as $name){
+  			$query=mysql_query("SELECT * FROM `people` WHERE `tag` LIKE '$name'");
+  			
+  			if ($dbentry=mysql_fetch_object($query)){
+				
+			} else {
+				echo "Adding $name  to people database.\n";
+				mysql_query("INSERT INTO `people` (`tag`) VALUES ('$name')");
+			}
+  			
+  			
+  			
+  			
+  		}
+  		
   	}
   	
-  	echo 'Added '.$count.' faces.';
+  	
   }
    
   

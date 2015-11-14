@@ -51,10 +51,18 @@ $translations['es']['cancel']='Cancelar';
 //$translations['es']['see legal']='siehe Impressum';
 $translations['es']['search']='Buscar';
 $translations['es']['with a codeword']='con una contraseña';
+$translations['es']['codeword']='contraseña';
+$translations['es']['send']='enviar';
 $translations['es']['Jump directly to a topic']='Pasa directamente a un tema';
 $translations['es']['Filter by tag']='Filtrar por etiqueta';
 $translations['es']['Filter by person']='Filtrar por persona';
 $translations['es']['remove filter']='Eliminar filtro';
+
+$translations['es']['Due to privacy reasons, you only see a selection of photos of this event. You get access to all photos, if you know the codeword.']='Por motivos de privacidad, solo puedes ver una selección de las fotos de este evento. Obtienes acceso a todas las fotos, si conoces la contraseña.';
+
+$translations['es']['You are browsing this event using a codeword. Please do not share neither the codeword nor this address with people who have no connection to this event!']='Estas viendo este evento protegido con contraseña. ¡Por favor, no compartas ni la contraseña ni la dirección URL con personas que no tienen una relacion con el evento!';
+
+$translations['es']['go to address']='vaya a la dirección';
 
 $translations['es']['January']='Enero';
 $translations['es']['February']='Febrero';
@@ -87,6 +95,9 @@ $translations['es']['This event is not publically visible, but can directly be a
 
 $translations['es']['Only a small selection of this event is publically available. The full event (except exlicitally private images) can be accessed with the following codeword:']='Solo una pequeña selección de este evento esta disponible púplicamente. Todo el evento (con la excepción de imágenes expresamente privadas) se puede ver con la contraseña siguiente:';
 
+
+$translations['es']['or directly using this address:']='o se pueda acceder directamente:';
+
 //Right to the Personal Image
 
 //$translations['es']['You are browsing this event using a codeword. Please do not share neither the codeword nor this address with people who have no connection to this event!']='Sie haben Zugriff auf dieses Ereignis mit einem Kennwort. Bitte geben Sie weder das Kennwort noch diese Adresse an Leute weiter, die keine Verbindung zu dem Ereignis haben.';
@@ -114,5 +125,26 @@ $translations['es']['download event as ZIP']='Descargar el evento en formato ZIP
 //$translations['es']['Please only donwload the ZIP file, if you really need all photos. If you are just interested in a few shots, please use the individual image download instead.']='Bitte lade die ZIP-Datei nur herunter, wenn du wirklich alle Fotos herunterladen möchtest. Wenn du nur Interesse eine einigen wenigen Aufnahmen hast, verwende bitte die individuelle Herunterladefunktion der Bilder.';
 
 //
+$words['es']['Anreise']='llegada';
+$words['es']['Jubiläumsfeier']='fiesta jubilar';
+$words['es']['Bürgermeisterempfang']='recibimiento del alcalde';
+$words['es']['Training']='entrenamiento';
+$words['es']['Weingut']='propiedad vinícola';
+$words['es']['Strand']='playa';
+$words['es']['Rückfahrt']='vuelta';
+$words['es']['Urlaub']='vacaciones';
+$words['es']['Karneval']='carnaval';
+$words['es']['Tag des Ehrenamtes']='Día del voluntariado';
+$words['es']['Rathaus']='ayuntamiento';
+$words['es']['Freundschaftsspiel']='partido amistoso';
+$words['es']['Party']='Fiesta';
+$words['es']['Abfahrt']='Salida';
+$words['es']['Zeche']='mina de carbón';
+$words['es']['Picknick']='picnic';
+$words['es']['Nachtaufnahmen']='capturas nocturnas';
+$words['es']['Jubiläum']='aniversario';
+
+$words['es']['in']='en';
+$words['es']['und']='y';
 
 ?>
