@@ -99,11 +99,4 @@ $output=str_replace('#DESCRIPTION#',$pageDescription,$output);
 
 echo $output;
 
-// -- Piwik Tracking API init -- 
-require_once "PiwikTracker.php";
-PiwikTracker::$URL = 'http://www.bildersee.eu/piwik/';
-
-$piwikTracker = new PiwikTracker( $idSite = 1 );
-$piwikTracker->doTrackPageView($pageTitle);
-
 ?>

@@ -27,12 +27,6 @@ if (!$config->local){
 	}
 }
 
-if (isset($_SESSION['last_target']) && $_SESSION['last_target']){
-	$target=$_SESSION['last_target'];
-	echo translate('images are shown on presenter',true).' '.$target;
-	echo ' - <a href="?target=">'.translate('switch back to local image display',true).'</a><br>&nbsp;<br>';
-}
-
 echo '<script>
 
 function setFilter(filter){
