@@ -470,7 +470,7 @@ function translate($input,$upper=false){global $translations,$words,$language,$c
 
 
 function translateWords($input){global $words,$translations,$language,$config;
-	
+
 	if (!$language){
 		
 		$dir=scandir('translations');

@@ -170,6 +170,8 @@ if ($state=='non-existant') {
 			//display of image
 			
 			$mainurl=$config->imageGetterURL.'?key='.$image;
+			$mainurl15=$config->imageGetterURL.'?key='.$image.'&size=display1.5x';
+			$mainurl2=$config->imageGetterURL.'?key='.$image.'&size=display2x';
 			$thumbnail=$config->imageGetterURL.'?key='.$image.'&size=preview';
 			
 			echo '<div id="imagediv"><img src="" id="theimage" /><noscript><img src="'.$mainurl.'" id="theimage" style="opacity:1;width:100%" /></noscript></div>';
@@ -308,6 +310,7 @@ if ($state=='non-existant') {
 		if (image){
 			
 			image.src="";
+			image.srcset="";
 			
 			image.onload=function(){
 				var mHeight=myHeight-40;
@@ -325,6 +328,7 @@ if ($state=='non-existant') {
 			}
 			
 			image.src="'.$mainurl.'";
+			image.srcset="'.$mainurl.' 1x,'.$mainurl15.'  1.5x,'.$mainurl2.'  2x";
 			
 			var body=document.getElementsByTagName("body")[0];
 			
@@ -546,6 +550,7 @@ $allowed['ShutterCurtainHack']=true;
 $allowed['DigitalZoomRatio']=true;
 $allowed['ImageDescription']=true;
 $allowed['BrightnessValue']=true;
+$allowed['ApproximateFocusDistance']=true;
 
 $allowed['BestShotMode']=true;
 $allowed['AutoISO']=true;

@@ -38,6 +38,9 @@
 			case 'preview':$width=450;$height=338;$minimum='';$download=false;$quality=85;break;
 			case 'preview1.5x':$width=675;$height=507;$minimum='';$download=false;$quality=75;break;
 			case 'preview2x':$width=900;$height=676;$minimum='';$download=false;$quality=65;break;
+			case 'display':$width=1000000;$height=1080;$minimum='';$quality=85;$download=false;break;
+			case 'display1.5x':$width=1500000;$height=1620;$minimum='';$quality=85;$download=false;break;
+			case 'display2x':$width=2000000;$height=2160;$minimum='';$quality=85;$download=false;break;
 			default:
 				$width=1000000;$height=1080;$minimum='';$quality=85;$download=false;
 			break;
