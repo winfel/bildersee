@@ -34,12 +34,14 @@ $search=mysql_query("SELECT filename,copyright,folder,tags,($userQuery) as hasRi
 if ($search=mysql_fetch_object($search)){
 	//determine rights
 	$state='no-rights';
+	
+	
 	if ($search->hasRights) $state='has-rights';
 	if ($search->inContext) {
 		$state='has-rights';
 		$contextOK=true;
 	}
-	if (stripos($search->tags,'public')!==false) $state='public';
+
 	
 	//general image information
 	$pageTitle=basename($search->filename);
@@ -48,10 +50,6 @@ if ($search=mysql_fetch_object($search)){
 	$pageDescription=translate('an image in',true).' &quot;'.$folderReadable.'&quot;';;
 	$pageDescription.=' '.translate('taken by').' '.ucwords_new(str_replace('_',' ',$search->copyright));
 	$tags=$search->tags;
-	$geo=false;
-	if (stripos($tags,'geo_')!==false) {
-		$geo=explode('geo_',$tags);$geo=$geo[1];$geo=explode(' ',$geo);$geo=$geo[0];
-	}
 	
 }
 
@@ -126,7 +124,7 @@ if ($state=='has-rights' || $state=='public'){
 	
 
 	$url='index.php?folder='.urlencode($folder).'&filter='.$filter.'&page='.$page.'#scroll'.$image;
-	$functionBar.='<a href="'.$url.'"><img src="design/overview1.png" alt="" />'.translate('overview',true).'</a>';
+	$functionBar.='<a href="'.$url.'"><img src="design/overview1.png" alt="" target="_top" />'.translate('overview',true).'</a>';
 	
 	if ($user){
 		$url='findimage.php?key='.$image;
@@ -145,69 +143,57 @@ if ($state=='non-existant') {
 	echo '<p>'.translate('An image with this address could not be found. Please check if you have typed in or copied the address correctly.').'</p>';
 } else {
 
-    if (stripos($filename,'.youtube')){
-		$id=file_get_contents($filename);
-		$mainurl='http://www.youtube.com/embed/'.$id;
-		echo '<div id="imagediv"><iframe id="theimage" width="1000" height="1000" src="http://www.youtube.com/embed/'.$id.'" frameborder="0" allowfullscreen></iframe></div>';
-	} else {
-		
-		if (stripos($filename,'.jpg')===false && stripos($filename,'.jpeg')===false && stripos($filename,'.png')===false){
-			$url=$filename;
-			$url=str_replace($config->contentPath,$config->contentURL,$url);
-			$mainurl='';
-			echo '
-			
+if (stripos($filename,'.jpg')===false && stripos($filename,'.jpeg')===false && stripos($filename,'.png')===false){
+	$url=$filename;
+	$url=str_replace($config->contentPath,$config->contentURL,$url);
+	$mainurl='';
+	echo '
+	
 <video controls="controls"  autoplay="autoplay" poster="'.str_replace('.m4v','.preview.jpg',$url).'" width="640" height="480" title="2013-01-01 Neujahr 2013">
 <source src="'.$url.'" type="video/mp4" />
 <source src="'.str_replace('.m4v','.webm',$url).'" type="video/webm" />
 </video>			
-			
-			
-			';
-				   
-		} else {
-		
-			//display of image
-			
-			$mainurl=$config->imageGetterURL.'?key='.$image;
-			$mainurl15=$config->imageGetterURL.'?key='.$image.'&size=display1.5x';
-			$mainurl2=$config->imageGetterURL.'?key='.$image.'&size=display2x';
-			$thumbnail=$config->imageGetterURL.'?key='.$image.'&size=preview';
-			
-			echo '<div id="imagediv"><img src="" id="theimage" /><noscript><img src="'.$mainurl.'" id="theimage" style="opacity:1;width:100%" /></noscript></div>';
-			
-			//Display image tag data
-			
-			if ($user){
-				$imagedata=mysql_query("SELECT * FROM files WHERE md5(`key`) ='$image'");
-				
-				if ($imagedata=mysql_fetch_object($imagedata)){
-					$theseTags='';
-					$readable=getReadableTags($imagedata->tags,$imagedata->sortstring);
-					
-					$imagedata=mysql_query("SELECT * FROM filetags WHERE md5(`image`) ='$image'");
-					if ($imagedata=mysql_fetch_object($imagedata)){
-						$theseTags=$imagedata->tags;
-					}
-					echo '
-					   <div id="imagetags" onclick="changeState(\''.$image.'\',true)">
-					   <span>'.$readable.'</span>
-					   <textarea onblur="changeState(\''.$image.'\',false)" onkeyup="handleEnter(event,\''.$image.'\');" >'.$theseTags.' </textarea><textarea>'.$theseTags.' </textarea>
-					   </div>
-					 ';
+	
+	
+	';
+		   
+} else {
 
-					
-				}
-			}
+	//display of image
+	
+	$mainurl=$config->imageGetterURL.'?key='.$image;
+	$mainurl15=$config->imageGetterURL.'?key='.$image.'&size=display1.5x';
+	$mainurl2=$config->imageGetterURL.'?key='.$image.'&size=display2x';
+	$thumbnail=$config->imageGetterURL.'?key='.$image.'&size=preview';
+	
+	echo '<div id="imagediv"><img src="" id="theimage" /><noscript><img src="'.$mainurl.'" id="theimage" style="opacity:1;width:100%" /></noscript></div>';
+
+	
+	//Display image tag data
+	
+	if ($user){
+		$imagedata=mysql_query("SELECT * FROM files WHERE md5(`key`) ='$image'");
+		
+		if ($imagedata=mysql_fetch_object($imagedata)){
+			$readable=getReadableTags($imagedata->tags,$imagedata->sortstring);
 			
-			//$targetPath=$config->tempPath.'/spy';
-			//file_put_contents ($targetPath,$image);
-			/**/
+			$tagFile=$imagedata->filename.'.tags';
+			$theseTags=(file_exists($tagFile))?file_get_contents($tagFile):'';
 			
+			echo '
+			   <div id="imagetags" onclick="changeState(\''.$image.'\',true)">
+			   <span>'.$readable.'</span>
+			   <textarea onblur="changeState(\''.$image.'\',false)" onkeyup="handleEnter(event,\''.$image.'\');" >'.$theseTags.' </textarea><textarea>'.$theseTags.' </textarea>
+			   </div>
+			 ';
+
 			
 		}
-		
 	}
+	
+	
+}
+		
 	
 		
 	$element=array();$element['link']='';$element['text']=basename($filename);$breadcrumb[]=$element;
@@ -391,13 +377,14 @@ if ($state=='non-existant') {
 		
 	}
 	
-	@$exif=parseExif($filename,$geo);
+	@$exif=parseExif($filename,$image);
 	
 	if ($exif['exif']) {
 		$functionBar='<span class="seperator notonsmall"></span>'.$functionBar;
 		$functionBar='<a href="#" onclick="showExif(event);return false;" class="notonsmall"><img src="design/metadata1.png" alt="" />'.translate('metadata',true).'</a>'.$functionBar;
 		echo '<div id="exifdata">'.$exif['exif'].'</div>';
 	}
+
 	if ($exif['location']) {
 		$functionBar='<a href="#" onclick="showLocation(event);return false;"><img src="design/location1.png" alt="" />'.translate('location',true).'</a>'.$functionBar;
 		echo '<div id="exiflocation">'.$exif['location'].'</div>';
@@ -425,21 +412,11 @@ if ($state=='non-existant') {
  }
  
  
-function parseExif($filename,$geo){global $translations,$lang,$config;
+function parseExif($filename,$key){global $translations,$lang,$config;
 
-$output=array();
-
-exec('exiftool -json -c "%.14f" -groupHeadings "'.$filename.'"',$output);
-
-$output=implode($output);
-
-$output=json_decode($output,true);
-
-$data=$output[0];
+$data=getExif($filename,$key);
 
 if (!$data) return;
-
-//var_dump($data);
 
 $allowed=array();
 $allowed['FileSize']=true;
@@ -697,8 +674,8 @@ if (isset($metadataRaw['ScaleFactor35efl'])){
 }
 
 if (isset($metadataRaw['ImageSize'])){
-	$data=explode('x',$metadataRaw['ImageSize']);
-	$pixels=$data[0]*$data[1];
+	$sizedata=explode('x',$metadataRaw['ImageSize']);
+	$pixels=$sizedata[0]*$sizedata[1];
 	$mpixels=round($pixels/100000)/10;
 	$metadataRaw['ImageSize'].=' ('.$mpixels.' megapixels)';
 }
@@ -740,11 +717,12 @@ $output='';
 if (isset($data['Composite']['GPSPosition'])) 
 	$coordinates=$data['Composite']['GPSPosition'];
 else
-	$coordinates=$geo;
+	$coordinates=false;
 
 if ($coordinates){
   $link='http://maps.google.com/maps?q='.$coordinates.'+(Standort)&output=embed&hl=de&z=20&t=h';
-  if (!isIPhone(true)) $output.='<iframe src="'.$link.'" width="500" height="500" style="border:none"></iframe><br /><a href="'.$link.'" target="_blank">Bigger view</a>';
+
+  if (!isIPhone(true)) $output.='<iframe src="'.$link.'" width="500" height="500" style="border:none"></iframe><br />';
   $link2='http://maps.bing.de/maps/?v=2&lvl=2&style=o&where1='.$coordinates;
 
 

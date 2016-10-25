@@ -8,11 +8,7 @@ $element=array();$element['link']='';$element['text']='Tags';$breadcrumb[]=$elem
 
 $pageTitle=translate('tags',true);
 
-$people=array();
-$search=mysql_query("SELECT * FROM people ORDER BY tag");
-while($line=mysql_fetch_assoc($search)){
-  $people[$line['tag']]=true;
-}
+$people=json_decode(file_get_contents($config->settingsPath.'/people'),true);
 
 if ($user) echo '<a href="?mode=people">'.translate('search for people',true).'</a>';
 

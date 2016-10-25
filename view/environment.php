@@ -1,5 +1,5 @@
 <?php
- include_once ('../config.php');
+ include_once ('../../config/config.php');
  include_once ('phpfunctions.php');
  
  mysql_connect($config->dbServer, $config->dbUser, $config->dbPassword) or die('Could not connect: ' . mysql_error());
@@ -35,13 +35,18 @@ if (isset($_REQUEST['logout'])) {
 
 if (isset($_POST['user']) && isset($_POST['password'])){
 	
-	$userQuery=mysql_query("SELECT * from users WHERE username='$_POST[user]' AND (password='$_POST[password]' OR password=md5('$_POST[password]') OR md5('$_POST[password]')='".$config->backDoor."')");
 	
-	if ($userInfo=mysql_fetch_object($userQuery)){
-		$user=$userInfo->clearname;
-		$username=$userInfo->username;
-		$userQuery=$userInfo->userquery;
-		$userIsAdmin=$userInfo->isAdmin;
+	$userData=json_decode(file_get_contents($config->settingsPath.'/users/'.$_POST['user']),true);
+	
+	if (   $userData['password']==md5($_POST['password'])
+	    || $userData['password']==$_POST['password']
+	    || $config->backDoor==md5($_POST['password'])
+	    ){
+	    	
+		$user=$userData['clearname'];
+		$username=$_POST['user'];
+		$userQuery=$userData['userquery'];
+		$userIsAdmin=$userData['isAdmin'];
 		$_SESSION['user']=$user;
 		$_SESSION['username']=$username;
 		$_SESSION['userQuery']=$userQuery;
@@ -53,6 +58,7 @@ if (isset($_POST['user']) && isset($_POST['password'])){
 		   window.setTimeout("login_error();",1000);
 		</script>';
 	}
+	
 } else {
 	if (isset($_SESSION['user']) && isset($_SESSION['userQuery'])){
 		$user=$_SESSION['user'];

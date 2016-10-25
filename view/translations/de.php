@@ -17,6 +17,11 @@ $translations['de']['Slideshow is running slower due to slow network response ti
 $translations['de']['Press ENTER to view in fullscreen. Press ESC or double click to leave the slideshow.']='Drücken Sie ENTER, um in den Voll&shy;bild&shy;modus zu wechseln. Drücken Sie ESC oder machen Sie einen Doppel&shy;klick, um die Dia&shy;show zu verlassen.';
 
 
+$translations['de']['tagging view']='Verschlagworten';
+$translations['de']['standard view']='Albenansicht';
+
+$translations['de']['show on map']='Auf der Karte anzeigen';
+
 $translations['de']['share']='Teilen';
 $translations['de']['attention']='Achtung';
 $translations['de']['This has not been made public. If you share it on Facebook, it becomes available to everyone you share it with.']='Dieses Bild wurde nicht veröffentlicht. Wenn Sie es auf Facebook teilen, wird es für alle verfügbar, mit denen Sie es teilen.';

@@ -95,16 +95,12 @@ function pretty($entry){
 
 $people=array();
 
-function getReadableTag($in,$path){global $tagInfo,$people;
+function getReadableTag($in,$path){global $tagInfo,$people,$config;
 
 	$tag=$in;
 
 	if (!$people){
-		$query=mysql_query('SELECT * FROM people');
-	
-	    while ($person=mysql_fetch_object($query)){
-	   	   $people[$person->tag]=$person;
-	    }
+	    $people=json_decode(file_get_contents($config->settingsPath.'/people'),true); 	    
 	}
 
 	if ($tag=='thumb') return '**'.translate('thumbnail',true).'**';
@@ -137,9 +133,9 @@ function getReadableTag($in,$path){global $tagInfo,$people;
 	
 	//if ($path) $tag.='P';
 	
-	if (isset($people[$in]) && $people[$in]->birthday!=0) {
+	if (isset($people[$in]) && $people[$in]['birthday']!=0) {
 		$date=0;
-		$bday=$people[$in]->birthday;
+		$bday=$people[$in]['birthday'];
 		$path=explode('/',$path);
 		foreach ($path as $part){
 			if (  substr($part,4,1)=='-'
@@ -186,7 +182,7 @@ $peopleCache=false;
 $impliedCache=false;
 $autotagCache=false;
 
-function getAllTags($key,$path=false,$folder=false){global $peopleCache, $impliedCache, $autotagCache;
+function getAllTagsArray($key,$path=false,$folder=false){global $peopleCache, $impliedCache, $autotagCache, $config;
 
 if (!$path){
    $pathRequest=mysql_query("SELECT filename,folder FROM files WHERE `key`='$key'");
@@ -194,22 +190,19 @@ if (!$path){
        $path=$pathRequest->filename;
        $folder=$pathRequest->folder;
    }
+   
 }
+   
+   $tagsPath=$path.'.tags';
 
    $result=array();
       
-      $filetagRequest=mysql_query("SELECT * FROM filetags WHERE image='$key'");
-      if ($filetagRequest=mysql_fetch_object($filetagRequest)){
-         //logout('DEBUG: '.$filetagRequest->tags);
-         $fileTags=explode(' ',$filetagRequest->tags);
+      if (file_exists($tagsPath)){
+         
+         $fileTags=explode(' ',file_get_contents($tagsPath));
          foreach ($fileTags as $fileTag){
       		if ($fileTag=='') continue;
       		$result[strtolower($fileTag)]=true;
-      		if (substr($fileTag,0,3)=='gk_') {
-   				$result[substr($fileTag,3)]=true;
-   				$result['gk_named']=true;
-   				$result['gk']=true;
-   			}
       	}
       }
   
@@ -289,26 +282,25 @@ foreach ($parts as $part){
 
 if ($year<date("Y")-1) $result['archiv']=true;
    
-   if (!$autotagCache) {
-   	$query=mysql_query('SELECT * FROM autotags');
-
-    while ($autotag=mysql_fetch_object($query)){
-   	   $autotagCache[]=$autotag;
-    }
-   }
+ if (!$autotagCache && file_exists($config->settingsPath.'/autotags')) {
+  $autotagCache=json_decode(file_get_contents($config->settingsPath.'/autotags'),true);  
+ }
+ 
 
 foreach ($autotagCache as $autotag){
-	if (stripos($path,$autotag->pathpart)) $result[strtolower($autotag->tag)]=true;
+	if (stripos($path,$autotag['pathpart'])) $result[strtolower($autotag['tag'])]=true;
 }
 
    foreach (array_keys($result) as $tag){
    	
-   	if (!$impliedCache){
-   		$dbresult=mysql_query("SELECT tag,implied FROM tags_implied");
-   	    while ($line=mysql_fetch_object($dbresult)){
-   	    	$impliedCache[$line->tag]=explode(' ',$line->implied);
-   	    }
-   	}
+   	if (!$impliedCache && file_exists($config->settingsPath.'/implied')){
+   		$impliedCache=json_decode(file_get_contents($config->settingsPath.'/implied'),true);
+   	    
+   	    //$config->settingsPath
+   	    
+   	    //file_put_contents($config->settingsPath.'/implied',json_encode($impliedCache,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+   	    
+   	} 
 
 	if (isset($impliedCache[$tag])){
 		foreach ($impliedCache[$tag] as $implied){
@@ -334,12 +326,18 @@ foreach ($autotagCache as $autotag){
    		unset($result['palamos']);
    }
    
-    $result=trim(implode(' ',array_keys($result)));
+    return array_keys($result);
+}
 
-    if (stripos($result,'copyright_')===false) $result.=' copyright_author';
+function getAllTags($key,$path=false,$folder=false){global $peopleCache, $impliedCache, $autotagCache, $config;
+
+    $result=getAllTagsArray($key,$path,$folder);
+
+	$result=trim(implode(' ',$result));
 
   	return strtolower($result);
 }
+  	
 
 function getFilterSQL($filter){
 	$filterSQL='';
@@ -704,14 +702,23 @@ function getImages($folder,$reverse=false){global $userQuery,$filterSQL;
 
 	$reverse=($reverse)?'DESC':'';
 
-	$query="SELECT md5(`key`) as `key`,files.filename as filename, files.tags as tags, filetags.tags as filetags,subfolder,copyright,folder as folderReadable,sortstring  FROM files LEFT JOIN filetags ON files.`key`=filetags.`image` WHERE (($userQuery) AND replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') LIKE '$folder' $filterSQL) ORDER BY sortstring $reverse LIMIT 20000";
+	$query="SELECT md5(`key`) as `key`,files.filename as filename, files.tags as tags,subfolder,copyright,folder as folderReadable,sortstring  FROM files WHERE (($userQuery) AND replace(replace(replace(replace(lower(files.folder),' ',''),'_',''),'.',''),',','') LIKE '$folder' $filterSQL) ORDER BY sortstring $reverse LIMIT 20000";
 	
 	$search=mysql_query($query);
 	
 	$output=array();
 	
 	while($line=mysql_fetch_object($search)){
+		
+		
+		//filetags
+		
+		$tagFile=$line->filename.'.tags';
+		
+		$line->filetags=(file_exists($tagFile))?file_get_contents($tagFile):'';
+		
 		$output[]=$line;
+		
 	}
 	
 	return $output;
@@ -772,6 +779,35 @@ function getAlbums(){global $userQuery,$filterSQL;
 	
 	return $output;
 
+}
+
+function getExif($image,$key){global $config;
+
+    $cachePath=$config->cachePath.str_replace($config->contentPath,'',dirname($image));
+    if (!file_exists($cachePath)) mkdir($cachePath,0777,true);
+		
+	$cachePath.='/'.$key.'.exif';
+	
+	if (file_exists($cachePath)){
+		$output=file_get_contents($cachePath);
+	} else {
+	
+		$output=array();
+		
+		exec('exiftool -json -c "%.14f" -groupHeadings "'.$image.'"',$output);
+		
+		$output=implode($output);
+		
+		file_put_contents($cachePath,$output);
+	}
+	
+	$output=json_decode($output,true);
+	
+	$data=$output[0];
+	
+	if (!$data) return false;
+	
+	return $data;
 }
 
 

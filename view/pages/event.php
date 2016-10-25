@@ -2,6 +2,13 @@
 
 if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
 
+echo'<script>
+	if(window.location.href!==parent.location.href){
+		parent.location.href=window.location.href;
+	}
+	</script>';
+
+
 //Determining target attribute for remote screen
 if (isset($_GET['target'])){
 	$target=$_GET['target'];
@@ -115,13 +122,7 @@ while ($line=array_shift($search)){
 		if (stripos($ele,'codeword_')!==false) continue;
 		
 		if (!$peopleList){ //load full people list used to determine if a tag is a person
-			$query="SELECT * FROM people";
-			$psearch=mysql_query($query);
-			$peopleList=array();
-			
-			while($pline=mysql_fetch_object($psearch)){
-				$peopleList[$pline->tag]=true;
-			}
+			$peopleList=json_decode(file_get_contents($config->settingsPath.'/people'),true); 
 		}
 		
 		if ($ele=='selection'){
@@ -213,7 +214,7 @@ function onScroll(){
 			
 			var data=imageData[image.title];
 			
-			var imgurl="previmage.php?key="+image.title+"&amp;size=";
+			var imgurl="previmage.php?key="+image.title+"&size=";
 			
 			image.src=imgurl;
 			image.srcset=data.prevImage1x+" 1x, "+data.prevImage15x+" 1.5x, "+data.prevImage2x+" 2x";
@@ -324,6 +325,9 @@ switch (count($copyrights)){
 
 echo $byString;
 $pageDescription.=strip_tags($byString);
+
+echo '<br><br>';
+echo '<a href="map.php?folder='.urlencode($folder).'&amp;filter='.urlencode($filter).'">'.translate('show on map',true).'</a>';
 
 
 if ($restrictedToAuthor) {
@@ -458,19 +462,6 @@ echo '
 
 <div id="images">';
 
-function cacheURL($key,$size){global $config;
-   
-	 if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL']=='no-cache') {
-	 	return false;
-	 }     
-	
-	$filename='/'.$key.'.'.$size.'.jpg';
-	
-	if (file_exists($config->cachePath.$filename)){return $config->cacheURL.$filename;}
-	
-	return false;
-}
-
 foreach ($files as $category=>$entries){
 	
 	if ($catOnPage[$category]!=$page) continue;
@@ -491,7 +482,30 @@ foreach ($files as $category=>$entries){
 			}
 		}
 		
+		$spherical=false;
+		
+		if (stripos($entry->tags,'public')!==false) $state='public';
+		if (stripos($entry->tags,'equirectangular')!==false) $spherical=true;
+		if (stripos($entry->tags,'spherical')!==false) $spherical=true;
+		if (stripos($entry->tags,'fullpano')!==false) $spherical=true;
+		if (stripos($entry->tags,'fullpanorama')!==false) $spherical=true;
+		if (stripos($entry->tags,'vollpano')!==false) $spherical=true;
+		if (stripos($entry->tags,'vollpanorama')!==false) $spherical=true;
+			
 		$url='?image='.urlencode($entry->key);
+			
+		if ($spherical) {
+			$fileURL=str_replace($config->contentPath,'/pics',$entry->filename);
+			$fileURL=explode('/',$fileURL);
+			
+			foreach($fileURL as $i=>$text){
+				$fileURL[$i]=rawurlencode($text);
+			}
+			
+			$fileURL=implode('/',$fileURL);
+
+			$url='pannellum.htm?autoLoad=true&autoRotate=-0.5&panorama='.$fileURL;	
+		}
 				
 		$readable=getReadableTags($entry->tags,$entry->sortstring);
 		
@@ -501,20 +515,26 @@ foreach ($files as $category=>$entries){
 
 		$frameclass=($user)?'imageframe':'imageframe nouser_imageframe';
 		
+		if (stripos($entry->filename,'.m4v')) {
+			$entry->filename=str_replace('.m4v','.preview.jpg',$entry->filename);
+		}
 
 		$size=@GetImageSize($entry->filename);
 	 	$origwidth=$size[0];$origheight=$size[1];
 	 	if (!$origheight) continue; //Do not care about images that cannot be loaded
-	 	$setHeight=250;
+	 	
+	    @$exif = exif_read_data($entry->filename);
+	 	@$ort = $exif['Orientation'];
+	    if ($ort==6 ||$ort==8){
+	    	$origwidth=$size[1];$origheight=$size[0];
+	    }
+	 	
+	 	$setHeight=325;
 	 	$setWidth=round($setHeight/$origheight*$origwidth);
 	 	
-	 	$prevImage1x="previmage.php?key=".$entry->key."&amp;size=1x";
-	 	$prevImage15x="previmage.php?key=".$entry->key."&amp;size=1.5x";
-	 	$prevImage2x="previmage.php?key=".$entry->key."&amp;size=2x";
-	 	
-	 	if (cacheURL($entry->key,'1x')){$prevImage1x=cacheURL($entry->key,'1x');}
-	 	if (cacheURL($entry->key,'1.5x')){$prevImage15x=cacheURL($entry->key,'1.5x');}
-	 	if (cacheURL($entry->key,'2x')){$prevImage2x=cacheURL($entry->key,'2x');}
+	 	$prevImage1x="previmage.php?key=".$entry->key."&size=1x";
+	 	$prevImage15x="previmage.php?key=".$entry->key."&size=1.5x";
+	 	$prevImage2x="previmage.php?key=".$entry->key."&size=2x";
 	 	
 	 	echo '<script>
 	 		var thisImageData={};
@@ -527,7 +547,10 @@ foreach ($files as $category=>$entries){
 	 		thisImageData.margin=3;
 	 		thisImageData.prevImage1x="'.$prevImage1x.'";
 	 		thisImageData.prevImage15x="'.$prevImage15x.'";
-	 		thisImageData.prevImage2x="'.$prevImage2x.'";
+	 		thisImageData.prevImage2x="'.$prevImage2x.'";';
+	 		
+	 		
+	    echo '
 	 		imageDataArray.push(thisImageData);
 	 		imageData["'.$entry->key.'"]=thisImageData;
 	 	</script>';

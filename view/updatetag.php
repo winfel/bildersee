@@ -37,14 +37,14 @@ if (isset($_SESSION['user'])){
 
 //get the key
 
-$request=mysql_query("SELECT `key` FROM files WHERE md5(`key`)='$key'");
+$request=mysql_query("SELECT `key`,filename FROM files WHERE md5(`key`)='$key'");
 if ($request=mysql_fetch_object($request)) {
 	$key=$request->key;
+	$filename=$request->filename;
+	$tagFileName=$filename.'.tags';
 }
 
-
-mysql_query("DELETE FROM filetags WHERE `image`='$key'");
-mysql_query("INSERT INTO filetags (tags,image) VALUES('$tags','$key')");
+file_put_contents($tagFileName,$tags);
 
 $alltags=getAllTags($key);
 

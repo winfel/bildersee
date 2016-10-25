@@ -44,7 +44,6 @@
   foreach ($delta as $filename=>$operation){
   	 switch ($operation){
   	    case 'delete': deleteEntry($filename); break;
-  	    //'case 'update': updateEntry($filename); break;
 	    default: addEntry($filename);break;
   	 }
   }
@@ -63,16 +62,7 @@
 
   function final_cleanup(){
   	
-  	$query=mysql_query("SELECT * FROM filetags,files WHERE filetags.image=files.`key` AND filetags.tags LIKE '%delete%'");
-  	while ($file=mysql_fetch_object($query)){
-  		$key=$file->image;
-  		$filename=$file->filename;
-  		if (!unlink($filename)) writeLog('update',"Could not delete $filename");
-  		else {
-  			mysql_query("DELETE FROM filetags WHERE image='$key'");
-  			mysql_query("DELETE FROM files WHERE `key`='$key'");
-  		}
-  	}
+     //Nothing at the moment
   	
   }
   
@@ -88,23 +78,6 @@
   
   $keys=array();
   
-  function updateEntry($filename){global $keys;
-  	if (!$keys) {
-  		$query=mysql_query("SELECT * FROM files");
-  		while($line=mysql_fetch_object($query)){
-  			$keys[$line->filename]=$line->key;
-  		}
-  		echo "Keys loaded!<br>";
-  	}
-  	$newKey=getKey($filename);
-  	$oldKey=$keys[$filename];
-  	if (!$oldKey) return;
-  	if ($oldKey==$newKey) return;
-  	echo "Update $oldKey to $newKey<br>";
-  	mysql_query("UPDATE filetags SET image='$newKey' WHERE image='$oldKey'");
-  	mysql_query("UPDATE files SET `key`='$newKey' WHERE `key`='$oldKey'");
-  	
-  }
   
   $topicCache=array();
   
@@ -222,6 +195,8 @@
 		    if (stripos($lowline,'.db')===false
 		     && stripos($lowline,'.tmp')===false
 		     && stripos($lowline,'.webm')===false
+		     && stripos($lowline,'.tags')===false
+		     && stripos($lowline,'.exif')===false
 		     && stripos($lowline,'.preview.jpg')===false) {  
 		       if (isset($list[$fullpath])) unset($list[$fullpath]); else $list[$fullpath]='add';
 		       //HERE

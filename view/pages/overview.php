@@ -2,7 +2,7 @@
 
 if (!isset($config) || !isset($config->hash) || !isset($securityHash) || $securityHash!=$config->hash) die ('<h1>Forbidden!</h1>');
 
-cleanupCache();
+//cleanupCache();
 
 $pageTitle=$config->pageTitle;
 $pageDescription='';
@@ -28,6 +28,10 @@ if (!$config->local){
 }
 
 echo '<script>
+
+if(window.location.href!==parent.location.href){
+	parent.location.href=window.location.href;
+}
 
 function setFilter(filter){
 	location.href="?filter="+filter;

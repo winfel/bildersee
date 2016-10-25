@@ -17,6 +17,20 @@
 	
 	if (isset($_GET['size']) && $_GET['size']) $size=$_GET['size']; else $size='1x';
 	
+	/*
+	
+	//the following snippet lets the user get a bigger version of the image if the file is directly downloaded
+	//seems to work only on chrome so far
+	$accept=(isset($_SERVER['HTTP_ACCEPT']))?($_SERVER['HTTP_ACCEPT']):false;
+	
+	if ($accept===false || stripos($accept,'html')!==false){
+		include('getimage.php');
+		die ('');
+	}
+	//until here
+	*/
+	
+	
 	$playIcon=false;
 	
 	if (stripos($getFile,'.m4v')) {
@@ -47,28 +61,19 @@
 	 else if (strpos($getTags,'norotate')!==false) $rotate='none';
 	 else if (strpos($getTags,'rotate')!==false) $rotate='rotate';
 	 
-	 shrinkImage($getFile,$size,$rotate,$config->cachePath,$input,$text,$playIcon);
+	 shrinkPrevImage($getFile,$size,$rotate,$config->cachePath,$input,$text,$playIcon);
 	 
 	
-function shrinkImage($lokalurl,$size,$rotate,$cachePath,$key,$text='',$playIcon=false){global $config;	
+function shrinkPrevImage($lokalurl,$size,$rotate,$cachePath,$key,$text='',$playIcon=false){global $config;
+
 	
 	switch ($size){
-	    case '1.5x':$limitWidth=1000001;$limitHeight=559;$quality=75;break;
-	    case '2x':$limitWidth=1000001;$limitHeight=731;$quality=65;break;
+	    case '1.5x':$limitWidth=1000001;$limitHeight=727;$quality=75;break;
+	    case '2x':$limitWidth=1000001;$limitHeight=950;$quality=65;break;
 		default:
-			$limitWidth=1000001;$limitHeight=430;$quality=85;break;
+			$limitWidth=1000001;$limitHeight=600;$quality=85;break;
 		break;
 	}
-	
-	 if (stripos($lokalurl,'.youtube')){
-	 	
-	 	 //Get a youtube preview
-	 	
-	 	 $id=file_get_contents($lokalurl);
-		 $content=file_get_contents('http://i3.ytimg.com/vi/'.$id.'/0.jpg');
-		 $lokalurl=$cachePath.'/'.$id.'.jpg';
-		 file_put_contents($lokalurl,$content);
-	 }
 	 
 	 if (!$rotate){
 	 	
@@ -94,17 +99,39 @@ function shrinkImage($lokalurl,$size,$rotate,$cachePath,$key,$text='',$playIcon=
 	 
 	 $withText=str_replace('%','_',rawurlencode($text));
 		
-	 // CACHING	
+	 // CACHING
+	 	
+	 
+	 $temp=$cachePath.str_replace($config->contentPath,'',dirname($lokalurl));	
+	 
+	 $temp=str_replace(' [','###',$temp);
+	 $temp=str_replace('] ','###',$temp);
+	 $temp=str_replace('[','###',$temp);
+	 $temp=str_replace(']','###',$temp);
+	 
+	 $temp=explode('###',$temp);
+	 
+	 foreach ($temp as $k=>$v){
+	 	if ($k%2==1) unset ($temp[$k]);
+	 }
+	 
+	 $cachePath=implode($temp);
+	
+	 if (!file_exists($cachePath)) mkdir($cachePath,0777,true);
 		
 	 $cachePath.='/'.$key.'.'.$size.'.jpg';
+	 
+	 if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL']=='no-cache') {
+	 	if (file_exists($cachePath)) unlink($cachePath);
+	 }   
 	 
 	 
 	 $expires=date("D, d M Y H:i:s",time() + (3 * 60 * 60)).' GMT';
 	 header("Expires: $expires");  //in one week
 	 
-	 
 	 if (file_exists($cachePath)) {
-	 	header ('location: '.$config->cacheURL.'/'.basename($cachePath));die('FROM CACHE');
+	 	
+	 	header ('location: '.str_replace($config->cachePath,$config->cacheURL,$cachePath));die('FROM CACHE');
 	 } 
 	
 	 
@@ -114,11 +141,12 @@ function shrinkImage($lokalurl,$size,$rotate,$cachePath,$key,$text='',$playIcon=
 		
 	 ini_set('memory_limit', '1024M');set_time_limit(60);ini_set('gd.jpeg_ignore_warning', 1);               
 	 
-	 if (!$original=@imagecreatefromfile($lokalurl)) return;	
+	 if (!$original=@imagecreatefromfilePrev($lokalurl)) return;	
 	 
 	 // determine new image dimensions
 	 $size=GetImageSize($lokalurl);
 	 $origwidth=$size[0];$origheight=$size[1];
+	 
 	 
 	 /*
 	 //no upsizing
@@ -144,11 +172,14 @@ function shrinkImage($lokalurl,$size,$rotate,$cachePath,$key,$text='',$playIcon=
 	 //Shrinking of the image
 	
 	   $temp=ImageCreateTrueColor($newwidth,$newheight);
+	   
 	   imagecopyresampled($temp,$original,0,0,0,0,$newwidth,$newheight,$origwidth,$origheight); 
+	   
+	   
 	 
-	 if ($rotate=='rotate'){$temp=ImageRotateRightAngle ($temp, 180);}
-	 if ($rotate=='right'){$temp=ImageRotateRightAngle ($temp, 90);$newheight=$newwidth;}
-	 if ($rotate=='left'){$temp=ImageRotateRightAngle ($temp, 270);$newheight=$newwidth;}
+	 if ($rotate=='rotate'){$temp=ImageRotateRightAnglePrev ($temp, 180);}
+	 if ($rotate=='right'){$temp=ImageRotateRightAnglePrev ($temp, 90);$newheight=$newwidth;}
+	 if ($rotate=='left'){$temp=ImageRotateRightAnglePrev ($temp, 270);$newheight=$newwidth;}
 	 	
 	 	$size=($newwidth/1200*17);
 	 	$offset=($newwidth/1200*10);
@@ -193,7 +224,7 @@ function shrinkImage($lokalurl,$size,$rotate,$cachePath,$key,$text='',$playIcon=
 	 imagedestroy($original);
 }
 
-function imagecreatefromfile($path, $user_functions = false)
+function imagecreatefromfilePrev($path, $user_functions = false)
 {
     $info = @getimagesize($path);
     
@@ -228,7 +259,7 @@ function imagecreatefromfile($path, $user_functions = false)
     return $functions[$info[2]]($path);
 }
 
-function ImageRotateRightAngle( $imgSrc, $angle ) 
+function ImageRotateRightAnglePrev( $imgSrc, $angle ) 
 { 
     // ensuring we got really RightAngle (if not we choose the closest one) 
     $angle = min( ( (int)(($angle+45) / 90) * 90), 270 ); 

@@ -2,6 +2,7 @@
 
  //ini_set ('error_reporting', E_ALL);
  //ini_set ('display_errors', true);
+ 
 
 	include_once ('environment.php');
 	
@@ -132,14 +133,30 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
 	 $withText=str_replace('%','_',rawurlencode($text));
 		
 	 // CACHING	
+	 
+	 $temp=$cachePath.str_replace($config->contentPath,'',dirname($lokalurl));	
+	 
+	 $temp=str_replace(' [','###',$temp);
+	 $temp=str_replace('] ','###',$temp);
+	 $temp=str_replace('[','###',$temp);
+	 $temp=str_replace(']','###',$temp);
+	 
+	 $temp=explode('###',$temp);
+	 
+	 foreach ($temp as $k=>$v){
+	 	if ($k%2==1) unset ($temp[$k]);
+	 }
+	 
+	 $cachePath=implode($temp);
+	
+	 if (!file_exists($cachePath)) mkdir($cachePath,0777,true);
 		
 	 $cachePath.='/'.$key.'.'.$limitWidth.'.'.$limitHeight.'.'.filesize($lokalurl).$minimum.$withText.'.jpg';
 	
-	 /*
 	 if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL']=='no-cache') {
 	 	if (file_exists($cachePath)) unlink($cachePath);
 	 } 
-	 */    
+	   
 	 
 	 
 	 $expires=date("D, d M Y H:i:s",time() + (3 * 60 * 60)).' GMT';
@@ -147,8 +164,8 @@ function shrinkImage($lokalurl,$limitWidth,$limitHeight,$rotate,$cachePath,$key,
 	 
 	 
 	 if (file_exists($cachePath)) {
-	 	header ('location: '.$config->cacheURL.'/'.basename($cachePath));die('FROM CACHE');
-	 } 
+	 	header ('location: '.str_replace($config->cachePath,$config->cacheURL,$cachePath));die('FROM CACHE');
+	 }
 	
 	 
 	 // END CACHING
